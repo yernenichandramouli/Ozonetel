@@ -79,6 +79,7 @@ public class redBusCancellation
     public string tinNumber{get;set;}
     public string physCanclErrorMsg{get;set;}
     public boolean isPhysCanclErrorMsg {get ; set;}
+    public boolean disableSubmitForApproval{get;set;}
     
     public redBusCancellation(ApexPages.StandardController controller) 
     {
@@ -88,6 +89,7 @@ public class redBusCancellation
         refundCaseExists = false;   
         isZQPrefundType =false;      
         isPhysCanclErrorMsg = false;  
+        disableSubmitForApproval = false;
         //pWrapList=new list<PCWrapper>();
         cpsLog = new Cancellation_Process_DB_Log__c();
         orItemId = ApexPages.currentPage().getParameters().get('id'); 
@@ -1136,6 +1138,7 @@ canRefundAmount=canRefundAmount+CP.Max_Refundable_Amount__c;
         {             
             insert cs;            
             update listCases[0];
+            disableSubmitForApproval = true;
             
             if(instantRefundBoIds.contains(orIt.Service_Provider_Id__c) && cs.Refund_Amount__c<= suggestedAmount){
                 // ApproveExceptionalRefund aer=new ApproveExceptionalRefund();
