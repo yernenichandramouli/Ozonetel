@@ -1,0 +1,17 @@
+<template>
+    <lightning-card>
+        <template if:true={showUpdMsg}>
+            <c-generic-toast-messages notificationtype={notifType} notificationmessage={notifMsg}>
+            </c-generic-toast-messages>
+            <div class="slds-m-bottom_x-small"></div>
+        </template>
+
+        <lightning-button variant="success" label="Send CSAT Notfication" onclick={handleSendNotification}
+            class="slds-align_absolute-center">
+        </lightning-button>
+        <div if:true={sendLoad} style="display:flex;flex-wrap: wrap;">
+            <lightning-spinner alternative-text="Sending..." variant="brand" size="small" class="slds-is-absolute">
+            </lightning-spinner>
+        </div>
+    </lightning-card>
+</template>

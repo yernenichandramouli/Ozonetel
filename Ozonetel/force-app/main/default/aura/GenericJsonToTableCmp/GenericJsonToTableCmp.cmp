@@ -1,0 +1,4 @@
+<aura:component controller="GenericJsonToTable" implements="flexipage:availableForAllPageTypes,force:lightningQuickAction,force:hasRecordId" >    
+    <aura:attribute name="recordId" type="String"/>
+    <c:genericJsonToTable recordId="{!v.recordId}" />
+</aura:component>

@@ -1,0 +1,5 @@
+({
+	setAgentInputFunc : function() {
+		
+	}
+})

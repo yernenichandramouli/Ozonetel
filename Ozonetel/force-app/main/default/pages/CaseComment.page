@@ -1,0 +1,21 @@
+<apex:page standardController="Case" extensions="HighLightPanelDataGet" showHeader="false">
+<apex:outputPanel rendered="{! $User.UIThemeDisplayed == 'Theme3' }">
+
+    <apex:includeLightning />   
+    <div id="LightningComponentid" /> 
+    <script>
+    $Lightning.use("c:CaseCommentApp", function() {
+        $Lightning.createComponent("c:caseCommentsCmp",
+                                   {
+                                       recordId:'{!recId}'
+                                   },
+                                   "LightningComponentid",
+                                   function(cmp) {
+                                       console.log('Case Comment Componet Created Successfully!');
+                                   });
+    });    
+    
+    </script>  
+        </apex:outputPanel>   
+
+</apex:page>

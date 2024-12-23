@@ -1,0 +1,24 @@
+<template>
+    <lightning-card>
+        <template if:true={showUpdMsg}>
+            <c-generic-toast-messages notificationtype={notifType} notificationmessage={notifMsg}>
+            </c-generic-toast-messages>
+            <div class="slds-m-bottom_x-small"></div>
+        </template>
+
+
+        <lightning-button variant="Success" label="Fetch Co Traveller Details" onclick={handleClick}
+            class="slds-align_absolute-center">
+        </lightning-button>
+        <div if:true={fetchLoad} style="display:flex;flex-wrap: wrap;">
+            <lightning-spinner alternative-text="Updating..." variant="brand" size="small" class="slds-is-absolute">
+            </lightning-spinner>
+        </div>
+
+        <lightning-accordion if:true={showSection}>
+            <lightning-datatable key-field="Id" data={coPassDetails} columns={fields}></lightning-datatable>
+        </lightning-accordion>
+
+    </lightning-card>
+
+</template>

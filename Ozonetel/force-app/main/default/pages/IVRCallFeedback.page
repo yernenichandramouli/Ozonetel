@@ -1,0 +1,99 @@
+<apex:page controller="CallFeedbackCntr" action="{!insertfdbck}" showHeader="flase">
+  <style>
+  p {
+  font-size: 1.1em!important;
+  display: block!important;
+  margin-top: 1em!important;
+  margin-bottom: 1em!important;
+  margin-left: 1em!important;
+  margin-right: 0!important;
+  
+}
+
+
+  @media only screen and (max-width: 400px) {
+    p{
+        margin-left: 1em;
+       
+
+    }
+  }
+ 
+</style>
+    <apex:composition template="{!$Site.Template}">
+        <apex:define name="body">
+         <apex:form id="fmId">  
+    <head>
+             
+     </head>
+  
+ 
+ <apex:pageMessages ></apex:pageMessages>
+ 
+ <apex:outputPanel rendered="{!showimage}">
+ <p>Hi!</p>
+<p>Thank you for calling redBus. We hope we were able to resolve your concerns.</p>
+<p>We would love to hear your feedback! Let us know how was your experience, by clicking on one of the icons below.</p><br/>
+  <div style="text-align:center">
+  <apex:image url="https://redbus--c.ap0.content.force.com/servlet/servlet.ImageServer?id=01528000003BYeR&oid=00DBg000001Y7eP&lastMod=1480672775000" width="150" height="60" onclick="validate('Excellent');return false;"> </apex:image>
+  <apex:image url="https://redbus--c.ap0.content.force.com/servlet/servlet.ImageServer?id=01528000003BYeb&oid=00DBg000001Y7eP&lastMod=1480672836000" width="150" height="60" onclick="validate('Average');return false;"> </apex:image>
+ <apex:image url="https://redbus--c.ap0.content.force.com/servlet/servlet.ImageServer?id=01528000003BYeW&oid=00DBg000001Y7eP&lastMod=1480672806000" width="150" height="60" onclick="validate('Bad');return false;"> </apex:image>
+ </div>
+<br/><p>Always here to help,<br/>
+redBus team</p>
+   <apex:actionFunction name="updateRecords" action="{!performUpdate}" reRender="fmId">
+    <apex:param name="SelVal" value="" assignTo="{!selRating}" />
+   </apex:actionFunction>
+  
+  </apex:outputPanel><br/><br/><br/><br/><br/><br/><br/><br/>
+ 
+  <apex:outputPanel id="panelID">
+  <apex:outputPanel rendered="{!AND(showimage==false,fdbck==false,errWhileUpdate==false)}" >
+    <table width="87%" align="center" ><br/><br/><br/><br/><br/><br/><br/><br/>
+        <tr>
+            <td  width="290" align="center" valign="middle">
+                <span style=" font-family:times new roman; font-size:30px; color:steelblue; line-height:28px;" class="topCls">
+                <i><center style="margin-top:-7em !important;">Feedback Already Submitted, Thank You....</center></i></span>
+            </td>
+        </tr>
+    </table>
+</apex:outputPanel> 
+
+<apex:outputPanel rendered="{!AND(ratingInsert==true,fdbck==true)}">
+    <table width="87%" align="center" ><br/><br/><br/><br/><br/><br/><br/><br/>
+        <tr>
+            <td  width="290" align="center" valign="middle">
+                <span style=" font-family:times new roman; font-size:30px; color:steelblue; line-height:28px;" class="topCls">
+                <i><center style="margin-top:-7em !important;"> Thank you for your Valuable Feedback...</center></i></span>
+            </td>
+        </tr>
+    </table> 
+</apex:outputPanel>
+
+  <apex:outputPanel rendered="{!errWhileUpdate}" >
+    <table width="87%" align="center" ><br/><br/><br/><br/><br/><br/><br/><br/>
+        <tr>
+            <td  width="290" align="center" valign="middle">
+                <span style=" font-family:times new roman; font-size:30px; color:steelblue; line-height:28px;" >
+                <i><center style="margin-top:-7em !important;">{!errorMsg}</center></i></span>
+            </td>
+        </tr>
+    </table>
+</apex:outputPanel> 
+
+</apex:outputPanel>
+
+<script>       
+  function validate(selVal)
+  {
+   updateRecords(selVal);
+  }
+</script>
+
+
+
+   </apex:form>
+ </apex:define>
+   </apex:composition>
+ 
+</apex:page>

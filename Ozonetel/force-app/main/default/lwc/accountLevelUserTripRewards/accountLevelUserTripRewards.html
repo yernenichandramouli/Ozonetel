@@ -1,0 +1,67 @@
+<template>
+    
+     <template if:true={isLoading} style="height: 200px; position:relative">
+        <lightning-spinner variant="base" size="medium"></lightning-spinner>
+    </template>
+
+<template if:false={isError}>
+        <div class="userContainer">
+            <template for:each={useStreaksResponse} for:item="item">
+                <div class="streak-container" key={item.OpId}>
+                    <div class="left-side">
+                        <ul>
+                            <li><span class="field">Streak Construct:</span> <span class="value">{item.StreakConstruct}</span></li>
+                            <li><span class="field">Operator Name:</span> <span class="value">{item.OpName}</span></li>
+                            <li><span class="field">OpName:</span> <span class="value">{item.OpId}</span></li>
+                            <li><span class="field">MaxOfferAmount:</span> <span class="value">{item.MaxOfferAmount}</span></li>
+                            <li><span class="field">TotalTxnCount:</span> <span class="value">{item.TotalTxnCount}</span></li>
+                            <!-- Add more fields as needed -->
+                        </ul>
+                    </div>
+                    <div class="right-side">
+                        <ul>
+                            <li><span class="field">StreakStatus:</span> <span class="value">{item.StreakStatus}</span></li>
+                            <li><span class="field">StreakStartDate:</span> <span class="value">{item.StreakStartDate}</span></li>
+                            <li><span class="field">StreakEndDate:</span> <span class="value">{item.StreakEndDate}</span></li>
+                            <li><span class="field">RedemptionStartDate:</span> <span class="value">{item.RedemptionStartDate}</span></li>
+                            <li><span class="field">RedemptionDate:</span> <span class="value">{item.RedemptionDate}</span></li>
+                            <li><span class="field">IsLastBooking:</span> <span class="value">{item.IsLastBooking}</span></li>
+                            <!-- Add more fields as needed -->
+                        </ul>
+                    </div>
+        <br/>
+                    <template if:true={item.Txns}>
+                        <strong><h3>List of Transcations Related to Operator</h3></strong>
+                        <table class="txn-table">
+                            <thead>
+                                <tr>
+                                    <th>Transcation ID</th>
+                                    <th>Source</th>
+                                    <th>Destination</th>
+                                    <th>DOJ</th>
+                                    <th>Position</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={item.Txns} for:item="txn">
+                                    <tr key={txn.UUID}>
+                                        <td>{txn.UUID}</td>
+                                        <td>{txn.Src}</td>
+                                        <td>{txn.Dest}</td>
+                                        <td>{txn.DOJ}</td>
+                                        <td>{txn.Position}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                </div>
+            </template>
+        </div>
+ </template>
+
+<template if:true={isError}>
+   <strong> <p class="error-message">{errorMsg}</p></strong>
+</template>
+
+</template>

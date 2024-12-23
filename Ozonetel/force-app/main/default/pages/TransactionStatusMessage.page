@@ -1,0 +1,50 @@
+<apex:page standardController="Account" extensions="TransactionStatusMssg_cls" lightningStylesheets="true">
+    <apex:slds />
+
+ <apex:includeScript value="/support/console/45.0/integration.js" />
+    <script type="text/javascript">       
+        function isLightningExperience()
+        {
+            if(sforce.console.isInConsole())
+            {
+                sforce.console.getEnclosingPrimaryTabId(function(result)
+                {
+                    if('{!Account.RecordType.Name}')
+                    {
+                        sforce.console.openSubtab(result.id,'/apex/CreateCase_NoTransaction?id={!accId}', true, 'New Case');
+                    }
+                    else
+                    {
+                        sforce.console.openSubtab(result.id,'/apex/ChatCaseCreationPage?Source=callpopup', true, 'New Case');
+
+                    }
+                });
+            }
+            
+            else
+            {
+            
+                if (UITheme.getUITheme() === 'Theme4d' || UITheme.getUITheme() === 'Theme4u')
+                 {
+                     alert(UITheme.getUITheme());
+                     sforce.one.navigateToURL('/apex/ChatCaseCreationPage?Source=callpopup',false);
+                     
+                 }
+                else 
+                    window.open('/apex/ChatCaseCreationPage');
+            }
+        }
+        
+  </script>
+  <div class="slds-scope">
+    <apex:form >
+        <div class="slds-text-align_center">
+                     <apex:commandButton onclick="isLightningExperience();return false" value="New Case"  styleClass="slds-button slds-button_success"/>
+ 
+        </div>
+                 
+        <div class="slds-text-heading_xx_small"><apex:outputText value="{!message}"></apex:outputText></div>
+        
+    </apex:form>
+  </div>
+</apex:page>

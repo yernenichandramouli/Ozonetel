@@ -1,0 +1,421 @@
+<apex:page controller="BDIntldevQueueController" showheader="false" docType="html-5.0" action="{!BDCases}"> 
+    <apex:form id="formId">
+        <apex:slds />
+        <apex:pageMessages id="erromsg" />
+        <apex:actionFunction name="refreshPageSize" action="{!refreshPageSize}" status="fetchStatus" reRender="srpb"/>
+        <apex:actionFunction name="hideCommentsJs" action="{!hideCommentsAction}" status="fetchStatus" reRender="pbe"/>
+   
+        <apex:pageBlock title="{!If(sobj.Type__c =='Agent','BD Queue','BD Management Queue') }" rendered="{!!massBuscancl}">
+
+            <apex:commandButton value="Logout"  action="{!Userlogout}" styleClass="btn Regbtnstyle btn-default" style="background-image: linear-gradient(#26A69A, #26A69A 50%, #26A69A);background-repeat: no-repeat;color:#ffffff; padding: 3px 12px; font-size:16px;border: 1px solid #26A69A;border-radius: 5px; margin-right:15px;float:right;"/>
+                Hi {!sobj.name}, {!sobj.Location__c}. <img alt="New" style="height: 25px;margin-left:10px" src="https://thedigiworldeducation.com/wp-content/uploads/2018/09/new.gif"/>
+                        Sorting Functionality Has Enabled On <b><i>Case Number,Bo Name</i></b> and <b><i>Age Columns.</i></b><img alt="New" style="height: 25px;margin-left:10px" src="https://thedigiworldeducation.com/wp-content/uploads/2018/09/new.gif"/><br/><br/>
+                Queue Name &nbsp;&nbsp; <apex:selectList value="{!queueName}" size="1">
+                <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption> 
+                <apex:selectOption itemLabel="Social Media / Escalated Care" itemValue="Social Media / Escalated Care"></apex:selectOption>
+                <apex:selectOption itemLabel="SIT/ HF Team" itemValue="SIT/ HF Team"></apex:selectOption>
+                <apex:selectOption itemLabel="SPOC" itemValue="SPOC"></apex:selectOption> 
+                <apex:selectOption itemLabel="Invalid Address" itemValue="Invalid Address"></apex:selectOption>
+                <apex:selectOption itemLabel="Invalid BP Number" itemValue="Invalid BP Number"></apex:selectOption>
+
+            <!-- <apex:selectOption itemLabel="Others" itemValue="Others"></apex:selectOption> 
+                <apex:selectOption itemLabel="Invalid BP number" itemValue="Invalid BP number"></apex:selectOption> -->
+                <apex:actionSupport event="onchange" reRender="srpb,erromsg,countDs" action="{!getCases}" status="status"/>
+                                     
+                </apex:selectList>
+                <apex:actionStatus id="status">
+                <apex:facet name="start">
+                    <img src="/img/loading.gif" />            
+                </apex:facet>
+                </apex:actionStatus>
+                <apex:outputPanel id="countDs" style="margin-left:10px;">
+                    Total Pending Cases:   {!agentBDCasesCount}
+                </apex:outputPanel>   
+                <apex:outputPanel ><apex:commandButton value="Bus Cancellation"  action="{!buscanclPage}" styleClass="btn Regbtnstyle btn-default" style="background-image: linear-gradient(#26A69A, #26A69A 50%, #26A69A);background-repeat: no-repeat;color:#ffffff; padding: 3px 12px; font-size:16px;border: 1px solid #26A69A;border-radius: 5px; margin-right:634px;float:right;"/></apex:outputPanel>
+
+                <apex:pageblocksection columns="1" id="srpb">
+                <script>
+                    if (typeof hideComments == 'function') {
+                    hideComments(); 
+                    }
+                </script>
+
+                <apex:panelGrid columns="3"> 
+                 
+                <apex:selectList value="{!size}" multiselect="false" size="1" onchange="refreshPageSize();">
+                   <apex:selectOption itemLabel="5" itemValue="5"></apex:selectOption>
+                   <apex:selectOption itemLabel="10" itemValue="10"></apex:selectOption>
+                   <apex:selectOption itemLabel="25" itemValue="25"></apex:selectOption>
+                   <apex:selectOption itemLabel="50" itemValue="50"></apex:selectOption>
+                   <apex:selectOption itemLabel="100" itemValue="100"></apex:selectOption>
+                </apex:selectList>
+                <apex:outputPanel style="float:right;margin-right: -125px;">              
+                <apex:commandButton status="fetchStatus" reRender="srpb" value="<<" action="{!setCon.first}" disabled="{!!setCon.hasPrevious}" title="First Page" style="{!IF(setCon.hasPrevious,'background:lightgreen;font-weight: bold;width: 35px !important','background:#e8c2cf;font-weight: bold;width: 35px !important')}"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="srpb" value="<" action="{!setCon.previous}" disabled="{!!setCon.hasPrevious}" title="Previous Page" style="{!IF(setCon.hasPrevious,'margin-left:1em;background:lightgreen;font-weight: bold;width: 35px !important','margin-left:1em;background:#e8c2cf;font-weight: bold;width: 35px !important')}"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="srpb" value=">" action="{!setCon.next}" disabled="{!!setCon.hasNext}" title="Next Page" style="{!IF(setCon.hasNext,'background:lightgreen;margin-left:1em;font-weight: bold;width: 35px !important','background:#e8c2cf;margin-left:1em;font-weight: bold;width: 35px !important')}"/> 
+  
+                <apex:commandButton status="fetchStatus" reRender="srpb" value=">>" action="{!setCon.last}" disabled="{!!setCon.hasNext}" title="Last Page" style="{!IF(setCon.hasNext,'background:lightgreen;margin-left:1em;font-weight: bold;width: 35px !important','background:#e8c2cf;margin-left:1em;font-weight: bold;width: 35px !important')}"/> 
+                </apex:outputPanel>
+
+                <apex:outputPanel style="margin-right:2em !important;float:right">
+                                
+                  <apex:outputText > Showing {!(setCon.pageNumber * size)+1-size}-{!IF((setCon.pageNumber * size)>noOfRecords, noOfRecords,
+                     (setCon.pageNumber * size))} of {!noOfRecords}
+                  </apex:outputText> 
+                                    
+                    <apex:actionStatus id="fetchStatus" >
+                        <apex:facet name="start" >
+                          <img src="/img/loading.gif" />                    
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:outputPanel> 
+             
+            </apex:panelGrid>  
+   
+            <apex:pageblocktable value="{!CaseDetails}" id="pb"  var="c"  styleClass="pbstyle">
+ 
+    <!--<apex:column value="{!c.casenumber}"/> -->
+<!--                <apex:column value="{!c.casenumber}"> </apex:column> -->
+                <apex:column value="{!c.casenumber}">
+                    <apex:facet name="header">
+                    <apex:commandLink action="{! SortCondPrepare }" value="Case Number">
+                            <apex:param value="casenumber" name="column" assignTo="{!sortExpression}" ></apex:param>
+                        
+                        </apex:commandLink>
+                    </apex:facet>
+                </apex:column>
+
+                <apex:column headerValue="TIN">
+                    <apex:outputtext value="{!c.TIN_No__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+                    <apex:outputtext value="{!c.TIN__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+                </apex:column>
+
+                <apex:column headerValue="PNR">
+                    <apex:outputtext value="{!c.PNR__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+                    <apex:outputtext value="{!c.PNR_No__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+                </apex:column>
+
+                <apex:column headerValue="Ticket Amount">
+                    <apex:outputtext value="{!c.AmountD__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+                    <apex:outputtext value="{!c.Total_Ticket_Amount__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+                </apex:column>
+
+<!--                <apex:column headerValue="BO Name & ID">
+                    <apex:outputtext value="{!c.Operator_Id__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+                    <apex:outputtext value="{!c.Service_Provider_Name__c} - {!c.Service_Provider_Id__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+                </apex:column> -->
+                <apex:column headerValue="BO Name & ID">
+                    <apex:facet name="header">
+                        <apex:commandLink action="{! SortCondPrepare }" value="BO Name & ID" >
+                            <apex:param value="Service_Provider_Name__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                        </apex:commandLink>
+                    </apex:facet>
+                    <apex:outputtext value="{!c.Operator_Id__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+                    <apex:outputtext value="{!c.Service_Provider_Name__c} - {!c.Service_Provider_Id__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+                </apex:column>             
+
+                <apex:column headerValue="Source/Destination">
+                    <apex:outputtext value="{!c.SourceT__c} / {!c.DestinationT__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+                    <apex:outputtext value="{!c.Source__c} / {!c.Destination__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+                </apex:column>
+
+                <apex:column headervalue="Boarding Point" value="{!c.Boarding_Point__c}"/>
+                <apex:column headervalue="Assigned by" value="{!c.LastModifiedByid}"/>
+                <apex:column value="{!c.description}"/>
+                <apex:column headervalue="HFT" value="{!c.HFT__c}"/>
+
+<!--                <apex:column value="{!c.Age__c}"/> -->
+                <apex:column value="{!c.Age__c}">
+                    <apex:facet name="header">
+                        <apex:commandLink action="{! SortCondPrepare }" value="Age" >
+                            <apex:param value="Age__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                        </apex:commandLink>
+                    </apex:facet>                    
+                </apex:column>
+                <apex:column value="{!c.origin}"/>
+
+                <apex:column id="col" >
+                    <apex:outputpanel id="pbe">
+                    <apex:commandButton value="Comments" style="width:100px" action="{!showComments}"  reRender="pbe">
+                    <apex:param name="removeProductCode22" assignTo="{!caseId}" value="{!c.id}"/> 
+                    </apex:commandButton>
+
+                    <apex:pageBlock rendered="{!showCC}" >
+<apex:pageblocktable value="{!ccsList}" var="cc">
+<apex:column headerValue="Comments" value="{!cc.ccrec.commentBody}"/>
+<apex:column headerValue="Created Date" value="{!cc.createdate}"/>
+</apex:pageblocktable>
+</apex:pageBlock>
+
+<apex:pageBlock rendered="{!showPB}" title="Add New Comment">
+<apex:actionregion >
+<apex:pageblocksection columns="1">
+<apex:outputPanel id="bpPhone">
+            <div class="requiredInput">
+                <div class="requiredBlock"></div>                       
+<apex:inputTextarea value="{!description}" /></div>
+
+<br/>
+
+ <!--<label for="checkid">-->
+ <apex:outputPanel rendered="{!if(c.Issue_Sub_Category__c=='Issue with BO contact number',true,false)}" id="bpNo">
+BP numbers:-&nbsp;<apex:outputtext value="{!c.BP_Contact_Number__c}"/><br/><br/>
+Customer provided Bp no:-&nbsp;<apex:outputtext value="{!c.Phone_No_ct__c}"/><br/>
+<br/>isExisting BP no. Correct:&nbsp; <apex:inputCheckbox value="{!isExistingBPnumber}" >
+ <apex:actionSupport event="onchange"  action="{!hide}" rerender="bpPhone" />
+</apex:inputCheckbox><br/>
+<br />
+Enter Correct BPnumber :&nbsp;&nbsp; <apex:input type="text" id="inputText"   value="{!correctBPnumber}" disabled="{!!hidetext}"  onkeyup="return isNumber(event);" onkeypress="return isNumber(event);" styleClass="textcheck"/>
+</apex:outputpanel>
+<apex:outputPanel rendered="{!if(c.Issue_Sub_Category__c=='Issue with Boarding Address',true,false)}" id="bpAddress">
+BP Address:-&nbsp;<apex:outputtext value="{!c.Boarding_Point__c}"/><br/><br/>
+Customer provided Bp Address:-&nbsp;<apex:outputtext value="{!c.Customer_provided_Boarding_Point__c}"/><br/>
+<br/>isExisting BP Address Correct:&nbsp; <apex:inputCheckbox value="{!isExistingBPAddress}" >
+ <apex:actionSupport event="onchange"  action="{!hideBPAddress}" rerender="bpPhone" />
+</apex:inputCheckbox><br/>
+<br />
+Enter Correct BP Address:&nbsp;&nbsp; <apex:input type="text" id="AddressinputText"   value="{!correctBPAddress}" disabled="{!!hidetext}"    styleClass="textcheck"/>
+</apex:outputpanel>
+</apex:outputpanel>
+</apex:pageblocksection>
+
+<apex:pageblocksection columns="2">
+              <apex:actionStatus id="loadStatus" >
+                    <apex:facet name="start" >
+                        <apex:commandButton value="Saving..."  disabled="true" status="loadStatus"/>                                       
+                     </apex:facet>
+                     <apex:facet name="stop">                   
+                         <apex:commandButton value="Save" action="{!save}" style="width:75px" reRender="col,erromsg" status="loadStatus" rendered="{!if(c.Issue_Type__c!='I need help to board my bus',true,false)}">
+                            <apex:param name="removeProductCode" assignTo="{!caseId}" value="{!c.id}"/> 
+                            <apex:param name="removeProductCode44" assignTo="{!assignedById}" value="{!c.Assigned_By__c}"/>
+                            <apex:param name="removeProductCode445" assignTo="{!sButton}" value="Save"/>  
+                          </apex:commandButton>
+                     </apex:facet>
+              </apex:actionStatus>
+                    
+              <apex:actionStatus id="loadStatus2" >
+                <apex:facet name="start" >
+                  <apex:commandButton value="Save & Closing..."  disabled="true" status="loadStatus"/>                                       
+                </apex:facet>
+                <apex:facet name="stop">                   
+                   <apex:commandButton value="Save & Close" action="{!save}" style="width:90px" reRender="col,erromsg" status="loadStatus2">
+                       <apex:param name="removeProductCode" assignTo="{!caseId}" value="{!c.id}"/> 
+                       <apex:param name="removeProductCode44" assignTo="{!assignedById}" value="{!c.Assigned_By__c}"/>
+                       <apex:param name="removeProductCode445" assignTo="{!sButton}" value="SaveAndClose"/>  
+                   </apex:commandButton>
+                </apex:facet>
+              </apex:actionStatus>
+ 
+   </apex:pageblocksection>
+    </apex:actionregion>
+  <apex:pageblockSection >
+  <apex:actionregion >
+     <apex:commandButton value="Attach File" style="width:75px" onclick="window.open('https://redbuslive.secure.force.com/BD/AttachFile?cId={!c.id}','_blank','height=500,width=1000');" reRender="pb"/>
+        </apex:actionregion>
+         <apex:commandButton value="Cancel" action="{!cancel}" style="width:75px" reRender="pb,pbe,erromsg"/>
+
+</apex:pageblocksection>
+
+</apex:pageBlock>
+
+</apex:outputpanel>
+
+</apex:column>
+
+
+</apex:pageblocktable>
+
+</apex:pageblocksection> 
+
+
+</apex:pageBlock>
+
+<apex:pageBlock rendered="{!massBuscancl}" id="searchPnlId">
+  <div class="slds-form">
+   <apex:outputpanel id="blke">
+   
+             <apex:actionStatus id="ldstatus">
+                <apex:facet name="start">
+                    <img src="/img/loading.gif" />            
+                </apex:facet>
+                </apex:actionStatus>
+                
+    <div class="slds-section slds-is-open">
+         <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e78d">
+       <span class="slds-truncate slds-p-horizontal_x-small " title="Section Title">Bus Cancellation Search Criteria</span>
+     </h3> 
+     <div aria-hidden="false" class="slds-section__content">
+      <div class="slds-grid slds-wrap slds-grid_align-left slds-grid--align-spread">
+         
+        <div class="slds-col slds-size--5-of-11 slds-medium-size--5-of-11">
+            <div class="slds-form-element slds-form-element">
+                <label class="slds-form-element__label" for="Source">Source</label>
+                <div class="slds-form-element__control">
+                    <apex:input type="text" id="srce" styleClass="slds-input" value="{!busCnclSource}"/>
+                </div>
+            </div>
+        </div>
+        
+         <div class="slds-col slds-size--3-of-11 slds-medium-size--3-of-11">
+            <div class="slds-form-element slds-form-element">
+                <label class="slds-form-element__label" for="Destination">Destination</label>
+                <div class="slds-form-element__control">
+                    <apex:input type="text" id="dest" styleClass="slds-input" value="{!busCnclDestination}"/>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-col slds-size--2-of-11 slds-medium-size--2-of-11">
+            <div class="slds-form-element slds-form-element">
+                <label class="slds-form-element__label" for="dojS">DOJ Start</label>
+                <div class="slds-form-element__control">
+                   <apex:input type="date" id="dojstr" styleClass="slds-input" value="{!busCnclDojstart}"/>
+                </div>
+            </div>
+        </div>
+        
+        <div class="slds-col slds-size--1-of-11 slds-medium-size--1-of-11">
+            <div class="slds-form-element slds-form-element">
+                <label class="slds-form-element__label" for="dojE">DOJ End</label>
+                <div class="slds-form-element__control">
+                   <apex:input type="date" id="dojend" styleClass="slds-input" value="{!busCnclDojend}"/>
+                </div>
+            </div>
+        </div>
+        
+          <div class="slds-col slds-size--4-of-11 slds-medium-size--4-of-11">
+            <div class="slds-form-element slds-form-element">
+                <label class="slds-form-element__label" for="OperatorId">Operater Id</label>
+                <div class="slds-form-element__control">
+                    <apex:input type="text" id="optrId" styleClass="slds-input" value="{!busCncloperatorId}"/>
+                </div>
+            </div>
+         </div>
+         
+        <div class="slds-col slds-size--1-of-9 slds-medium-size--1-of-9">
+            <div class="slds-form-element slds-form-element">
+                <label class="slds-form-element__label"/>
+                <div class="slds-form-element__control">
+                 <apex:commandButton value="Search" action="{!ServiceDetailsCall}"  status="ldstatus" /> 
+                </div>
+            </div>
+        </div>
+
+      </div>
+     </div>
+    </div>
+   </apex:outputpanel>
+  </div>   
+  
+   <apex:outputpanel id="respnseTableData" layout="block" > 
+   
+         
+     <apex:outputpanel rendered="{!showNoResult}">  
+        <center><apex:outputText rendered="{!!resultFound}" value=""> <font style="background-color: yellow;"><B>No records found for this search criteria -Error message -{!errorMessage}</b></font></apex:outputText></center>       
+     <apex:pageBlockSection title="Cancel Details" columns="1" collapsible="false" rendered="{!resultFound}">
+          <apex:pageBlockTable value="{!listRespData}" var="respWrap" styleClass="slds-table slds-table_cell-buffer slds-table_bordered">
+
+                <apex:column headerValue="Service Id">
+                    <apex:outputLabel value="{!respWrap.ServiceID}" />
+                </apex:column>
+
+                <apex:column headerValue="Route ID">
+                    <apex:outputLabel value="{!respWrap.RouteID}" />
+                </apex:column>   
+
+                <apex:column headerValue="Journey Date">
+                    <apex:outputLabel value="{!respWrap.JourneyDate}" />
+                </apex:column>
+                
+                <apex:column headerValue="Date of Journey">
+                    <apex:outputLabel value=" {!respWrap.DateOfJourney}" />
+                </apex:column>
+
+                <apex:column headerValue="Confirm Tickets">
+                   <apex:outputLabel value="{!respWrap.ConfirmTickets}" />
+                </apex:column>
+
+                <apex:column headerValue="Cancel Tickets">
+                   <apex:outputLabel value="{!respWrap.CancelTickets}" />
+                </apex:column>
+
+         </apex:pageBlockTable>
+
+     </apex:pageblocksection>
+     </apex:outputpanel>
+          </apex:outputpanel>
+
+         <apex:outputpanel rendered="{!!showUpdateButton}" id="cancId">
+       
+           <apex:pageBlockSection >
+                
+                 
+           <apex:pageBlockSectionItem >
+            Cancelltion Type   &nbsp;<apex:selectList size="1"  value="{!cancellationType}">
+                <apex:selectOption itemLabel="--None--" itemvalue=""></apex:selectOption>
+                <apex:selectOption itemLabel="All" itemvalue="all"></apex:selectOption>
+                <apex:selectOption itemLabel="Confirmed" itemvalue="confirmed"></apex:selectOption>
+                <apex:selectOption itemLabel="Cancelled" itemvalue="cancelled"></apex:selectOption>
+                <apex:actionSupport event="onchange" rerender="cancId,btniId" status="status"/>
+             </apex:selectList>
+           </apex:pageBlockSectionItem>
+              
+             <apex:pageBlockSectionItem >
+                 Email &nbsp;<apex:inputText value="{!busCanclEmailId}" />     
+              </apex:pageBlockSectionItem>
+                    
+             
+              <apex:actionStatus id="status">
+                <apex:facet name="start">
+                    <img src="/img/loading.gif" />            
+                </apex:facet>
+               </apex:actionStatus>
+                
+             <apex:pageBlockSectionItem >
+              <apex:commandButton id="btniId" value="Download" action="{!PassengerDetailsCall}" reRender="erromsg,cancId" disabled="{!showUpdateButton}"  /> 
+            </apex:pageBlockSectionItem>
+            
+           
+            </apex:pageBlockSection>
+        </apex:outputpanel>
+
+</apex:pageBlock>
+
+<script type="text/javascript">
+ function isNumber(evt) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      var element  = document.getElementsByClassName('textcheck')[0];
+      if(evt.type == "keyup")
+      {
+          var initialValue  = element.value;
+          var intival=initialValue.replace("/", "");
+          if(isNaN(intival) &&!intival.includes("/"))
+          {
+           
+            element.value=''; 
+          }
+      }
+
+      if (charCode > 31 && (charCode < 47 || charCode > 57)) {
+        return false;
+      }
+      return true;
+    }
+    
+    function hideComments()
+    {
+             hideCommentsJs();
+    }
+    
+</script>
+<style>
+.btnColrCss
+{
+ "background-color":"light-green";
+}
+</style>
+</apex:form>
+</apex:page>

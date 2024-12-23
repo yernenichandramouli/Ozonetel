@@ -1,0 +1,144 @@
+<apex:page controller="NPSDetractorController" docType="html-5.0" showheader="false" id="pg">
+    <style>
+        .floatleftwidth16
+        {
+        float:left;
+        width:20%;
+        }
+    </style>
+    
+    
+    <apex:form id="fm" >
+        <apex:pageBlock id="pb" >
+                    <apex:inputHidden id="selId" value="{!selCsId}"/>
+                    <apex:inputHidden id="reqId" value="{!requestId}"/>
+
+            <apex:slds />
+            <apex:includeScript value="//code.jquery.com/jquery-1.11.1.min.js"/>
+            <apex:includeScript value="/soap/ajax/26.0/connection.js"/>
+            <apex:includeScript value="/support/console/26.0/integration.js"/>
+            <apex:stylesheet value="{!$Resource.LoadingStatus}" />
+            <apex:includeScript value="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"/>
+            <apex:stylesheet value="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
+            <script>
+            $(document).ready(function(){
+                $('.pbstyle').DataTable();
+            });
+            </script>
+            
+            <apex:pageMessages id="msg"></apex:pageMessages>
+            <apex:pageBlockSection columns="3">
+               <!-- <apex:outputpanel layout="block" style="width:100%"> -->
+               <apex:pageblocksectionItem >
+                    From Date <apex:input value="{!fromDate}" type="date" required="true"/>
+                    </apex:pageblocksectionItem>
+                     <apex:pageblocksectionItem >
+                     To Date <apex:input value="{!toDate}" type="date" required="true"/>
+                     </apex:pageblocksectionItem>
+                    <apex:pageblockSectionItem >
+                    <!-- <div class="" align="right"> -->
+                        <apex:actionStatus id="status" >
+                            <apex:facet name="start" >
+                                <apex:commandButton value="Searching..." style="width:100px" disabled="true" status="status"/>                                       
+                            </apex:facet>
+                            <apex:facet name="stop">
+                                <apex:commandButton value="Search" style="width:100px" reRender="popCS,pb,msg,npsDetractorTable" status="status" action="{!search}"/>                   
+                            </apex:facet>
+                        </apex:actionStatus> 
+                  <!--  </div> -->         </apex:pageblockSectionItem>
+               <!-- </apex:outputpanel>-->
+            </apex:pageblocksection>  
+            <apex:pageblocktable value="{!caseList}" var="c" styleClass="pbstyle">
+              <apex:column headerValue="Case Number" value="{!c.casenumber}"/>
+                <apex:column headerValue="Request Id" value="{!c.Request_Id__c}"/>
+                <apex:column headerValue="CheckInDate" value="{!c.CheckIn_Date__c}"/>
+                <apex:column headerValue="TIN" value="{!c.TIN_No__c}"/>
+                <apex:column headerValue="Phone No" value="{!c.Phone_No_ct__c}"/>
+                <apex:column headerValue="Email Id" value="{!c.Email_Id_ct__c}"/>
+                <apex:column headerValue="NP Score" value="{!c.NP_Score__c}"/>
+                <apex:column headerValue="Hotel Name" value="{!c.Hotel_Name__c}"/>
+                <apex:column headerValue="Location" value="{!c.Location__c}"/>
+                <apex:column >
+                    <apex:commandButton value="Action" onclick="openPopup('{!c.id}','{!c.Request_Id__c}');return false;" id="popup"  />
+                                        
+                </apex:column>
+            </apex:pageblocktable>
+        </apex:pageBlock>
+        
+        <apex:outputPanel id="popup" styleClass="exRefdPopupPanel" style="display:none">            
+                <apex:outputPanel styleClass="popupBackground" layout="block" />                    
+                <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block" style="width: 500px !Important;">                        
+                      <apex:pageBlock title="Case Comment">
+                      <apex:pageblocksection columns="1">
+                        <apex:inputtextarea value="{!comment}" id="comIds" styleClass="msgCls" style="width:300px;height: 56px;"/>
+                      <apex:pageblocksectionItem >
+                        <apex:actionStatus id="butnStatus2" >
+                            <apex:facet name="stop" >
+                            <apex:commandButton value="Update" action="{!caseUpdate}" oncomplete="closepopup()"  reRender="msg,popCS" status="butnStatus2"/>
+                            </apex:facet>
+
+                            <apex:facet name="start">
+                            <apex:commandButton value="Updating.." oncomplete="closepopup()" status="butnStatus2" disabled="true"/>
+                            </apex:facet>
+                        </apex:actionStatus>
+                        <apex:commandButton value="Cancel" onclick="closePopup();return false;"/>
+                        </apex:pageblocksectionItem>
+                     </apex:pageblocksection>  </apex:pageBlock>
+                </apex:outputpanel>
+            </apex:outputpanel>
+            
+           <!--    <apex:outputPanel id="popup" styleClass="exRefdPopupPanel" style="display:none">      
+                <apex:outputPanel styleClass="popupBackground" layout="block" /> 
+                <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block" >
+                   
+ <apex:inputtextarea value="{!comment}" id="comIds" styleClass="msgCls" style="width:370px;height: 56px;"/>
+                        <apex:outputpanel > 
+                            <apex:actionStatus id="loadStatus" >
+                                <apex:facet name="start" >
+                                    <apex:commandButton value="Calling..." style="width:100px"  disabled="true" status="loadStatus"/>                                       
+                                </apex:facet>
+                                <apex:facet name="stop">
+                                    <apex:commandButton value="Call now" style="width:100px" styleClass="buttonStyle" action="{!caseUpdate}" reRender="msg,pbt"  status="loadStatus"/>
+                                </apex:facet>
+                            </apex:actionStatus>
+                            
+                            <apex:commandButton value="Cancel" onclick="closePopup();return false;" style="width:100px;" styleClass="buttonStyle" />
+                        
+                        </apex:outputpanel>
+                        
+                        
+                   
+                </apex:outputpanel>       
+            </apex:outputPanel>
+           -->
+           
+            
+        <script>
+         function closePopup()
+    {
+       $('.exRefdPopupPanel').hide();
+       document.getElementById('pg:fm:pb:selId').value = '';
+        
+    }
+    function openPopup(caseId,requestId)  
+    {
+        //alert('calling'+caseId);
+        $('.exRefdPopupPanel').show();
+        // window.scrollTo(0, 0);
+        //  document.getElementById('pg:formId:pb:selStatus').value = status;
+          document.getElementById('pg:fm:pb:selId').value = caseId;
+          document.getElementById('pg:fm:pb:reqId').value = requestId;
+          console.log('caseId-->'+caseId);
+    }
+        </script>
+        <apex:outputPanel id="popCS">
+               <script>                
+                    if('{!popupCS}' == 'true')
+                    {
+                        $('.exRefdPopupPanel').hide();
+                        document.getElementById('pg:fm:pb:selId').value = '';
+                    }
+               </script>
+            </apex:outputPanel>
+    </apex:form>
+</apex:page>

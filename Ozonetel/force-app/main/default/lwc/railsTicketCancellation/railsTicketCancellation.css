@@ -1,0 +1,20 @@
+.vertical-table {
+    border-collapse: collapse;
+    width: 50%;
+	margin-left: 18%;
+}
+
+.vertical-table th, .vertical-table td {
+    border: 1px solid #0176d3;
+    text-align: left;
+    padding: 8px;
+	 /* Additional styles */
+    background-color: #f2f2f2; /* Light gray background */
+    font-family: Arial, sans-serif; /* Font family */
+    color: #333; /* Text color */
+    /* Add any other styles you need */
+}
+
+.detail-row.collapsed {
+    display: none;
+}

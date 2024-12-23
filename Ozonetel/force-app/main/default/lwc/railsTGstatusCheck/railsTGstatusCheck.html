@@ -1,0 +1,12 @@
+<template>
+    <lightning-card title="TG Status">
+        <div class="datatable-container">
+            <lightning-datatable
+                key-field="key"
+                data={tripAttributes}
+                columns={columns}
+                hide-checkbox-column="true">
+            </lightning-datatable>
+        </div>
+    </lightning-card>
+</template>

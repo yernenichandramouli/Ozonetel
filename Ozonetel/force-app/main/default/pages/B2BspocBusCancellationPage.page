@@ -1,0 +1,261 @@
+<!--
+ * (c) 2016 RedBus
+ *
+ * Name           : B2BspocBusCancellationPage
+ * Created Date   : 28 Mar 2017
+ * Created By     : Praveen
+ * Modified By    : Sreenivas M
+ * Purpose        : VF page to display all Bus Cancellation cases to B2B SPOC person for further processing.
+ *
+ -->
+ 
+<apex:page standardController="Case" extensions="B2BSPOCBusCancellationExtn" docType="html-5.0" id="pageId" lightningStylesheets="true" showHeader="false" showChat="false" sidebar="false" >
+<apex:slds />
+<div class="slds-box slds-theme_default">
+<div class="slds-scope">
+    
+  <apex:form id="formId" >
+    <apex:pageMessages escape="false" id="errmsgTop"/>
+    <apex:actionStatus id="statusSaveTrip">
+    <apex:facet name="start">
+        <div class="demo-only" style="height:6rem">
+            <div class="slds-spinner_container" style="position:fixed">
+                <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+    </apex:facet> 
+    </apex:actionStatus>
+        
+    <div class="slds-form">
+        <div class="slds-section slds-is-open">
+            <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e78d">
+                <span class="slds-truncate slds-p-horizontal_x-small " title="Section Title">Search Criteria</span>
+            </h3>
+              <div aria-hidden="false" class="slds-section__content">
+                <div class="slds-grid slds-wrap slds-grid_align-left slds-grid--align-spread">
+                    <div class="slds-col slds-size--1-of-5 slds-medium-size--1-of-5 slds-align_absolute-center">
+                        <div class="slds-form-element slds-form-element">
+                     <label class="slds-form-element__label" for="tin"> TIN</label>
+                      <div class="slds-form-element__control">
+                            <apex:input type="text" id="tin" html-placeholder="TN" styleClass="slds-input" value="{!selTin}" />
+                      </div>
+                  </div>
+             </div>
+             <div class="slds-col slds-size--1-of-5 slds-medium-size--1-of-5 slds-align_absolute-center">
+                        <div class="slds-form-element slds-form-element">
+                            <label class="slds-form-element__label" for="doj"> Date Of Journey</label>
+                            <div class="slds-form-element__control">
+                                <apex:input type="date" id="doj" styleClass="slds-input" value="{!doj}"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slds-col slds-size--1-of-5 slds-medium-size--1-of-5 slds-align_absolute-center">
+                        <div class="slds-form-element slds-form-element">
+                            <label class="slds-form-element__label" for="createdDate"> Date Of Creation</label>
+                            <div class="slds-form-element__control">
+                                <apex:input type="date" id="createdDate" styleClass="slds-input" value="{!doi}" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slds-col slds-size--1-of-5 slds-medium-size--1-of-5 slds-align_absolute-center">
+                        <div class="slds-form-element slds-form-element">
+                            <label class="slds-form-element__label" for="createdDate">Status</label>
+                            <div class="slds-form-element__control">
+                                <apex:selectList size="1" value="{!selSearchStatus}" id="st">
+                                  <!-- <apex:selectOption itemLabel="Pending Auto Refunded" itemValue="Pending Auto Refunded"/>-->
+                                    <apex:selectOptions value="{!searchStatusOptions}"/>
+                                </apex:selectList>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slds-col slds-size--1-of-5 slds-medium-size--1-of-5 slds-align_absolute-center">
+                        <div class="slds-form-element slds-form-element">
+                            <label class="slds-form-element__label"/>
+                            <div class="slds-form-element__control">
+                                <apex:commandButton value="Search" action="{!doSearch}" reRender="resultPanel" status="statusSaveTrip" styleClass="slds-button slds-button_success"/>           
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  </div>             
+           </div>
+    </div>
+  
+      <apex:outputPanel id="resultPanel"> 
+   
+      <div class="slds-section slds-is-open" style="{!IF(showSearchResult,'display:block','display:none')}">
+        <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e78d">
+            <span class="slds-truncate slds-p-horizontal_x-small " title="Section Result">Search Result</span>
+        </h3>
+        
+        <div aria-hidden="false" class="slds-section__content">
+        <apex:pageMessages id="errMsg"></apex:pageMessages>
+       
+         <apex:outputPanel rendered="{!IF(AND(listWrapCase.size>0,selSearchStatus<>'All'),true,false)}">
+            <label for="mBpid" style="font-family: sans-serif;"> Status </label>
+               <apex:selectList value="{!selectedupdstatus}" size="1" id="mBpid">
+                    <apex:selectOptions value="{!statusUpdate}"/>
+               </apex:selectList>
+            <apex:commandButton value="Update" onclick="openPopup();" style="width:100px;margin-left:5px"  reRender="accountTableData" styleClass="buttonStyle" status="statusSaveTrip222"/>
+         </apex:outputPanel>
+       
+        <!-- comments section start -->
+        <apex:outputPanel id="popup2" styleClass="exRefdPopupPanel2" style="display:none"> 
+            <apex:outputPanel styleClass="popupBackground" layout="block" />                    
+                <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block" style="width: 401px !Important;">           
+                       Please Input Your Comments Below.Update Button Will Appear Automatically.                   
+                        <apex:inputtextarea value="{!caseComments}" id="comIds2" styleClass="msgCls" style="width:370px;height: 56px;"/>
+                        <apex:actionStatus id="butnStatus3" >
+                            <apex:facet name="stop" >
+                            <apex:commandButton value="Save" action="{!updateFinalStatus}"  style="background:#04B431;color:white;font-family:Arial;" oncomplete="closePopup(); return false;" reRender="errMsg"  status="butnStatus3"/>
+                            </apex:facet>
+                            <apex:facet name="start">
+                            <apex:commandButton value="Please Wait.." status="butnStatus3" style="background:#04B431;color:white;font-family:Arial;" disabled="true"/>
+                            </apex:facet>
+                        </apex:actionStatus>
+                        &nbsp;<apex:commandButton value="Cancel" onclick="closePopup();return false;"/>
+                </apex:outputpanel>
+        </apex:outputpanel>
+        <!-- comments section End -->
+            
+       <apex:outputPanel id="accountTableData" layout="block" >
+        <apex:pageBlock >    
+         <apex:pageBlockTable value="{!listWrapCase}" var="caseWrap" styleClass="slds-table slds-table_cell-buffer slds-table_bordered">
+             
+                <apex:column >
+                    <apex:facet name="header" ><input type="checkbox" onclick="selectCheckboxes2(this,'inputId')" style="text-align:center;margin-left: 18px;"/></apex:facet>
+                    <apex:outputPanel >
+                    <apex:inputCheckbox value="{!caseWrap.isSelect}" id="inputId"/>
+                    </apex:outputPanel>
+                </apex:column>
+
+                <apex:column >
+                    <apex:facet name="header" >CaseId</apex:facet>
+                    <a HREF="#" onClick="openCaseSubtab('{!caseWrap.cs.id}');return false;">
+                    <apex:outputLabel value="{!caseWrap.cs.CaseNumber}" />
+                    </a>
+                </apex:column>
+
+                <apex:column headerValue="Route Id">
+                    <apex:outputLabel value="{!caseWrap.cs.SS_Route_Id__c}" />
+                </apex:column>
+
+                <apex:column headerValue="Status">
+                    <apex:outputLabel value="{!caseWrap.cs.status}" />
+                </apex:column>   
+
+                <apex:column headerValue="TIN">
+                    <apex:outputLabel value="{!caseWrap.cs.TIN_No__c}" />
+                </apex:column>
+                
+                <apex:column headerValue="DOJ">
+                    <apex:outputfield value=" {!caseWrap.cs.SS_DOJ__c}" />
+                </apex:column>
+
+                <apex:column headerValue="Case Origion">
+                   <apex:outputtext value="{!caseWrap.cs.Origin}" />
+                </apex:column>
+
+                <apex:column headerValue="Operator Id">
+                   <apex:outputtext value="{!caseWrap.cs.Operator_Id__c}" />
+                </apex:column>
+
+                <apex:column headerValue="Partner">
+                   <apex:outputtext value="{!caseWrap.cs.Partner__c}" />
+                </apex:column>
+                                            
+         </apex:pageBlockTable>
+         </apex:pageBlock>
+      <apex:outputPanel >
+                <center><apex:outputText rendered="{!noResultfound}"> <font style="background-color: yellow;"><B>No records found for the search criteria </b></font></apex:outputText></center>
+        </apex:outputPanel>
+     </apex:outputPanel>
+    </div></div>
+   </apex:outputPanel>   
+
+  </apex:form>
+  </div></div>
+<script type="text/javascript">
+  
+    function openCaseSubtab(recId) {
+        
+        if (sforce.console.isInConsole()) 
+          {
+            sforce.console.getEnclosingPrimaryTabId(function(result)
+            {
+             
+              sforce.console.openPrimaryTab(undefined,'/'+recId, true, 'Details');
+             
+            });
+          } 
+          else {
+           window.open('/' + recId);
+        }
+    }
+    
+    function selectCheckboxes2(inpt,receivedInptID)
+   {
+       console.log('Check All Checkboxes in Table');
+        var inputCheckBox = document.getElementsByTagName("input");     
+        console.log('inputCheckBox->'+inputCheckBox.length);             
+        for(var i=0; i<inputCheckBox.length; i++)
+        {          
+           if(inputCheckBox[i].id.indexOf(receivedInptID)!=-1){                                     
+              inputCheckBox[i].checked = inpt.checked;
+           }
+        }
+   }
+ 
+    function openPopup()  
+    {
+    
+     
+     var inputCheckBox2 = document.getElementsByTagName("input");
+     console.log('inputCheckBox->'+inputCheckBox2.length);  
+     count = 0; 
+     var selcUpdstatus= document.getElementById("pageId:formId:mBpid").value;
+     console.log('selcUpdstatus->'+selcUpdstatus);
+     for (var i=0; i<inputCheckBox2.length; i++) {       
+           if (inputCheckBox2[i].type == "checkbox" && inputCheckBox2[i].checked == true){
+             count++;
+             
+            }
+           }
+             console.log('count->'+count);
+        if(count>=1 && selcUpdstatus!=''){
+  
+         $('.exRefdPopupPanel2').show();
+         window.scrollTo(0, 0);
+        }
+        
+        if(count<1){
+          alert('Please select at least one record');
+        }
+        
+        if(selcUpdstatus=='' && count>=1){
+          alert('Please select the action');
+        }
+    }
+    
+    function closePopup()
+    {
+      
+     $('.exRefdPopupPanel2').hide();
+        
+    }
+
+  </script>
+  <script src="/soap/ajax/46.0/connection.js"/>
+<script src="/support/console/46.0/integration.js"/>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"/>
+<apex:stylesheet value="{!$Resource.LoadingStatus}" />
+ 
+</apex:page>

@@ -1,0 +1,42 @@
+<apex:page controller="RPoolTripsCtrl" action="{!getWalletHistory}" showHeader="false">   
+    <apex:form >
+        <apex:pageBlock >
+            <apex:commandLink value="Click here to show current customer balance" action="{!getWalletBalance}" reRender="bal"/>            
+            <apex:outputpanel id="bal">
+                <apex:pageBlockSection rendered="{!currBal}">
+                    <apex:pageBlockSectionItem >
+                        User Id<apex:outputtext value="{!walBalWrap.rideUserId}"/>  
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        Core Cash<apex:outputtext value="{!walBalWrap.coreCash}"/>  
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        Earned Cash<apex:outputtext value="{!walBalWrap.earnedCash}"/>  
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        Offer Cash<apex:outputtext value="{!walBalWrap.offerCash}"/>  
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        Total Cash<apex:outputtext value="{!walBalWrap.totalCash}"/>  
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:outputpanel>
+        </apex:pageBlock>
+        <apex:pageBlock >            
+            <apex:pageBlockSection title="Transaction History" columns="1" collapsible="false">
+                <apex:pageBlockTable value="{!tWrapperList}" var="tr">
+                    <apex:column headerValue="Id" value="{!tr.Id}"/>
+                    <apex:column headerValue="Ride Trip Id" value="{!tr.rideTripId}"/>
+                    <apex:column headerValue="Account" value="{!tr.account}"/>
+                    <apex:column headerValue="Amount" value="{!tr.amount}"/>
+                    <apex:column headerValue="BillingGroup" value="{!tr.billingGroup}"/>
+                    <apex:column headerValue="Billing Code" value="{!tr.billingCode}"/>
+                    <apex:column headerValue="Transaction Id" value="{!tr.transactionId}"/>
+                    <apex:column headerValue="Description" value="{!tr.description}"/>
+                    <apex:column headerValue="Notes" value="{!tr.notes}"/>
+                    <apex:column headerValue="Created Time" value="{!tr.createdTime}"/>                                         
+                </apex:pageBlockTable>                
+            </apex:pageBlockSection>
+        </apex:pageBlock>      
+    </apex:form>   
+</apex:page>

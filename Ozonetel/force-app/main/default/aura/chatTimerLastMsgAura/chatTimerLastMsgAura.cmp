@@ -1,0 +1,43 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+	 <lightning:conversationToolkitAPI aura:id="conversationKit"/>
+      <aura:attribute name="recordId" type="String" />
+    <!-- Attributes -->
+    <aura:attribute name="minutes" type="String" default="00" />
+    <aura:attribute name="seconds" type="String" default="00" />
+    <aura:attribute name="timer" type="Object" />
+    <lightning:workspaceAPI aura:id="workspaceAPI" />
+    
+    <!-- Handlers -->
+    <aura:handler event="lightning:conversationAgentSend" action="{!c.onMessage}" />
+    <aura:handler event="lightning:conversationNewMessage" action="{!c.onMessage}" />
+    <aura:handler name="destroy" value="{!this}" action="{!c.cleanupTimer}" />
+    <aura:handler event="lightning:conversationChatEnded" action="{!c.onChatEnd}" />
+        <lightning:card title="Customer Remainder" iconName="standard:real_time">
+
+    <!-- Timer UI -->
+    <div class="timer-container" style="text-align: center; padding: 20px; font-family: Arial, sans-serif;">
+        <div style="display: flex; justify-content: center; gap: 12px; align-items: center;">
+            <div style="text-align: center;">
+                <div style="font-size: 60px; font-weight: bold; color: #0078D7; margin-bottom: 5px;">
+                    {!v.minutes}
+                </div>
+                <div style="font-size: 18px; color: #555; margin-top: 0;">Mins</div>
+            </div>
+            <div style="font-size: 60px; font-weight: bold; color: #0078D7;">:</div>
+            <div style="text-align: center;">
+                <div style="font-size: 60px; font-weight: bold; color: #0078D7; margin-bottom: 5px;">
+                    {!v.seconds}
+                </div>
+                <div style="font-size: 18px; color: #555; margin-top: 0;">Secs</div>
+            </div>
+        </div>
+    </div>
+            
+              <div class="button-container" style="margin-top: 20px;">
+        <button onclick="{!c.handleHoldClick}" style="margin: 5px; padding: 10px; font-size: 16px;">Hold</button>
+        <button onclick="{!c.handleResumeClick}" style="margin: 5px; padding: 10px; font-size: 16px;">Resume</button>
+        <button onclick="{!c.handleOnlineClick}" style="margin: 5px; padding: 10px; font-size: 16px;">Online</button>
+    </div>
+                </lightning:card>
+
+</aura:component>

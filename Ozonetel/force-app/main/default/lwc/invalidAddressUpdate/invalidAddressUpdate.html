@@ -1,0 +1,45 @@
+<template>
+
+<template  if:true={show}>
+    
+<lightning-card title='Invalid Address Updation'  icon-name="custom:custom19">    
+<div>
+    <div if:true={showSpinner}>
+        <lightning-spinner alternative-text="Loading..." variant="brand" size="small" class="slds-is-absolute">
+        </lightning-spinner>
+    </div>
+
+<lightning-layout  multiple-rows="true" vertical-align="stretch">
+<lightning-layout-item flexibility="auto" padding="around-small">
+    <lightning-input type="text" label="Boarding Address" value={boardingAddress} readonly> </lightning-input>   
+</lightning-layout-item>
+<lightning-layout-item flexibility="auto" padding="around-small">
+    <lightning-input type="text" label="Customer Provided Boarding Address" value={customerBP} onchange={handlecbpChange}></lightning-input>
+</lightning-layout-item><br>
+
+        <lightning-layout-item flexibility="auto" padding="around-small">
+    <lightning-combobox label="Status" value={status} placeholder="Select Status" options={StatusOptions} onchange={handleStatusChange} ></lightning-combobox>
+</lightning-layout-item>
+</lightning-layout>
+</div>
+<lightning-layout  multiple-rows="true" vertical-align="stretch">
+
+<lightning-layout-item flexibility="auto" padding="around-small">
+    <lightning-textarea label="Comments" placeholder="comment here..." value={comment}></lightning-textarea>
+</lightning-layout-item><br>
+</lightning-layout>
+
+<div class='slds-float_right'>
+    <lightning-button variant="success" label="Submit" onclick={handleSubmit} class="slds-m-left_x-small"></lightning-button>
+</div>
+<!--
+<lightning-layout-item flexibility="auto" padding="around-small">
+    <lightning-button variant="success" label="Cancel"  onclick={handleCancel} class="slds-m-left_x-small"></lightning-button>
+</lightning-layout-item> -->
+
+</lightning-card>
+</template>
+<template if:false={show}>
+    <p><b>Invalid Address update is not supporting for this transaction</b></p>
+</template>
+</template>

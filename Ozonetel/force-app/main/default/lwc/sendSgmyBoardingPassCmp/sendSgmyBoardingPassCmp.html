@@ -1,0 +1,17 @@
+<template>
+    <lightning-quick-action-panel header="Send Boarding Pass">
+        <lightning-spinner alternative-text="Loading" size="small" if:true={isSpinner} ></lightning-spinner>
+        <div class="row">
+            <lightning-input data-oldemail='oldemail' label="Register Email Id" value={emailValue} disabled='{disbaleEmailField}'></lightning-input>
+        <lightning-input data-checkboxvalue='checkboxvalue' type="checkbox" label="Send to alternate Email" onchange={handleCheckboxChange} ></lightning-input>
+        <template if:true={disbaleNewEmailField}>
+            <lightning-input data-newemail='newemail' type="email" label="Enter New Email" placeholder="type alternate email here..." required='{disbaleNewEmailField}'></lightning-input>
+        </template>
+        </div>
+
+        <div slot="footer">
+            <lightning-button variant="neutral" label="Cancel" onclick={closeAction} ></lightning-button>
+            <lightning-button variant="brand" label="Send" onclick={handleSendClick}></lightning-button>
+        </div>
+    </lightning-quick-action-panel>
+</template>

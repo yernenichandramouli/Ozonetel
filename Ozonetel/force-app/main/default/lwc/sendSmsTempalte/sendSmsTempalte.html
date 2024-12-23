@@ -1,0 +1,52 @@
+<template>
+    <div class="slds-box">
+        <lightning-card icon-name="utility:sms">
+            <b slot="title">{businessUnit}</b>
+
+            <lightning-radio-group name="radioGroup" onchange={handleTypeChange} label="Select Type"
+                options={wasms_options} value={selType} type="radio">
+            </lightning-radio-group>
+
+            <template if:true={type}>
+
+                <lightning-input name="enter-search" label="Search template here" type="search" is-loading={isLoading}
+                    minlength="1" onkeyup={handleKeyChange} value={seacrhText}></lightning-input>
+
+                <template if:true={showRecords}>
+
+                    <template for:each={searchRecords} for:item="sr">
+                        <lightning-layout vertical-align="center" key={sr.Id}>
+                            <div style="cursor:pointer" key={sr.Id} data-contact-id={sr.Id}>
+                                <lightning-layout-item padding="around-small" data-record={sr.DeveloperName} key={sr.Id}
+                                    onclick={handleSelect}>
+                                    {sr.DeveloperName}
+                                </lightning-layout-item>
+                            </div>
+                        </lightning-layout>
+                    </template>
+                </template>
+                <lightning-radio-group name="radioGroup" label="Select Mobile Number" options={options} value={value}
+                    required onchange={handleNumberSelect} type="radio"></lightning-radio-group>
+                <lightning-textarea required value={selMessageContent} placeholder='Please select a template'
+                    onkeyup={commentValue} label="Message"></lightning-textarea>
+
+                <lightning-button variant="brand" label="Send" onclick={handleSend}></lightning-button>
+                <div class="exampleHolder">
+                    <template if:true={isLoadingSendSms}>
+                        <lightning-spinner alternative-text="Loading"></lightning-spinner>
+                    </template>
+                    <template if:false={isLoadingSendSms}>
+                    </template>
+                </div>
+            </template>
+
+            <template if:false={type}>
+                <lightning-input name="enter-search" label="Search template here" type="search" is-loading={isLoading}
+                    minlength="1" onkeyup={handleKeyChange} value={seacrhText}></lightning-input>
+
+
+            </template>
+        </lightning-card>
+    </div>
+
+</template>

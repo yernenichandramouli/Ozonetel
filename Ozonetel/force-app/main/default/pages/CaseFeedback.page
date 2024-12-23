@@ -1,0 +1,35 @@
+<apex:page controller="FeedBackCls" sidebar="false" showHeader="false" action="{!sfInsert}" lightningStylesheets="true">
+<apex:outputPanel rendered="{!AND(msg==true,childCase==false)}">
+    <table width="87%" align="center" ><br/><br/><br/><br/><br/><br/><br/><br/>
+        <tr>
+            <td  width="290" align="center" valign="middle">
+                <span style=" font-family:times new roman; font-size:30px; color:steelblue; line-height:28px;">
+                <i> Thank you for your Valuable Feedback...</i></span>
+            </td>
+        </tr>
+    </table>
+</apex:outputPanel> 
+
+<apex:outputPanel rendered="{!AND(msg==false,childCase==false)}">
+    <table width="87%" align="center" ><br/><br/><br/><br/><br/><br/><br/><br/>
+        <tr>
+            <td  width="290" align="center" valign="middle">
+                <span style=" font-family:times new roman; font-size:30px; color:steelblue; line-height:28px;">
+                <i>Feedback Already Created...</i></span>
+            </td>
+        </tr>
+    </table>
+</apex:outputPanel> 
+
+<apex:outputPanel rendered="{!childCase==true}">
+    <table width="87%" align="center" ><br/><br/><br/><br/><br/><br/><br/><br/>
+        <tr>
+            <td  width="290" align="center" valign="middle">
+                <span style=" font-family:times new roman; font-size:30px; color:steelblue; line-height:28px;">
+                <i>For child case Feedback will not submit...</i></span>
+            </td>
+        </tr>
+    </table>
+</apex:outputPanel> 
+
+</apex:page>

@@ -1,0 +1,66 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-11-2023
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+
+<lightning-card title="Cargo Services" icon-name="standard:account">
+   <div class="slds-container">
+        <div if:true={errorMsg} style="margin-left: 3%;">
+            <p style="color: red;">{errorMsg}</p>
+        </div>
+
+    <lightning-layout multiple-rows="true" horizontal-align="spread">
+
+            <lightning-layout-item size="10" small-device-size="2" medium-device-size="2" large-device-size="2" padding="around-small">
+                <div class="slds-form-element">
+                    <div class="slds-form-element__control">
+                                    <lightning-input type="text"   style="margin-left:13px; margin-right:1px; font-weight: bold;"
+                                                     label="Enter Vocher Id/Order Id" 
+                                                     onchange={handleTrckingNo} ></lightning-input>                                       
+                    </div></div>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="10" small-device-size="2" medium-device-size="2" large-device-size="2" padding="around-small">
+                <div class="slds-form-element">
+                    <div class="slds-form-element__control">
+                                <lightning-input type="email"  style="margin-right:125px; margin-left: -131px; font-weight: bold;"
+                                                 label="Enter Email id" 
+                                                 onchange={handleEmailId} ></lightning-input>                                       
+                </div>
+                </div>
+        </lightning-layout-item>
+
+        <lightning-layout-item size="10" small-device-size="2" medium-device-size="2" large-device-size="2" padding="around-small">
+            <div class="slds-form-element">
+                <div class="slds-form-element__control">
+                        <lightning-input type="tel"   style="font-weight: bold;  margin-right:272px; margin-left: -248px;"
+                        label="Enter Phone No" 
+                        onchange={handlePhoneNo} ></lightning-input>                                        
+                </div></div>
+    </lightning-layout-item>
+
+    
+    <lightning-layout-item size="10" small-device-size="2" medium-device-size="2" large-device-size="2" padding="around-small">
+      
+                    <lightning-button label="Search" class="custom-button" 
+                    onclick={handleSearch}></lightning-button>                           
+
+    </lightning-layout-item>
+
+        
+        <div if:true={searchData}>
+            <lightning-datatable data={activityLst} 
+                                 columns={columns} 
+                                 key-field="Voucher_Id__c"
+                                 hide-checkbox-column="true"></lightning-datatable>
+        </div>
+     </lightning-layout>
+   
+</div>     
+
+</lightning-card>
+</template>

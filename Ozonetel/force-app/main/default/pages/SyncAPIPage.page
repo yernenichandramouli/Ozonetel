@@ -1,0 +1,81 @@
+<!--
+ * (c) 2017 RedBus
+ *
+ * Name           : SyncAPI Page
+ * Created Date   : 17 Jan 2017
+ * Created By     : Sreenivas M
+ * Purpose        : VF page to add missing OrderId/Transactions to .Net Schedular Queues
+ *
+ -->
+ 
+<apex:page controller="SyncAPICntrl" tabStyle="Account" id="pgId" lightningStylesheets="true">
+<apex:slds />
+<div class="slds-scope">
+<apex:form > 
+<apex:pageBlock >
+     <apex:pageBlockSection columns="1" title="Add to Queue" collapsible="false" id="pbsId">
+      <apex:pageMessages id="errId"/>
+      Please enter either Order Id or Tin
+      <apex:pageBlockSectionItem >
+          Order Id<apex:inputText value="{!ordId}"/>
+      </apex:pageBlockSectionItem>
+      
+      <apex:pageBlockSectionItem rendered="{!($Profile.Name !='Hotels Team')}">
+          TIN<apex:inputText value="{!tin}"/>
+      </apex:pageBlockSectionItem>
+      
+      <apex:pageBlockSectionItem rendered="{!($Profile.Name =='Hotels Team')}">
+          Voucher Id<apex:inputText value="{!tin}"/>
+      </apex:pageBlockSectionItem>
+      <!-- 
+      <apex:pageBlockSectionItem rendered="{!($Profile.Name !='Hotels Team')}">
+        Phone <apex:inputText value="{!phone}"/>
+      </apex:pageBlockSectionItem>
+      
+      <apex:pageBlockSectionItem rendered="{!($Profile.Name !='Hotels Team')}">   
+        EMail <apex:inputText value="{!emailId}"/>
+      </apex:pageBlockSectionItem>
+      -->
+      <apex:pageBlockSectionItem rendered="{!($Profile.Name !='Hotels Team')}">   
+        Region <apex:selectList value="{!region}" size="1">
+                     <apex:selectOption itemLabel="None" itemValue="None"></apex:selectOption>
+                     <apex:selectOption itemLabel="Domestic" itemValue="IND"></apex:selectOption>
+                     <apex:selectOption itemLabel="International" itemValue="INTL"></apex:selectOption>
+               </apex:selectList>
+      </apex:pageBlockSectionItem>
+      
+      <apex:commandButton value="Add to Queue" action="{!addToQueue}" reRender="pbsId,errId"  rendered="{!($Profile.Name !='Hotels Team')}" status="loaderStatus"  style="margin-left:23%" styleClass="slds-button slds-button_success"/>
+    
+      <apex:commandButton value="Add to HotelQueue" action="{!hotelSync}"   reRender="pbsId,errId" rendered="{!($Profile.Name =='Hotels Team')}" status="butnSts" style="margin-left:23%" styleClass="slds-button slds-button_success"/>
+               
+     </apex:pageBlockSection>
+ </apex:pageBlock>
+ <!-- rendered="{!($Profile.Name =='Tech Ops' || $Profile.Name =='Integration User')}"-->
+ <apex:pageBlock rendered="{!($Profile.Name =='Tech Ops' || $Profile.Name =='Integration User')}">
+ <apex:pageBlockSection columns="1" title="Sycn Old Recharge Orders" collapsible="false" id="rpb">
+  <apex:pageMessages id="msg"/>
+    <apex:pageBlockSectionItem >
+          Order Id<apex:inputText value="{!rcOrdId}"/>
+      </apex:pageBlockSectionItem>
+     
+     <apex:commandButton value="Sync Order" action="{!syncOldRecharge}" reRender="rpb,msg"   status="butnStatus"  style="margin-left:23%" styleClass="slds-button slds-button_success"/>
+              
+      
+ </apex:pageBlockSection>
+ </apex:pageBlock>
+ <apex:actionStatus id="loaderStatus">
+                <apex:facet name="start">
+                    <div class="demo-only" style="height:6rem">
+                        <div class="slds-spinner_container" style="position:fixed">
+                            <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+                                <span class="slds-assistive-text">Loading</span>
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                    </div>
+                </apex:facet> 
+      </apex:actionStatus>
+ </apex:form>
+</div>
+</apex:page>

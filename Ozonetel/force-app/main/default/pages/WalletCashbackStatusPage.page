@@ -1,0 +1,42 @@
+<!--
+ * (c) 2016 RedBus
+ *
+ * Name           : WalletCashbackStatusPage
+ * Created Date   : 29 Dec 2016
+ * Created By     : Sreenivas M
+ * Purpose        : VF page to fecth/display Wallet Cashback Status from Transactional DB
+ *
+ -->
+ 
+<apex:page standardController="Order_Items__c" extensions="WalletCashbackStatusExtn" showChat="false" showHeader="false" sidebar="false" lightningStylesheets="true">
+ <apex:slds />
+ <apex:form >
+      <div>
+         <apex:actionStatus id="butnStatus" >
+               <apex:facet name="stop" >
+                   <apex:commandButton value="Get CashBack Status" action="{!fetchCashbackStatus}" reRender="tabId,errId" status="butnStatus"  styleClass="slds-button slds-button_success slds-align_absolute-center"/>
+               </apex:facet>
+               
+                <apex:facet name="start">
+                   <apex:commandButton value="Getting Status..." status="butnStatus" disabled="true" styleClass="slds-button slds-button_success slds-align_absolute-center"/>
+               </apex:facet>
+         </apex:actionStatus> 
+         <apex:pageMessages id="errId"/>
+           <apex:outputPanel id="tabId">
+               <apex:pageBlock rendered="{!cashBackResponse.size>0}">
+               <apex:pageBlockTable value="{!cashBackResponse}" var="cbItem" >
+                   <apex:column headerValue="Cashback Amount" value="{!cbItem.Amount}"/>
+                   <apex:column headerValue="Offer Code" value="{!cbItem.OfferCode}"/>
+                   <apex:column headerValue="Offer Type" value="{!cbItem.Type}"/>
+                   <apex:column headerValue="CashBack Status" value="{!cbItem.Status}"/>
+                   <apex:column headerValue="TIN number" value="{!cbItem.TIN}"/>
+                   <apex:column headerValue="Credited Date" value="{!Order_Items__c.Corrected_Date_of_Journey__c}"/>
+                   </apex:pageBlockTable></apex:pageBlock>
+               <br></br>
+               <apex:outputText rendered="{!showStatus}"> <font style="background-color: yellow;margin-left:28em;"><B>No records found for this transaction</b></font></apex:outputText>
+          </apex:outputPanel>
+     </div>
+      
+ </apex:form>
+ 
+</apex:page>

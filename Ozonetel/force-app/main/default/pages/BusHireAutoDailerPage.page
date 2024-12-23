@@ -1,0 +1,305 @@
+<apex:page controller="BusHireAutoDailerCntrl" showHeader="false" tabStyle="Case" id="pg">
+<apex:slds />
+
+<apex:includeScript value="{!$Resource.cometd}"/>
+<apex:includeScript value="{!$Resource.jquery}"/>
+<apex:includeScript value="{!$Resource.json2}"/>
+<apex:includeScript value="{!$Resource.jquery_cometd}"/>
+
+
+<script type="text/javascript">
+
+ var timerVar;
+ var setIntrlRes;
+ var setTimeOutVar;
+ 
+    (function($) {
+     
+        
+        $(document).ready(function() { 
+
+            //Reconnect the calling if agent refreshes the page
+           // if(window.performance.navigation.TYPE_RELOAD==window.performance.navigation.type){
+              timerVar = 10;
+              window.clearInterval(setIntrlRes);
+              setIntrlRes = self.setInterval("timerClock()",1000);
+              window.clearTimeout(setTimeOutVar);  
+              setTimeOutVar = window.setTimeout(connectCallToCust,10000);
+           
+           // }
+
+
+            // Connect to the CometD endpoint
+            $.cometd.init({
+                url: window.location.protocol+'//'+window.location.hostname+'/cometd/24.0/',
+                requestHeaders: { Authorization: 'OAuth {!$Api.Session_ID}'},
+                appendMessageTypeToURL: false
+            });
+            
+            // Subscribe to a topic. JSON-encoded update will be returned in the callback
+            $.cometd.subscribe('/topic/CZentrixCallEndDetails', function(message) {
+               
+                var messDetails = JSON.parse(JSON.stringify(message));
+                var agentsCZId = messDetails['data']['sobject']['Agent_ID__c'];
+                var loginAgentId = '{!usDet.C_Zentrix_Id__c}';
+                var callStatus = messDetails['data']['sobject']['Call_Status__c'];
+                if(agentsCZId == loginAgentId)
+                {
+                   console.log('CZentrixCallEndDetails calling same agent id using');
+                   GetRefreshedCallDetails();
+                   if(callStatus === 'answered')
+                        timerVar = 60;
+                   else
+                        timerVar = 20;
+                        
+                   window.clearInterval(setIntrlRes);
+                    console.log('CZentrixCallEndDetails timer clock interval..'+timerVar);
+                   setIntrlRes = self.setInterval("timerClock()",1000);
+                   window.clearTimeout(setTimeOutVar);
+                   
+                   if(callStatus === 'answered')
+                        setTimeOutVar = window.setTimeout(connectCallToCust,60000);
+                   else
+                        setTimeOutVar = window.setTimeout(connectCallToCust,20000);
+                   
+                } 
+            });
+            
+            // Trigger a call when agent status has changed
+            $.cometd.subscribe('/topic/RefreshUserDetails', function(message) {
+
+               var parresults = JSON.parse(JSON.stringify(message));
+               var agentCZId = parresults['data']['sobject']['C_Zentrix_Id__c'];
+               var loggedInAgentId = '{!usDet.C_Zentrix_Id__c}';
+               var latestStatus = parresults['data']['sobject']['AgentStatus__c'];                    
+               var nxtCalTime = new Date(parresults['data']['sobject']['Next_Call_Time__c']);
+               var lstMdTime = new Date(parresults['data']['sobject']['LastModifiedDate']);
+               var res = Math.abs(nxtCalTime - lstMdTime);
+              
+             
+               if(agentCZId == loggedInAgentId && (latestStatus !='' && latestStatus ==='UnPaused' || latestStatus ==='ready' || latestStatus ==='Ready' || latestStatus ==='Progressive' || latestStatus ==='Available'))
+               {
+                    
+                   console.log('RefreshUserDetails calling same agent id using');
+                   GetRefreshedCallDetails();
+                   window.clearInterval(setIntrlRes);
+                   console.log('RefreshUserDetails timer clock interval..'+timerVar);
+                   timerVar = 30;
+                   setIntrlRes = self.setInterval("timerClock()",1000);
+                   window.clearTimeout(setTimeOutVar);
+                   setTimeOutVar =window.setTimeout(connectCallToCust, 30000);
+               }
+               
+               else if(agentCZId == loggedInAgentId && latestStatus !='' && latestStatus ==='Preview')
+               {
+                   console.log('RefreshUserDetails calling same agent id using else');
+                   GetRefreshedCallDetails();
+                   timerVar = 0;
+                   window.clearInterval(setIntrlRes);
+                   window.clearTimeout(setTimeOutVar);               
+               }
+               
+            });
+            
+            // Reinitiate calling for failed cases
+            $.cometd.subscribe('/topic/ReinitiateCalling', function(message) {
+
+               var initCalling = JSON.parse(JSON.stringify(message));
+               var agentCZId = initCalling['data']['sobject']['C_Zentrix_Id__c'];
+               var agentStatus = initCalling['data']['sobject']['AgentStatus__c'];    
+               var loggedInAgentId = '{!usDet.C_Zentrix_Id__c}';             
+            
+               if(agentCZId == loggedInAgentId && (agentStatus !='' && agentStatus ==='UnPaused' || agentStatus ==='ready' || agentStatus ==='Ready' || agentStatus ==='Progressive'))
+               {
+                   GetRefreshedCallDetails();
+                   console.log('Reinitiate calling same agent id using--'+agentCZId+'..logid..'+loggedInAgentId );
+                   timerVar = 20;
+                   window.clearInterval(setIntrlRes);
+                   console.log('ReinitiateCalling timer clock interval..'+timerVar);
+                   setIntrlRes = self.setInterval("timerClock()",1000); 
+                   window.clearTimeout(setTimeOutVar);
+                   setTimeOutVar = window.setTimeout(connectCallToCust,20000);
+               }
+            });
+
+        });
+
+    })(jQuery)
+
+function manualAssignDail()
+{
+    timerVar = 5;
+    window.clearInterval(setIntrlRes);
+    setIntrlRes = self.setInterval("timerClock()",1000);
+    window.clearTimeout(setTimeOutVar);  
+    setTimeOutVar = window.setTimeout(connectCallToCust,5000);
+}    
+    
+function timerClock()
+{
+    timerVar = (timerVar-1);
+    console.log('general timer clock interval..'+timerVar);
+  
+    if(timerVar < 1)
+    {
+        console.log('clearing interval..'+timerVar);
+        timerVar = 0;
+        window.clearInterval(setIntrlRes);
+    }
+   
+   document.getElementById("pg:formId:pb:pbs1:clckScI:clockSec").innerHTML = "<B>" + timerVar + "</B>";
+   
+   $('.blink').fadeOut(500);
+    $('.blink').fadeIn(500);
+}
+    
+    function connectCallToCust()
+    {
+      console.log('calling connectCallToCustomer and timer -'+timerVar);
+      connectCallToCustomer();
+    }
+    
+    function openLeadDetails(recId,recName) {
+        
+        if (sforce.console.isInConsole()) 
+          {
+           sforce.console.openPrimaryTab(undefined,'/'+recId, true,recName);
+             
+          } 
+          else
+            {
+            
+                
+                    window.open('/' + recId);
+            }
+    }
+  
+</script>
+
+ <apex:form id="formId" style="overflow-y: scroll !important;height: 400px !important;">
+ <apex:pageMessages id="errMsg"></apex:pageMessages>
+ <apex:actionFunction name="GetRefreshedCallDetails" action="{!getAgentCallDetails}" reRender="formId,errMsg"/>
+  <apex:actionFunction name="connectCallToCustomer" action="{!callToCustomer}" reRender="formId,errMsg"/>
+  <apex:pageBlock mode="inline" id="pb">
+  <div align="right">
+         <!-- disabled="{!assignmentLeadBt}" -->
+        
+         <apex:actionStatus id="agstatus">
+    <apex:facet name="start">
+        <apex:outputPanel >
+            <img src="/img/loading32.gif" width="15" height="15" />
+            <apex:outputLabel value="Loading..."/>
+        </apex:outputPanel>            
+    </apex:facet>
+</apex:actionStatus>
+
+            <apex:selectList id="chooseColor" value="{!agentStatus}" size="1">
+            <apex:selectOption itemValue="{!usDet.AgentStatus__c}" itemLabel="{!usDet.AgentStatus__c}"/>
+             <apex:selectOption itemValue="None" itemLabel="--None--"/>
+            <apex:selectOption itemValue="Available" itemLabel="Available"/>
+            <apex:selectOption itemValue="Busy" itemLabel="Busy"/>
+            <apex:selectOption itemValue="Break" itemLabel="Break"/> 
+            <apex:selectOption itemValue="Bio Break" itemLabel="Bio Break"/> 
+            <apex:selectOption itemValue="Ops Training" itemLabel="Ops Training"/> 
+            <apex:selectOption itemValue="QA feedback" itemLabel="QA feedback"/> 
+              <apex:actionSupport event="onchange" 
+                                action="{!UpdateAgentStatus}" 
+                                rerender="counter,errMsg,pb" status="agstatus" />
+        </apex:selectList> &nbsp;&nbsp;
+      <!-- <apex:commandButton value="Assign Leads" action="{!AssginLeads}"  reRender="tbd,errMsg" styleClass="slds-button slds-button_success"  /></div> <br/>  disabled="{!assignmentLeadBt}" -->
+            <apex:commandButton value="Assign Leads" action="{!AssginLeads}" reRender="tbd,errMsg" styleClass="slds-button slds-button_success"  oncomplete="manualAssignDail();return false;" /></div> <br/>
+ 
+      <apex:pageBlockSection columns="2" title="Agent Information" collapsible="false" id="pbs1">
+          <apex:pageBlockSectionItem >
+              Agent :<apex:outputField value="{!usDet.User__r.username}"/>
+          </apex:pageBlockSectionItem>
+           <apex:pageBlockSectionItem >
+            Last Call Start Time : <apex:outputfield value="{!usDet.Last_Call_Start_Time__c}"/>
+          </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+              Agent Status:<apex:outputField value="{!usDet.AgentStatus__c}"/>
+              
+          </apex:pageBlockSectionItem>
+           <apex:pageBlockSectionItem >
+            Last Call End Time : <apex:outputfield value="{!usDet.Last_Call_End_Time__c}"/>
+          </apex:pageBlockSectionItem>
+        <!--  <apex:pageBlockSectionItem >
+            CzentrixId:<apex:outputText value="{!usDet.C_Zentrix_Id__c}"/>
+          </apex:pageBlockSectionItem>-->
+         
+         
+          <apex:pageBlockSectionItem >
+           Next Call Time : <apex:outputField value="{!usDet.Next_Call_Time__c}"/>
+          </apex:pageBlockSectionItem>
+          
+          <apex:pageBlockSectionItem id="clckScI">
+           Call Connects In  : <apex:outputPanel ><apex:outputText styleClass="clock" id="clockSec"/><span class="blink" style="background-color:yellow"> Seconds</span></apex:outputPanel>
+          </apex:pageBlockSectionItem>
+          
+     
+          
+      </apex:pageBlockSection>
+  
+   </apex:pageBlock>
+   
+ 
+   <apex:pageBlock >
+   <apex:pageBlockSection title="To Be Dialed Lead Details" columns="1" id="tbd" collapsible="false">
+   <apex:pageBlockTable value="{!listLeads}" var="lds" columns="5" rows="5">
+   
+    <apex:column headerValue="Name">
+     <apex:facet name="header" >Name</apex:facet>
+      <a HREF="#" onclick="javascript:openLeadDetails('{!lds.id}','{!lds.Name}');return false">
+           {!lds.Name}
+        </a> 
+        
+    
+    </apex:column>
+     
+     <apex:column headerValue="LeadOwner">
+      <apex:outputField value="{!lds.owner.name}"/>
+     </apex:column>
+     <apex:column headerValue="Status">
+      <apex:outputField value="{!lds.Status}"/>
+     </apex:column>
+     
+     <!--<apex:column headerValue="Phone">
+      <apex:outputField value="{!lds.phone}"/>
+     </apex:column>-->
+      <apex:column headerValue="NextcallDate">
+      <apex:outputField value="{!lds.NextCallDate__c}"/>
+     </apex:column>
+     </apex:pageBlockTable>
+     </apex:pageBlockSection>
+     
+     <apex:pageBlockSection columns="1" collapsible="flase" title="Last 5 Calls Lead Details" >
+     <apex:pageBlockTable value="{!listlast5CallLeads }" var="lds" columns="5" rows="5">
+     
+     <apex:column headerValue="Name">
+         <apex:facet name="header" >Name</apex:facet>
+          <a HREF="#" onclick="javascript:openLeadDetails('{!lds.id}','{!lds.Name}');return false">
+               {!lds.Name}
+            </a> 
+     </apex:column>
+     <apex:column headerValue="LeadOwner">
+      <apex:outputField value="{!lds.owner.name}"/>
+     </apex:column>
+     <apex:column headerValue="Status">
+      <apex:outputField value="{!lds.Status}"/>
+     </apex:column>
+     
+     <!-- <apex:column headerValue="Phone">
+      <apex:outputField value="{!lds.phone}"/>
+     </apex:column> -->
+      <apex:column headerValue="NextcallDate">
+      <apex:outputField value="{!lds.NextCallDate__c}"/>
+     </apex:column>
+    </apex:pageBlockTable>
+    </apex:pageBlockSection>
+   
+    </apex:pageBlock> 
+ 
+ </apex:form>
+ <script src="/soap/ajax/46.0/connection.js"/>
+            <script src="/support/console/46.0/integration.js"/>
+</apex:page>

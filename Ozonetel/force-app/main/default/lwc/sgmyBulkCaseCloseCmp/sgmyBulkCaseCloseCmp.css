@@ -1,0 +1,12 @@
+.slds-theme_success, .slds-theme--success {
+    color: var(--lwc-colorTextInverse,rgb(255, 255, 255));
+    background-color: var(--brand-color-1);
+}
+
+.slds-p-around_small, .slds-p-around--small {
+    padding: 5px;
+}
+
+.slds-p-around_medium, .slds-p-around--medium {
+    padding: 5px; 
+}

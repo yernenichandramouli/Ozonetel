@@ -1,0 +1,12 @@
+<template>
+    <lightning-card>
+ 
+        <lightning-button variant="success" label="Send FeedBack Link" onclick={handleClick}
+            class="slds-m-left_x-small"></lightning-button>
+        <div if:true={fetchLoad} style="display:flex;flex-wrap: wrap;">
+            <lightning-spinner alternative-text="Updating..." variant="brand" size="small" class="slds-is-absolute">
+            </lightning-spinner>
+        </div>
+
+</lightning-card> 
+</template>

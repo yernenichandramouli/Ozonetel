@@ -1,0 +1,24 @@
+<template>
+    <lightning-card>
+    <template if:true={showUpdMsg}>
+        <c-generic-toast-messages notificationtype={notifType} notificationmessage={notifMsg}>
+        </c-generic-toast-messages>
+        <div class="slds-m-bottom_x-small"></div>
+    </template>
+    
+ 
+        <lightning-button variant="success" label="Get Self Help Link" onclick={handleClick}
+            class="slds-m-left_x-small"></lightning-button>
+        <div if:true={fetchLoad} style="display:flex;flex-wrap: wrap;">
+            <lightning-spinner alternative-text="Updating..." variant="brand" size="small" class="slds-is-absolute">
+            </lightning-spinner>
+        </div>
+
+        <template if:true={showresp}>
+            <div class="slds-align_absolute-center" style="height:5rem">{finalUrl}</div>
+            <lightning-button-menu icon-size="xx-small" alternative-text="Actions" slot="actions">
+                <lightning-menu-item value="Copy" label="Copy" onclick={copyDay}></lightning-menu-item>
+              </lightning-button-menu>
+        </template>
+</lightning-card> 
+</template>

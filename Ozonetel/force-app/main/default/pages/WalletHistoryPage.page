@@ -1,0 +1,35 @@
+<!--
+ * (c) 2016 RedBus
+ *
+ * Name           : WalletHistoryPage
+ * Created Date   : 21 Dec 2016
+ * Created By     : Praveen
+ * Purpose        : VF page to display Wallet History Details.
+ *
+ ** -->
+<apex:page extensions="WalletHistoryCntrl" standardController="Account" action="{!fetchWalletHistoryDetails}" showHeader="false" showChat="false" sidebar="false" lightningStylesheets="true">
+<apex:slds />
+<div class="slds-scope">
+    
+<apex:pageBlock title="Wallet History Details for :({!phone} {!emailId} {!userId} {!phoneNum} {!acEmailId})" >
+<apex:pagemessages ></apex:pagemessages>
+        <apex:pageBlockTable value="{!walletHisResponse}" var="res" styleClass="slds-table slds-table--bordered slds-table--striped">
+            <apex:column headerValue="Transaction Date" value="{!res.TransactionDate}" />
+            <apex:column headerValue="Transaction Mode" value="{!res.TransactionMode}"/>
+            <apex:column headerValue="Transaction Type" value="{!res.TransactionType}" />
+            <apex:column headerValue="Amount" value="{!res.Amount}" />
+            <apex:column headerValue="Expiration Date" value="{!res.ExprationDate}" />
+            <apex:column headerValue="Offer Name" value="{!res.OfferName}" />
+            <apex:column headerValue="Amount Used" value="{!res.AmountUsed}" />
+            <apex:column headerValue="Opening Balance" value="{!res.OpeningBalance}" />
+            <apex:column headerValue="Closing Balance" value="{!res.ClosingBalance}" />
+            <apex:column headerValue="Sales Channel" value="{!res.SalesChannel}" />
+            <apex:column headerValue="Reference Number" value="{!res.ReferenceNo}" />                       
+          
+        </apex:pageBlockTable>
+
+</apex:pageBlock>
+</div>
+<apex:includeScript value="/soap/ajax/45.0/connection.js"/>
+<apex:includeScript value="/support/console/45.0/integration.js"/>
+</apex:page>

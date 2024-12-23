@@ -1,0 +1,336 @@
+<apex:page standardController="Order_Items__c" extensions="redBusLiveDataPing" showHeader="false" action="{!refundEnableCheck}" >
+    <apex:slds rendered="{! $User.UIThemeDisplayed == 'Theme4u' }" />
+    <apex:form id="formId">
+            <table>
+                <tr>
+                    <apex:outputPanel rendered="{!if(orIt.RecordType.Name!='Hotels' && orIt.RecordType.Name!='B2B Bus Booking',true,false)}">
+                        <apex:actionStatus id="SaveButtonStatus2">
+                            <apex:facet name="stop">
+                                <apex:outputPanel >
+                                   
+                                    <apex:commandButton value="Get PG Details" style=" height:25px;width:100px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        action="{!PaymentUpdatePing}" status="SaveButtonStatus2" reRender="formId"
+                                        onComplete="RefreshPrimaryTab();" /> &nbsp;
+                                    <apex:commandButton value="Sync redBus data" style="height:25px;width:115px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        action="{!syncDataCall}" status="SaveButtonStatus2" reRender="formId" onComplete="RefreshPrimaryTab();"
+                                        rendered="true" />&nbsp;
+
+                                  
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                               
+                                <apex:commandButton value="Request Processing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                    disabled="true" />
+                              
+                            </apex:facet>
+                        </apex:actionStatus>
+               
+                        <apex:actionStatus id="SaveButtonStatus3" rendered="{!refundEnable}">
+                            <apex:facet name="stop">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Initiate Refund" style=" height:25px;width:120px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        action="{!refundAPIping}" status="SaveButtonStatus3" reRender="formId" onComplete="confirmDialog('Refund Initiation {!refundStatus}','{!refundStatusMesssage}'); return false;"
+                                    />&nbsp;
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Request Processing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        disabled="true" />
+                                </apex:outputPanel>
+                            </apex:facet>
+                        </apex:actionStatus>
+                    
+                        <apex:actionStatus id="SaveButtonStatus5" rendered="{!AND(orIt.Item_Type__c=='BUS',BusCancelEnable ,orIt.Business_Unit__c!='REDBUS_COM')}">
+                            <apex:facet name="stop">
+                                <apex:outputPanel >
+                                    <apex:commandButton onclick="BusCancelPopup('?recId={!recId}&busCancelBit=true')" value="Initiate Bus Cancel" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        rerender="popup" status="SaveButtonStatus5" />&nbsp;
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Request Processing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        disabled="true" />
+                                </apex:outputPanel>
+                            </apex:facet>
+                        </apex:actionStatus>
+                        
+                          <apex:actionStatus id="GenerateDisbursalStatus">
+                           <apex:facet name="stop">
+                            <apex:outputPanel >
+                                <apex:commandButton value="Generate Disbursal Id" action="{!GenrateDisbursalid}" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                    rerender="popup" status="GenerateDisbursalStatus" onComplete="confirmDialog('{!refundStatus}','{!refundStatusMesssage}'); return false;"
+                                    rendered="{!AND(genrateDisbursalid,genrateDisbrslid,orIt.Item_Type__c!='COUPON')}" />&nbsp;
+                            </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                            <apex:outputPanel >
+                                <apex:commandButton value="Sending..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                    disabled="true" />
+                            </apex:outputPanel>
+                           </apex:facet>
+                         </apex:actionStatus>
+                            
+                        <!--<apex:actionStatus id="SendNEFTStatus">
+                            <apex:facet name="stop">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Send NEFT Link" action="{!sendNEFTlink}" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        rerender="popup" status="SendNEFTStatus" onComplete="confirmDialog('{!refundStatus}','{!refundStatusMesssage}'); return false;"
+                                        rendered="{!AND(enableNeftLink,orIt.Item_Type__c!='COUPON')}" />&nbsp;
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Sending..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        disabled="true" />
+                                </apex:outputPanel>
+                            </apex:facet>
+                        </apex:actionStatus>-->
+                        
+                        <apex:actionStatus id="SendDisbursalStatus">
+                            <apex:facet name="stop">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Send Disbursal Link" action="{!sendDisbursallink}" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        rerender="popup" status="SendDisbursalStatus" onComplete="confirmDialog('{!refundStatus}','{!refundStatusMesssage}'); return false;"
+                                        rendered="{!AND(enableNeftLink,orIt.Item_Type__c!='COUPON')}" />&nbsp;
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Sending..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        disabled="true" />
+                                </apex:outputPanel>
+                            </apex:facet>
+                        </apex:actionStatus>
+                   
+                        <apex:actionStatus id="updateARNNumber">
+                            <apex:facet name="stop">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Update ARN Number" onclick="BusCancelPopup('?recId={!recId}&arnBit=true')" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        rerender="popup" status="updateARNNumber" rendered="false" />&nbsp;
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Updateing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        disabled="true" />
+                                </apex:outputPanel>
+                            </apex:facet>
+                        </apex:actionStatus>
+                   
+                    <!-- <td>
+              <apex:actionStatus id="ticketconfirmation" >
+                  <apex:facet name="stop">
+                      <apex:outputPanel >
+                                <apex:commandButton value="Confirm GFT" onclick="BusCancelPopup('?orItId={!recId}&cnfrm=true')" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;" rerender="popup" status="ticketconfirmation" rendered="{!enableconformation}"/>
+                      </apex:outputPanel>
+                  </apex:facet>
+                  <apex:facet name="start">
+                      <apex:outputPanel >
+                            <apex:commandButton value="Updateing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;" disabled="true" />
+                      </apex:outputPanel>
+                  </apex:facet>
+              </apex:actionStatus> 
+              </td>-->
+                    
+                        <apex:actionStatus id="BPStatus">
+                            <apex:facet name="stop">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Invalid BP Number" onclick="BusCancelPopup('?orItId={!orItemId}&BPnumber=true')" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        rerender="popup" status="BPStatus" rendered="{!AND(orIt.Transaction_Status__c== 'Booked',OR(orIt.Business_Unit__c=='REDBUS_IN',orIt.Business_Unit__c=='REDBUS_MY', orIt.Business_Unit__c=='REDBUS_SG',orIt.Business_Unit__c=='REDBUS_ID'), orIt.Item_Type__c!='COUPON')}"
+                                    />&nbsp;
+
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Updateing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        disabled="true" />
+                                </apex:outputPanel>
+                            </apex:facet>
+                        </apex:actionStatus>
+               
+                        <apex:actionStatus id="GFTStatus1">
+                            <apex:facet name="stop">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Re-Booking" onclick="GFTrebook('search?fromCityId={!orIt.Source_City_Id__c}&fromCityName={!orIt.Source__c}&toCityId={!orIt.Destination_City_Id__c}&toCityName={!orIt.Destination__c}&doj={!finalDoj}&gftOldOrderId={!orIt.Order_Id__c}&agentId={!agentId}')"
+                                        style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        rerender="popup" status="GFTStatus1" rendered="{!AND($Setup.UserVisibility__c.isActive__c,orIt.Transaction_Status__c== 'GFT - Payment Debited but Ticket not Generated',orIt.isreturn__c==False,orIt.isReturnTrip__c==False,orIt.Item_Type__c!='COUPON',enableRebooking)}"
+                                    />&nbsp;
+
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Updateing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        disabled="true" />
+                                </apex:outputPanel>
+                            </apex:facet>
+                        </apex:actionStatus>
+                    
+                        <!--<apex:actionStatus id="sendSMS">
+                            <apex:facet name="stop">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Send SMS" onclick="BusCancelPopup('?orItId={!orItemId}&sendSMS=true')" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        rerender="popup" status="sendSMS" />&nbsp;
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Processing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        disabled="true" />
+                                </apex:outputPanel>
+                            </apex:facet>
+                        </apex:actionStatus>-->
+                   
+                        <apex:actionStatus id="updateRefundStatus" rendered="{!AND(OR(CONTAINS(orIt.Business_Unit__c,'_PE'),CONTAINS(orIt.Business_Unit__c,'_CO')),enableUpdateRefund)}">
+                            <apex:facet name="stop">
+                                <apex:commandButton value="Update Refund Status" onclick="BusCancelPopup('?orItId={!recId}&refStatus=true')" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                    rerender="popup" status="updateRefundStatus" />&nbsp;
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:commandButton value="Updateing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                    disabled="true" />
+                            </apex:facet>
+                        </apex:actionStatus>
+                      <apex:outputPanel rendered="{!enableCompltPymntBtn}">
+                        <apex:actionStatus id="CmpltPayStatus">
+                            <apex:facet name="stop">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Complete Payment" onclick="BusCancelPopup('?orItId={!orItemId}&CmpltPaymnt=true')" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        rerender="popup" status="CmpltPayStatus"/>&nbsp;
+
+                                </apex:outputPanel>
+                            </apex:facet>
+                            <apex:facet name="start">
+                                <apex:outputPanel >
+                                    <apex:commandButton value="Updateing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                        disabled="true" />
+                                </apex:outputPanel>
+                            </apex:facet>
+                        </apex:actionStatus>
+                        </apex:outputPanel>
+                    </apex:outputpanel>
+
+           
+                        <!--      <td>
+                    <apex:Commandlink action="{!UPIRefundPage}"  target="_blank" rendered="{!enableUPIRefund}" >                   
+                            <apex:commandButton style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"  value="UPI Refund" />
+                        </apex:Commandlink>
+                        </td> -->
+                    <apex:outputPanel rendered="{!if(orIt.RecordType.Name=='Hotels',false,false)}">
+                            <apex:actionStatus id="hotelStatus" rendered="{!iSwalletCreditEnable}">
+                                <apex:facet name="stop">
+                                    <apex:outputPanel >
+                                        <apex:commandButton value="Initiate Refund" style=" height:25px;width:120px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                            action="{!creditAmountToWallet}" status="hotelStatus" reRender="formId" onComplete="confirmDialog('Refund Initiation {!walletRefundStatus}','{!walletRefundStatusMessage}'); return false;"
+                                        />&nbsp;
+                                    </apex:outputPanel>
+                                </apex:facet>
+                                <apex:facet name="start">
+                                    <apex:outputPanel >
+                                        <apex:commandButton value="Request Processing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                            disabled="true" />
+                                    </apex:outputPanel>
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                  
+                  
+                        <apex:outputpanel rendered="{!if(orIt.RecordType.Name=='B2B Bus Booking',true,false)}">
+                            <apex:actionStatus id="SaveButtonStatusB2B" rendered="{!AND(orIt.Business_Unit__c=='REDBUS_IN',orIt.Item_Type__c=='BUS',BusCancelEnable)}">
+                                <apex:facet name="stop">
+                                    <apex:outputPanel >
+                                        <apex:commandButton onclick="BusCancelPopup('?recId={!recId}&busCancelBit=true')" value="Initiate Bus Cancel" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                            rerender="popup" status="SaveButtonStatusB2B" />&nbsp;
+                                    </apex:outputPanel>
+                                </apex:facet>
+                                <apex:facet name="start">
+                                    <apex:outputPanel >
+                                        <apex:commandButton value="Request Processing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
+                                            disabled="true" />
+                                    </apex:outputPanel>
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </apex:outputpanel>
+                        
+                </tr>
+
+            </table>
+       
+    </apex:form>
+    <script type="text/javascript" language="javascript">
+
+        function confirmDialog(statusVal, statusVal2) {
+            alert(statusVal + '\n' + statusVal2);
+            RefreshPrimaryTab();
+        }
+
+        function RefreshFromPopUp(id) {
+            if (sforce.console.isInConsole()) {
+                RefreshPrimaryTab();
+            }
+
+            else {
+
+                if (UITheme.getUITheme() === 'Theme4d' || UITheme.getUITheme() === 'Theme4u')
+                    sforce.one.navigateToSObject(id, 'detail');
+                else
+                    window.top.location.href = '/' + id;
+            }
+        }
+
+        function RefreshPrimaryTab() {
+            if (sforce.console.isInConsole()) {
+                sforce.console.getFocusedPrimaryTabId(showTabId);
+            }
+
+            else {
+                if (UITheme.getUITheme() === 'Theme4d' || UITheme.getUITheme() === 'Theme4u')
+                    sforce.one.navigateToSObject('{!Order_Items__c.id}', 'detail');
+                else {
+                    var loVar = window.location.href;
+                    window.location.href = '/{!Order_Items__c.id}';
+                }
+
+            }
+
+        }
+
+        var showTabId = function showTabId(result) {
+            var tabId = result.id;
+            sforce.console.refreshPrimaryTabById(tabId, false, refreshSuccess);
+           
+        };
+
+        var refreshSuccess = function refreshSuccess(result) {
+            if (result.success == true) {
+               
+            }
+            else { }
+
+        };
+
+       
+        function cancelUpdate() {
+            document.getElementsByClassName('spocPopupPanel')[0].style.display = 'none';
+        }
+
+        function BusCancelPopup(pageParm) {
+            var newwindow = window.open('/apex/NEFTCustAccntDetailPopup' + pageParm, 'Popup', 'height=270,width=780px,left=280,top=200,resizable=no,scrollbars=no,toolbar=no,status=no');
+            newwindow.focus();
+        }
+
+
+        function GFTrebook(pageParm) {
+            var rebookURL = '{!rebookingURL}';
+            //alert(pageParm);
+            window.open(rebookURL + pageParm);
+
+        }
+
+    </script>
+    <script src="/support/console/46.0/integration.js" />
+</apex:page>

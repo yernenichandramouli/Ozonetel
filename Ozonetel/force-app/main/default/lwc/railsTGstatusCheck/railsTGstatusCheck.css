@@ -1,0 +1,9 @@
+/* myComponent.css */
+
+.datatable-container {
+    border: 3px solid #3a6690;
+    border-radius: 1.25rem;
+    padding: 1rem;
+    width: auto ;
+
+}

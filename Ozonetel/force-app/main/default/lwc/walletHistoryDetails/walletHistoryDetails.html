@@ -1,0 +1,30 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 05-24-2023
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+
+<template>
+     <lightning-quick-action-panel header="Wallet History Details">
+        <div if:true={isLoading} style="display:flex;flex-wrap: wrap;">
+          <lightning-spinner alternative-text="Loading..." variant="brand" size="small" class="slds-is-absolute">
+          </lightning-spinner>
+      </div>
+
+      <template if:true={isSuccessResponse}>
+    <lightning-datatable
+            key-field="TransactionDate"
+            data={apiRespBody}
+            columns={walletColumns} hide-checkbox-column >
+        </lightning-datatable>
+      </template>
+    
+      <template if:true={isError}>
+       <center><strong><p>{errorMsg}</p></strong></center>
+      </template>
+
+   </lightning-quick-action-panel>
+
+</template>

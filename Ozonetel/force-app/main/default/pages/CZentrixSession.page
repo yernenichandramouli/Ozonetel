@@ -1,0 +1,12 @@
+<apex:page standardController="account" showHeader="false" extensions="CzentrixSession" >
+  <apex:form >
+      <apex:actionFunction name="submit" action="{!SessionIdPing}" reRender="out"/>
+  </apex:form>
+  <Script>
+  function onLoad()
+  {
+      submit(); 
+  }
+   window.onload = onLoad;
+  </Script>
+</apex:page>

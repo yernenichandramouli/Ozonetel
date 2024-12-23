@@ -1,0 +1,68 @@
+<apex:page controller="DBTConsoleController" showheader="false" lightningStylesheets="true">
+ <apex:slds />
+    <style>
+        input {
+        padding-top: 0;
+        width: 100%;
+        }
+        table.detailList {
+        width: 50% !important;
+        text-align: center;
+        margin: 0 auto;
+        }
+        
+    </style>
+    
+    <style type="text/css">
+        .bPageBlock .pbTitle {
+        width: 80%;    
+        text-align: center;
+        }
+    </style>
+    <div class="slds-scope">
+    <apex:form >
+        <apex:pageMessages escape="false" id="msg"/>          
+        <apex:outputpanel styleClass="wide-input">
+            <apex:pageBlock title="DBT Console" >                
+                
+                <apex:pageblocksection columns="1" >
+                    <apex:pageblocksectionItem >
+                        
+                        Bank Name<apex:selectList value="{!bankName}" size="1" style="width:100px">
+                        <apex:selectOption itemValue="--None--" itemLabel="--None--"/>
+                        <apex:selectOption itemValue="BCA" itemLabel="BCA"/>
+                        <apex:selectOption itemValue="BNI" itemLabel="BNI"/>
+                        <apex:selectOption itemValue="BRI" itemLabel="BRI"/>
+                        <apex:selectOption itemValue="Mandiri" itemLabel="Mandiri"/>
+                        </apex:selectList>
+                    </apex:pageblocksectionItem>
+                    
+                    <apex:pageblocksectionItem HelpText="Test">
+                        
+                        Amount  <apex:inputtext value="{!amount}" style="width:100px" />
+                    </apex:pageblocksectionItem>
+                    
+                    <apex:commandButton value="Search & Confirm" action="{!DBTSearchAndConfirm}" reRender="msg" status="loaderStatus" styleClass="slds-button slds-button_success" style="margin-left:6em;width:12em"/>        
+                            
+                    <apex:actionStatus id="loaderStatus">
+                        <apex:facet name="start">
+                            <div class="demo-only" style="height:6rem">
+                                <div class="slds-spinner_container" style="position:fixed">
+                                    <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+                                    <span class="slds-assistive-text">Loading</span>
+                                    <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                            </div>
+                            </div>
+                        </apex:facet> 
+                    </apex:actionStatus>
+                    
+                    
+                </apex:pageblocksection>
+                
+            </apex:pageBlock>
+        </apex:outputpanel>
+    </apex:form>
+  </div>    
+</apex:page>

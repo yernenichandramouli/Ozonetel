@@ -1,0 +1,12 @@
+<apex:page tabStyle="account" sidebar="false" controller="CallBackRecordsController">
+  <apex:form >
+    <apex:pageBlock >
+       <apex:pageblocksection title="Call Back Requested">
+            <apex:pageBlockTable value="{!cbList}" var="cb">
+                 <apex:column headerValue="Name" value="{!cb.name}"/>
+                 <apex:column headerValue="Call Back Time" value="{!cb.Call_Back_Time__c }"/>
+            </apex:pageBlockTable>
+       </apex:pageblocksection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

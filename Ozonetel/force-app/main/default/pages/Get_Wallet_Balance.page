@@ -1,0 +1,30 @@
+<!--
+ * (c) 2016 RedBus
+ *
+ * Name           : CheckWalletBalancePage
+ * Created Date   : 15 Oct 2017
+ * Created By     : Praveen
+ * Purpose        : VF page to Populate Wallet Balance Details.
+ *
+ ** -->
+<apex:page controller="CheckWalletBalanceCntrl" action="{!fetchWalletBalance}" showHeader="false" showChat="false" sidebar="false" lightningStylesheets="true">
+<apex:slds />
+<div class="slds-scope">
+<apex:pageBlock title="Wallet Balance Details for :({!phone} -- {!emailId} {!acMail} -- {!acPhone})" >
+<apex:pagemessages ></apex:pagemessages>   
+     
+        <apex:pageBlockTable value="{!walletBalResponse}" var="res" styleClass="slds-table slds-table--bordered">
+            <apex:column headerValue="Total Balance" value="{!res.Data.totalBalance }" />
+            <apex:column headerValue="Core Balance" value="{!res.Data.coreBalance }"/>
+            <apex:column headerValue="Offer Balance" value="{!res.Data.offerBalance  }" />                            
+          
+        </apex:pageBlockTable>
+
+</apex:pageBlock>
+</div>
+<style type="text/css">
+    .pbTitle {
+        white-space: nowrap
+    }
+</style>
+</apex:page>

@@ -1,0 +1,14 @@
+<template>
+    <template if:true={showAnyMsg}>
+        <div class={notifcationThemeClass} role="alert">
+            <span class="slds-assistive-text">{notificationtype}</span>
+            <span class={notifcationContainerClass} title="Description of icon when needed">
+                <svg class="slds-icon slds-icon_x-large" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                    <use xlink:href={iconClass}></use>
+                </svg>
+            </span>
+            <h2>{notificationmessage}</h2>
+          
+        </div>
+    </template>
+</template>

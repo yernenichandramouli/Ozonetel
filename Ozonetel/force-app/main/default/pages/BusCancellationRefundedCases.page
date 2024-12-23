@@ -1,0 +1,736 @@
+<!--
+ *
+ * Name           : BusCancellationAgeingRefundedCases
+ * Created Date   : 10 April 2018
+ * Created By     : Veeramanikanta
+ * Purpose        : Page to display all the bus cancellation Ageing refunded cases 
+ *
+ -->
+ 
+<apex:page standardController="Case" extensions="BusCancellationRefundedCases" docType="html-5.0" id="pageId" showHeader="false" showChat="false" sidebar="false" lightningStylesheets="true">
+  <apex:slds />
+  <div class="slds-scope">
+    <div class="slds-box slds-theme_default">
+    
+  
+  <style>
+   td.childTableClass {
+              display: none;
+      }
+   
+   td.routeTableClass{
+              display: none;
+      }
+   
+    table.table td{
+              padding: 0 !important;
+              line-height: 22px;
+      }
+      table.table{
+              width: 99% !important;
+      }
+      
+    table.table {
+    border: 1px solid black;
+    border-bottom: 1px solid black
+    border-collapse: collapse;
+    }
+    .sldswordWrap{
+    word-break: break-word !important;
+    text-overflow: unset !important;
+    white-space: pre-wrap !important;
+      }
+    .colWidthStyle
+      {
+       width:50px !important;
+      }
+  </style>
+  
+  <apex:form id="formId" >
+     <apex:inputHidden id="hidRouteId" value="{!routeIdtoRender}"/>
+     <apex:inputHidden id="hidDropId" value="{!updateAction}"/>
+     <apex:inputHidden id="hidCaseTabId" value="{!tableIdtoRender}"/>
+     <apex:inputHidden id="hiddenHtmlDropId" value="{!hiddenHtmlDropId}"/>
+     
+    <apex:actionStatus id="statusSaveTrip">
+       <apex:facet name="start">
+          <div class="demo-only" style="height:6rem">
+            <div class="slds-spinner_container" style="position:fixed">
+                <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+         </div>
+     </apex:facet> 
+    </apex:actionStatus>
+             
+    
+    <apex:actionFunction name="updateRecords" action="{!performUpdate}" reRender="pgbId,ccb,errMsg,spocErr" status="statusSaveTrip">
+        <apex:param id="status" name="selStatus" value="" />
+    </apex:actionFunction>
+   
+   <apex:actionFunction name="boConnectCall" action="{!connectCall}" reRender="pgbId,errMsg,spocErr" status="statusSaveTrip"/>
+    
+    <apex:actionFunction name="jsLoadCasedata" action="{!loadCaseData}" reRender="pgbId,errMsg,spocErr" status="statusSaveTrip">
+        <apex:param id="rid" name="selRouid" value=""/>
+    </apex:actionFunction>
+    
+    <div class="slds-form">
+    <div class="slds-section slds-is-open">
+      <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e98d">
+        <span class="slds-truncate slds-p-horizontal_x-small " title="Section Title">Search Criteria</span>
+      </h3>
+      <div aria-hidden="false" class="slds-section__content">
+        <div class="slds-grid slds-wrap slds-grid_align-left slds-grid--align-spread">
+               <div class="slds-col--padded slds-size--2-of-6 slds-medium-size--2-of-6">
+                  <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="boNames">BO Name</label>
+                    <div class="slds-form-element__control">
+                      <apex:selectList size="1" value="{!selBO}" id="boNames"><apex:selectOptions value="{!boOptions}"/></apex:selectList>
+                    </div>
+                  </div>
+               </div>
+            
+               <div class="slds-col--padded slds-size--1-of-6 slds-medium-size--1-of-6">
+                  <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="tin"> TIN</label>
+                    <div class="slds-form-element__control">
+                        <apex:input type="text" id="tin" html-placeholder="TN/SGXXX" styleClass="slds-input" value="{!tin}"/>
+                    </div>
+                  </div>
+               </div>
+            
+               <div class="slds-col--padded slds-size--1-of-6 slds-medium-size--1-of-6">
+                  <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="doj"> DOJ</label>
+                    <div class="slds-form-element__control">
+                        <apex:input type="date" id="doj" styleClass="slds-input" value="{!doj}" title="Date Of Journey"/>
+                    </div>
+                  </div>
+               </div>
+               
+               <div class="slds-col--padded slds-size--1-of-6 slds-medium-size--1-of-6">
+                  <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="createdDate"> DOC</label>
+                    <div class="slds-form-element__control">
+                        <apex:input type="date" id="createdDate" styleClass="slds-input" value="{!doi}" title="Date of Creation"/>
+                    </div>
+                  </div>
+               </div>
+               
+               <div class="slds-col--padded slds-size--1-of-12 slds-medium-size--1-of-12">
+                  <div class="slds-form-element">
+                      <label class="slds-form-element__label"/>
+                      <div class="slds-form-element__control">
+                          <apex:commandButton value="Search" action="{!doSearch}" reRender="resultPanel" status="statusSaveTrip" styleClass="slds-button slds-button_success"/>           
+                      </div>
+                  </div>
+            </div>
+                
+              </div>
+            </div>
+          </div>
+       </div>
+ 
+    <apex:pageBlock >
+         
+       <apex:outputPanel id="popup2" styleClass="spocPopupPanel2" style="display:none">      
+        <apex:outputPanel styleClass="popupBackground" layout="block" /> 
+         <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block" >
+         <apex:pageblocksection >
+       Case Comment <apex:inputtextarea value="{!caseComment}" />
+        <apex:commandButton value="Save" style="float:right;" styleClass="slds-button slds-button_success" onclick="proceedUpdate();return false;"/>  
+        <apex:commandButton value="Cancel" onclick="cancelUpdate();return false;" styleClass="slds-button slds-button_success slds-m-left_small"/>
+       
+        </apex:pageblocksection>
+        </apex:outputpanel>
+       
+          </apex:outputPanel>
+          
+        <apex:outputPanel id="popup3" styleClass="spocPopupPanel3" style="display:none">      
+        <apex:outputPanel styleClass="popupBackground" layout="block" /> 
+         <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block" >
+            <apex:outputLabel for="bpNum">BO Phone Number</apex:outputLabel>
+            <apex:input type="text" styleClass="slds-input" value="{!boPhoneNo}" id="bpNum" label="BO Phone Number" title="BP" onkeypress="return isNumber(event,'{!$Component.bpNum}')"/>
+            <div class="slds-align_absolute-center slds-m-top_small">        
+            <apex:commandButton value="Call" styleClass="slds-button slds-button_success " onclick="proceedBOCall();return false;"/>  
+            <apex:commandButton value="Cancel" onclick="cancelUpdate();return false;" styleClass="slds-button slds-button_success slds-m-left_small"/>
+            </div>
+        </apex:outputpanel>       
+      </apex:outputPanel>
+    
+       <apex:outputPanel id="ccb">
+           <script>
+                if('{!reEnableCCPopup}' == 'true')
+                     $('.spocPopupPanel2').show();
+                else
+                     $('.spocPopupPanel2').hide();           
+          </script>
+       </apex:outputPanel>
+       
+       <apex:outputPanel id="bop">
+           <script>
+                if('{!reEnableBOPopup}' == 'true')
+                   $('.spocPopupPanel3').show();
+                else
+                   $('.spocPopupPanel3').hide();
+       
+         </script>
+       </apex:outputPanel>
+        
+      <apex:outputPanel id="resultPanel">
+        <input type="hidden" id="hiddenSelStas"/>
+        <input type="hidden" id="hiddenHtmlDropId"/>
+         <input type="hidden" id="hiddenTinStatus4"/>
+        
+        <script>
+             document.getElementById('hiddenSelStas').value ='{!selStatus}';
+             document.getElementById('hiddenTinStatus4').value ='{!tinStatus}';
+             toggleChildRow('routeTableRB','routeTableRB');
+        </script>
+        
+   <!--   <apex:pageBlockSection columns="1" title="Search Result" rendered="{!showSearchResult}"> -->
+      <div class="slds-section slds-is-open" style="{!IF(showSearchResult,'display:block','display:none')}">
+        <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e78d">
+            <span class="slds-truncate slds-p-horizontal_x-small " title="Section Result">Search Result</span>
+        </h3>
+       
+       <div aria-hidden="false" class="slds-section__content">
+       <apex:outputPanel id="accountTableData" layout="block" >
+       <apex:pageMessages id="errMsg"></apex:pageMessages>
+       
+        <table id="ServcTableid" class="slds-table slds-table_cell-buffer slds-table_bordered" align="center" cellspacing="0" width="100%">
+            <thead>
+                <tr><th colspan="8"></th></tr>
+            </thead>
+            
+            <tbody><!--mapServiceIdtoCase-->
+                <apex:repeat value="{!mapServiceIdtoCase}" var="srvc">
+                    <tr>
+                        <td colspan="8">                         
+                            <B><apex:outputLink value="javascript:void(0)" styleClass="routeTable{!srvc}" onclick="toggleChildRow('routeTable{!srvc}','routeTable{!srvc}')">(+)  </apex:outputLink>Service Id: &nbsp;<font color="mediumvioletred">{!srvc}</font>
+                        </B></td>
+                        
+                    </tr>
+                    <tr>
+                        <td colspan="8" class="routeTableClass" id="routeTable{!srvc}">
+                           <apex:outputPanel id="panelId">  
+                            <table id="ownTable" class="slds-table slds-table_cell-buffer" align="center" cellspacing="0" width="100%">
+                               <!-- <thead>
+                                    <tr><th colspan="8"></th></tr>
+                                </thead> -->
+                                
+                                <tbody>
+                                    <apex:repeat value="{!mapServiceIdtoRouteId[srvc]}" var="route">
+                                        <tr>
+                                            <td colspan="4">                         
+                                                <apex:outputLink value="javascript:void(0)" styleClass="caseTable{!srvc}{!route}" onclick="toggleChildRow('caseTable{!srvc}{!route}','caseTable{!srvc}{!route}{!srvc}')" >(+)  </apex:outputLink><font color="blue">Route Id : {!route}</font>
+                                            </td>
+                                            
+                                          
+                                            
+                                            <td colspan="1">
+                                                <apex:outputPanel style="float:right;display:none;" styleClass="button{!srvc}{!route}">
+                                                    Status <select id="caseTable{!srvc}{!route}{!srvc}"> </select>
+                                                </apex:outputPanel>
+                                            </td>
+                                            <td colspan="1">
+                                                <apex:outputPanel style="float:left;display:none;" styleClass="button{!srvc}{!route}">
+                                                    <apex:commandButton value="Update" onclick="updateSelRecords('caseTable{!srvc}{!route}','caseTable{!srvc}{!route}{!srvc}','routeTable{!srvc}');return false;" styleClass="slds-button slds-button_success"/>
+                                                </apex:outputpanel>
+                                            </td>                                            
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td colspan="8" class="childTableClass" id="caseTable{!srvc}{!route}" style="padding:0">
+                                                                                 
+                                             <!--   <apex:pageBlockTable value="{!listWrapCase}" var="caseWrap" styleclass="caseTable{!srvc}{!route}" rendered="{!showSearchResult}" id="pgbId">
+                                                                                                    
+                                                    <apex:column >
+                                                      <apex:facet name="header" ><input type="checkbox" onclick="selectAllCheckboxes(this,'{!srvc}{!route}chbxId')"/></apex:facet>
+                                                      <apex:outputPanel rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}">
+                                                        <apex:inputCheckbox value="{!caseWrap.isSelect}" styleClass="{!srvc}{!route}chbxId"/>
+                                                      </apex:outputPanel>
+                                                    </apex:column>
+                                                    
+                                                    
+                                                    <apex:column >
+                                                         <apex:facet name="header" >CaseId</apex:facet>
+                                                         <a HREF="#" onClick="openCaseSubtab('{!caseWrap.cs.id}');return false;">
+                                                              <apex:outputLabel value="{!caseWrap.cs.CaseNumber}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                         </a>
+                                                         
+                                                    </apex:column>
+                                                    
+                                                     <apex:column headerValue="Created Date/Time">
+                                                        <apex:outputLabel value="{!caseWrap.createddate}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                    </apex:column>
+                                                    
+                                                     <apex:column headerValue="Trip Id">
+                                                        <apex:outputLabel value="{!caseWrap.cs.Trip_ID__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                    </apex:column>
+                                                    
+                                                    <apex:column headerValue="Status">
+                                                        <apex:outputLabel value="{!caseWrap.cs.status}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}" />
+                                                    </apex:column>   
+                                                    
+                                                    <apex:column headerValue="Notes">
+                                                        <apex:outputLabel value="{!caseWrap.cs.Notes__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                    </apex:column>              
+                                                   
+                                                    
+                                                    <apex:column headerValue="Transaction #">
+                                                        <a HREF="#" onClick="openCaseSubtab('{!caseWrap.cs.Transaction_ID__c}');return false;">
+                                                              <apex:outputLabel value="{!caseWrap.cs.Transaction_ID__r.name}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                         </a>
+                                                    </apex:column>
+                                                    
+                                                    <apex:column headerValue="TIN">
+                                                        <apex:outputLabel value="{!caseWrap.cs.TIN__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                    </apex:column>
+                                                    
+                                                    <apex:column headerValue="DOJ">
+                                                        <apex:outputfield value=" {!caseWrap.cs.Date_Of_Journey_New__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}">
+                                                        </apex:outputfield>
+                                                       
+                                                    </apex:column>
+                                                    
+                                                    <apex:column headerValue="Customer Name">
+                                                       <apex:outputtext value="{!caseWrap.cs.Customer_Name__r.name}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                   </apex:column>
+                                                   
+                                                   <apex:column headerValue="PNR">
+                                                       <apex:outputtext value="{!caseWrap.cs.PNR_No__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                   </apex:column>
+                                                   
+                                                   <apex:column headerValue="Seats">
+                                                       <apex:outputtext value="{!caseWrap.cs.Seats__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                   </apex:column>
+                                                    
+                                                    <apex:column headerValue="BO Name">
+                                                        <apex:outputText value="{!caseWrap.cs.Bus_Operator_Name__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                         
+                                                    </apex:column>
+                                                    
+                                                    <apex:column headerValue="Is Primary">
+                                                      <apex:outputField value="{!caseWrap.cs.Is_Primary__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}" />
+                                                    </apex:column>
+                                                    
+                                                    <apex:column headerValue="BO Id" title="Bus Operator/Service Provider Id">
+                                                        <apex:outputLabel value="{!caseWrap.cs.Service_Provider_Id__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                    </apex:column>
+                                                    
+                                                     <apex:column headerValue="Source">
+                                                        <apex:outputLabel value="{!caseWrap.cs.Origin}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                    </apex:column>
+                                                    
+                                                    <apex:column headerValue="Modified By">
+                                                        <apex:outputLabel value="{!caseWrap.cs.lastmodifiedby.name}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                    </apex:column>
+                                                    <apex:column >
+                                                        <apex:commandButton value="{!caseWrap.btValue}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc,caseWrap.callButton)}" onclick="BOCall('caseTable{!srvc}{!route}','caseTable{!srvc}{!route}{!srvc}','routeTable{!srvc}');return false;" action="{!connectCall}" status="statusSaveTrip" rerender="pgbId,errMsg,spocErr" styleClass="buttonStyle"  />
+                                                    
+                                                    </apex:column>
+                                                 </apex:pageBlockTable>
+                                                 -->
+                                            <apex:outputPanel id="pgbId" rendered="{!showSearchResult}" layout="block" style="overflow:scroll;overflow-y: hidden;">
+                                                <script> console.log('loading data');</script>
+                                            <table class="caseTable{!srvc}{!route}" style="width: 150%;">
+                                              
+                                              <thead>
+                                                <tr class="slds-line-height_reset">
+                                                  <th class="colWidthStyle" scope="col">
+                                                      <div class="slds-truncate">
+                                                         <input type="checkbox" onclick="selectAllCheckboxes(this,'{!srvc}{!route}chbxId')"/>
+                                                             </div>
+                                                            
+                                                  </th>
+                                                  <th class="colWidthStyle" scope="col">
+                                                      <div class="slds-truncate" title="Call"/>
+                                                  </th>
+                                                  <th class="" scope="col" style="width:75px">
+                                                    <div class="slds-truncate" title="Case Id">Case Id</div>
+                                                  </th>
+                                                  <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Creation Time">Creation Time</div>
+                                                  </th>
+                                                  <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Trip Id">Trip Id</div>
+                                                  </th>
+                                                  <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Status">Status</div>
+                                                  </th>
+                                                   <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Notes">Notes</div>
+                                                  </th>
+                                                  <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Transaction">Transaction#</div>
+                                                  </th>
+                                                  <th class="" scope="col">
+                                                    <div class="slds-truncate" title="TIN">TIN</div>
+                                                  </th>
+                                                  <th class="" scope="col">
+                                                    <div class="slds-truncate" title="DOJ">DOJ</div>
+                                                  </th>
+                                                   <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Customer Name">Customer Name
+                                                   </div>
+                                                  </th>
+                                                   <th class="" scope="col">
+                                                    <div class="slds-truncate" title="PNR">PNR</div>
+                                                  </th>
+                                                   <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Seats">Seats</div>
+                                                  </th>
+                                                  <th class="" scope="col">
+                                                    <div class="slds-truncate" title="BO NAME">Bo Name</div>
+                                                  </th>
+                                                  <th class="" scope="col">
+                                                    <div class="slds-truncate" title="IS PRIMARY">Is Primary</div>
+                                                  </th>
+                                                  <th class="" scope="col">
+                                                    <div class="slds-truncate" title="BO Id">BO Id</div>
+                                                  </th>
+                                                  <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Source">Source</div>
+                                                  </th>
+                                                  <th class="" scope="col">
+                                                    <div class="slds-truncate" title="Modified By">Modified By</div>
+                                                  </th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                <apex:repeat value="{!listWrapCase}" var="caseWrap" rows="5">       
+                                                    <tr class="slds-hint-parent">
+                                                     
+                                                     
+                                                                
+                                                     <td>
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.createddate}">
+                                                             <apex:inputCheckbox value="{!caseWrap.isSelect}" styleClass="{!srvc}{!route}chbxId" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      <td>
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.Is_Primary__c}" onclick="BOCall('caseTable{!srvc}{!route}','caseTable{!srvc}{!route}{!srvc}','routeTable{!srvc}');return false;" style="{!IF(AND(caseWrap.routeId==route,caseWrap.servcId ==srvc),'display:block','display:none')}">
+                                                            <span class="slds-icon_container slds-icon-standard-call" title="Dial To Bo">
+                                                                <svg class="slds-icon" aria-hidden="true">
+                                                                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/standard-sprite/svg/symbols.svg#call" />
+                                                                </svg>
+                                                                <span class="slds-assistive-text">Description of icon when needed</span>
+                                                            </span>
+                                                        </div>
+                                                      </td>
+                                                      
+                                                      
+                                                      <th scope="row">
+                                                          <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.CaseNumber}">
+                                                            <apex:outputLabel value="{!caseWrap.cs.CaseNumber}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}" styleClass="slds-text-link" onClick="openCaseSubtab('{!caseWrap.cs.id}','{!caseWrap.cs.CaseNumber}');return false;"/>
+                                                        
+                                                          </div>
+                                                      </th>
+                                                      
+                                                      <td data-label="{!caseWrap.createddate}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.createddate}">
+                                                           <apex:outputLabel value="{!caseWrap.createddate}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      
+                                                      <td data-label="{!caseWrap.cs.Trip_ID__c}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.Trip_ID__c}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.Trip_ID__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      
+                                                      <td data-label="{!caseWrap.cs.status}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.status}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.status}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      
+                                                      <td data-label="{!caseWrap.cs.Notes__c}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.Notes__c}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.Notes__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      
+                                                      <td data-label="{!caseWrap.cs.Transaction_ID__r.name}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.Transaction_ID__r.name}">
+                                                          <apex:outputLabel value="{!caseWrap.cs.Transaction_ID__r.name}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}" styleClass="slds-text-link" onClick="openCaseSubtab('{!caseWrap.cs.Transaction_ID__c}','{!caseWrap.cs.Transaction_ID__r.Name}');return false;"/>
+                                                        </div>
+                                                      </td>
+                                                      
+                                                      <td data-label="{!caseWrap.cs.TIN__c}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.TIN__c}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.TIN__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      
+                                                      <td data-label="{!caseWrap.cs.Date_Of_Journey_New__c}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.Date_Of_Journey_New__c}">
+                                                            <apex:outputfield value=" {!caseWrap.cs.Date_Of_Journey_New__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      <td data-label="{!caseWrap.cs.Customer_Name__r.name}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.Customer_Name__r.name}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.Customer_Name__r.name}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      <td data-label="{!caseWrap.cs.PNR_No__c}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.PNR_No__c}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.PNR_No__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      <td data-label="{!caseWrap.cs.Seats__c}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.Seats__c}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.Seats__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      <td data-label="{!caseWrap.cs.Bus_Operator_Name__c}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.Bus_Operator_Name__c}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.Bus_Operator_Name__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      <td data-label="{!caseWrap.cs.Is_Primary__c}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.Is_Primary__c}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.Is_Primary__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>  
+                                                      <td data-label="{!caseWrap.cs.Service_Provider_Id__c}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.Service_Provider_Id__c}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.Service_Provider_Id__c}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      <td data-label="{!caseWrap.cs.Origin}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.Origin}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.Origin}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                      <td data-label="{!caseWrap.cs.lastmodifiedby.name}">
+                                                        <div class="slds-truncate sldswordWrap" title="{!caseWrap.cs.lastmodifiedby.name}">
+                                                           <apex:outputLabel value="{!caseWrap.cs.lastmodifiedby.name}" rendered="{!AND(caseWrap.routeId==route,caseWrap.servcId ==srvc)}"/>
+                                                        </div>
+                                                      </td>
+                                                     
+                                                     
+                                                     </tr>
+                                                </apex:repeat>
+                                               </tbody>
+                                            </table>                                                 
+                                           </apex:outputPanel>     
+                                            </td>
+                                        </tr> 
+                                    </apex:repeat>
+                                </tbody>
+                            </table>
+                          </apex:outputPanel>      
+                        </td>
+                    </tr>
+                    
+                </apex:repeat>
+            </tbody>
+        </table>
+        <apex:outputPanel >
+                <center><apex:outputText rendered="{!noResultfound}"> <font style="background-color: yellow;"><B>No records found for the search criteria </b></font></apex:outputText></center>
+        </apex:outputPanel>
+     </apex:outputPanel>
+   </div></div>
+ <!--   </apex:pageBlockSection> -->
+        <script>        
+            if('{!tableIdtoRender}')
+                 var hidDropId = document.getElementById("pageId:formId:hiddenHtmlDropId").value;          
+       </script>
+    </apex:outputPanel>
+   </apex:pageBlock>
+  </apex:form>
+  
+  <script type="text/javascript">      
+    function openCaseSubtab(recId,recName) {
+        
+        if (sforce.console.isInConsole()) 
+          {
+            sforce.console.getEnclosingPrimaryTabId(function(result)
+            {
+             
+              sforce.console.openPrimaryTab(undefined,'/'+recId, true,recName);
+             
+            });
+          } 
+          else
+            {
+            
+                if (UITheme.getUITheme() === 'Theme4d' || UITheme.getUITheme() === 'Theme4u')                  
+                     sforce.one.navigateToSObject(recId,'detail');
+                else 
+                    window.open('/' + recId);
+            }
+    }
+    
+    
+    function selectAllCheckboxes(obj,receivedInputID){
+        var that=obj;
+        $('.'+receivedInputID).each(function(){      
+
+            this.checked=that.checked;  
+
+        });
+    }
+    function BOCall2(tc,dropId,rouId)
+    {
+              
+        var chbxClass = '.'+tc.replace("caseTable","")+'chbxId';           
+        if($(chbxClass).is(':checked')){
+       $('.spocPopupPanel3').show();
+        }
+                
+        else
+        {
+            alert('Please select at least one record');
+            return false;
+        }
+        
+     } 
+     
+      function BOCall(tc,dropId,rouId)
+     {
+    
+     $('.spocPopupPanel3').show();
+                
+     } 
+      
+    function updateSelRecords(tc,dropId,rouId)
+    {
+          
+        var chbxClass = '.'+tc.replace("caseTable","")+'chbxId';           
+        if($(chbxClass).is(':checked')){}
+                
+        else
+        {
+            alert('Please select at least one record');
+            return false;
+        }
+        
+                    
+        var selAction = document.getElementById(dropId).value;
+        
+        if(selAction=='-None-')
+        {
+             alert('Please select the action');
+             return false;
+        }
+        
+        if ($(chbxClass+':checked').length == $(chbxClass).length) 
+        {
+        
+          if(confirm('You have selected all records for ' +selAction +' action. Are you sure?')){}
+           
+          else
+           return false;      
+        }
+      
+     
+        document.getElementById("pageId:formId:hidRouteId").value = rouId;
+        document.getElementById("pageId:formId:hidCaseTabId").value = tc;
+        document.getElementById("pageId:formId:hiddenHtmlDropId").value = dropId;        
+        document.getElementById("pageId:formId:hidDropId").value = selAction;
+       
+        if(selAction === 'Refunded as suggested by BO' || selAction === 'Refund rejected by BO' || selAction === 'Alternative arranged by BO')
+        {
+            $('.spocPopupPanel2').show();
+            window.scrollTo(0, 0);
+        }                       
+        else
+           updateRecords('Dummy'); 
+    }
+       
+    function proceedUpdate()
+    {
+        updateRecords('Dummy');
+    }
+    
+    function proceedBOCall()
+    {
+        boConnectCall('');
+    }
+       
+    function cancelUpdate()
+    {
+      
+        $('.spocPopupPanel2').hide();
+        $('.spocPopupPanel3').hide();
+    }
+
+
+    function isNumber(evt,phId) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        else
+        {
+         if( document.getElementById(phId).value.length<10)
+             return true;
+          else
+             return false;
+           
+        }
+    }
+            
+      
+  
+    function toggleChildRow(recordID,dropDownId){
+               
+        var boStatus =document.getElementById('hiddenSelStas').value;
+        var tinStatus =document.getElementById('hiddenTinStatus4').value;
+               console.log('tinStatus -->'+tinStatus );
+               console.log('boStatus-->'+boStatus);
+
+       
+        
+        if(recordID.includes("caseTable"))
+        {
+              
+            var buttonClass = "."+recordID.replace("caseTable","button");
+            var dropId = "#"+dropDownId;
+            console.log('buttonClass..'+buttonClass);                              
+            
+                $(dropId).find('option').remove().end().append('<option value="-None-">--None--</option>','<option value="Refunded as suggested by BO">Refund as suggested by BO</option>','<option value="Refund rejected by BO">Refund rejected by BO</option>','<option value="Alternative arranged by BO">Alternative arranged by BO</option>');
+                $(buttonClass).toggle();
+            
+             
+        }
+         
+         
+        var findClass = "."+recordID;         
+        recordID = "#"+recordID;
+        $( recordID ).toggle(function()
+        {
+
+            var $varText = $(this).closest("tbody").find(findClass);
+        
+            if($varText.text().indexOf("+") > -1){
+                $varText.html("(-)");
+                 if(recordID.includes("caseTable"))
+                    {
+                        document.getElementById("pageId:formId:hidCaseTabId").value = recordID.replace("#","");
+                        console.log('Datalog call..'+recordID);
+                        jsLoadCasedata(recordID.replace("#caseTableRB",""));
+            
+                    }
+            }
+            else{
+                $varText.html("(+)");
+            }
+        });
+    }
+      
+</script>
+
+<script src="/soap/ajax/46.0/connection.js"/>
+<script src="/support/console/46.0/integration.js"/>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"/>
+<apex:stylesheet value="{!$Resource.LoadingStatus}" />
+</div></div>
+</apex:page>

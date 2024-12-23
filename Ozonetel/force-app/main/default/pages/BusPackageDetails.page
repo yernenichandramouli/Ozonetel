@@ -1,0 +1,212 @@
+<!--<apex:page controller="BusPackageDetails" action="{!getDetails}">
+<apex:form >
+
+<apex:pageBlock >
+<apex:repeat value="{!dataMap}" var="d">
+
+{!d}
+</apex:repeat>
+
+<apex:repeat value="{!detailsList}" var="dl">
+
+{!dl}
+</apex:repeat>
+</apex:pageBlock>
+
+</apex:form>
+
+</apex:page> -->
+
+<apex:page controller="BusPackageDetails" id="pgid" showheader="false" tabStyle="contact">
+    <apex:form >
+        <apex:outputPanel rendered="{!packgId!=null}">
+
+    <apex:actionFunction name="doInit" action="{!getDetails}" rerender="ref"/>
+
+     <apex:outputPanel >
+          <script>
+           window.onload=function()
+           {
+              doInit();
+           };
+        </script>
+      </apex:outputPanel>
+      <apex:pageMessages ></apex:pageMessages>
+
+   <!-- <apex:pageBlock >
+    <apex:commandButton value="Get" action="{!getDetails}" reRender="ref"/>
+    </apex:pageBlock>-->
+        <apex:pageBlock id="ref" >
+        
+            <apex:repeat value="{!bwr}" var="b">
+                
+               <!-- {!b.data.bo_name} -->
+                <apex:repeat value="{!b.data.details}" var="dt">
+                    <apex:pageBlockSection title="Itinerary" columns="1">
+                        <apex:repeat value="{!dt}" var="d2">                            
+                            <apex:actionregion rendered="{!d2.tag=='travel'}">
+                                <apex:pageBlockSection title="{!d2.title}" collapsible="false" columns="1">
+                                    <apex:pageBlockSectionItem >
+                                        Time <apex:outputLabel value="{!d2.time_x}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Title<apex:outputLabel value="{!d2.title}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Description <apex:outputLabel value="{!d2.description}"/>
+                                    </apex:pageBlockSectionItem>                                   
+                                    <apex:pageBlockSectionItem >
+                                        BO Name <apex:outputLabel value="{!d2.data.bo_name}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Bus Type<apex:outputLabel value="{!d2.data.bus_type}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Departure Time<apex:outputLabel value="{!d2.data.departure_time}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Arrival time <apex:outputLabel value="{!d2.data.arrival_time}"/>
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                            </apex:actionregion>
+                            
+                            <apex:actionregion rendered="{!d2.tag=='stay'}">
+                                <apex:pageBlockSection collapsible="false" title="{!d2.title}" columns="1">
+                                    <apex:pageBlockSectionItem >
+                                        Time <apex:outputLabel value="{!d2.time_x}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Title<apex:outputLabel value="{!d2.title}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Description <apex:outputLabel value="{!d2.description}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        AC Availbale? <apex:outputLabel value="{!d2.data.ac}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Hotel Name <apex:outputLabel value="{!d2.data.hotelName}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Hotel Address<apex:outputLabel value="{!d2.data.hotelAddress}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Room Type<apex:outputLabel value="{!d2.data.roomType}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Star Type (Hotel)<apex:outputLabel value="{!d2.data.star}"/>
+                                    </apex:pageBlockSectionItem>
+                                </apex:pageBlockSection>
+                            </apex:actionregion>
+                            
+                            <apex:actionregion rendered="{!d2.tag=='food'}">
+                                <apex:pageBlockSection collapsible="false" title="{!d2.title}" columns="1">
+                                    <apex:pageBlockSectionItem >
+                                        Time <apex:outputLabel value="{!d2.time_x}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Title<apex:outputLabel value="{!d2.title}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Description <apex:outputLabel value="{!d2.description}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Food Include Include in Package?<apex:outputLabel value="{!d2.data.food_incl_package}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Meal Description <apex:outputLabel value="{!d2.data.meal_desc}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Meal Serve Type<apex:outputLabel value="{!d2.data.meal_serve_type}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Meal Type<apex:outputLabel value="{!d2.data.meal_type}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Meal Start Time<apex:outputLabel value="{!d2.data.meal_timing_start}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Meal End Time<apex:outputLabel value="{!d2.data.meal_timing_end}"/>
+                                    </apex:pageBlockSectionItem>            
+                                </apex:pageBlockSection>
+                            </apex:actionregion>
+                            
+                            <apex:actionregion rendered="{!d2.tag=='activity'}">
+                                <apex:pageBlockSection collapsible="false" title="{!d2.title}" columns="1">
+                                    <apex:pageBlockSectionItem >
+                                        Time <apex:outputLabel value="{!d2.time_x}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Title<apex:outputLabel value="{!d2.title}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Description <apex:outputLabel value="{!d2.description}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Activity Include in Package? <apex:outputLabel value="{!d2.data.activity_incl_package}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Activity Description <apex:outputLabel value="{!d2.data.activity_desc}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Activity Title<apex:outputLabel value="{!d2.data.activity_title}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Activity Type<apex:outputLabel value="{!d2.data.activity_type}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Activity Start Time<apex:outputLabel value="{!d2.data.activity_timing_start}"/>
+                                    </apex:pageBlockSectionItem>
+                                    <apex:pageBlockSectionItem >
+                                        Activity End Time<apex:outputLabel value="{!d2.data.activity_timing_end}"/>
+                                    </apex:pageBlockSectionItem>            
+                                </apex:pageBlockSection>
+                            </apex:actionregion>
+                            
+                        </apex:repeat>
+                    </apex:pageBlockSection>
+                    <!-- <apex:pageBlockTable value="{!dt}" var="d2">
+<apex:column headerValue="Time" value="{!d2.time_x}"/>
+<apex:column headerValue="Title" value="{!d2.title}"/>
+<apex:column headerValue="Arrival Time" value="{!d2.data.arrival_time}"/>
+
+</apex:pageBlockTable>-->
+                </apex:repeat>
+                <apex:pageblockSection title="Inclusions" columns="1">
+                <apex:repeat value="{!b.data.inclusions}" var="d">                    
+                       <!-- <apex:pageblockSectionItem >
+                            Key <apex:outputlabel value="{!d.key}"/>                            
+                        </apex:pageblockSectionItem>-->
+                        <apex:pageblockSectionItem >
+                            Value <apex:outputlabel value="{!d.value}"/>
+                        </apex:pageblockSectionItem>                   
+                </apex:repeat>
+                 </apex:pageblockSection>
+                 <apex:pageblockSection title="Exclusions" columns="1">
+                <apex:repeat value="{!b.data.exclusions}" var="d">                   
+                     <!--   <apex:pageblockSectionItem >
+                            Key <apex:outputlabel value="{!d.key}"/>
+                        </apex:pageblockSectionItem>-->
+                        <apex:pageblockSectionItem >
+                            Value <apex:outputlabel value="{!d.value}"/>
+                        </apex:pageblockSectionItem>                   
+                </apex:repeat>
+                 </apex:pageblockSection>
+                <apex:pageBlockSection title="Terms and Conditions">
+                    {!b.data.termsAndCondition}
+                </apex:pageBlockSection>
+                <apex:pageBlockSection title="Dress Code">
+                    {!b.data.dressCode}
+                </apex:pageBlockSection>
+            </apex:repeat>
+        </apex:pageBlock>
+        </apex:outputPanel>
+    <apex:outputPanel rendered="{!packgId=''}">
+    <center>
+    <br/>
+    <br/>
+    <p><b>Bus package not available for this transaction</b></p>
+    </center>
+    </apex:outputPanel>
+    </apex:form>
+</apex:page>

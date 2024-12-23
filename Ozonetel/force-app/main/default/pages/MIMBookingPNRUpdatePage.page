@@ -1,0 +1,115 @@
+<!--
+* (c) 2017 RedBus
+*
+* Name           : MIMBookingPNRUpdatePage
+* Created Date   : 09 Apr 2018
+* Created By     : Sreenivas M
+* Purpose        : Page to update the PNR /Seatwise PNR details at Trex End
+*
+-->
+
+<apex:page extensions="MIMBookingPNRUpdateExtension" tabStyle="Case" id="pg"  showHeader="false" sidebar="false" lightningStylesheets="true" Standardcontroller="Order_Items__c" >
+    <apex:slds />
+    <div class="slds-scope">
+    <apex:form id="formId">
+    <apex:outputPanel rendered="{!AND(busnsUnit!='REDBUS_IN',isMIMbooking)}">
+        <apex:pageBlock id="pb" >
+        <APEX:PAGEMessages id="errMsg"></APEX:PAGEMessages>
+               <apex:outputText rendered="{!!isShowPageBlock}"> 
+                 <center><font style="background-color: yellow;margin-left:28em;"><I>This Transaction Might Have Been Updated Already.So,you Can not Update It Agian.</i></font></center>
+               </apex:outputText>
+               
+           <apex:pageBlockSection columns="1" title="MIM Booking PNR Update Details" collapsible="flase" rendered="{!isShowPageBlock}">
+               
+               <apex:outputText rendered="{!!isNotificationAllowed}"> 
+                    <font style="background-color: yellow;margin-left:28em;"><I>This Operator Will Not Allow RedBus E-Ticket.So,Please Email The Operator Ticket To Customer</i></font>
+               </apex:outputText>
+               
+               <apex:pageBlockSectionItem >
+                    TIN Number <apex:outputField value="{!orIt.Order_Item_Reference_No__c}"/>
+               </apex:pageBlockSectionItem>
+               
+                <apex:pageBlockSectionItem >
+                  Seat Numbers 
+                   <apex:outputPanel >
+                       <div class = "requiredInput">
+                           <div class = "requiredBlock"></div>
+                           <apex:inputtext value="{!busLevelSeats}"  required="true" label="Seat Numbers"/>
+                       </div>
+                   </apex:outputPanel>
+                </apex:pageBlockSectionItem> 
+               <!--         
+               <apex:pageBlockSectionItem >
+                     Seat Numbers <apex:inputField value="{!orIt.Seat_No__c}" required="true" />
+                     
+               </apex:pageBlockSectionItem> -->
+              <!--  <apex:pageBlockSectionItem >
+                      Boarding Point Time <apex:inputField value="{!orIt.Boarding_Time__c}"/>
+               </apex:pageBlockSectionItem> -->
+               
+               <apex:pageBlockSectionItem >
+                      Boarding Point Time <apex:inputtext value="{!boardingTime}"/>
+               </apex:pageBlockSectionItem>
+              
+              <!-- 
+               <apex:pageBlockSectionItem >
+                    Bus Level PNR <apex:inputField value="{!orIt.Service_Provider_Reference_No__c}" required="true"/>
+               </apex:pageBlockSectionItem> -->
+               
+                <apex:pageBlockSectionItem >
+                 Bus Level PNR
+                   <apex:outputPanel >
+                       <div class = "requiredInput">
+                           <div class = "requiredBlock"></div>
+                           <apex:inputtextarea value="{!busLevelPnr}"  required="true" label="Bus Level PNR"/>
+                       </div>
+                   </apex:outputPanel>
+                </apex:pageBlockSectionItem> 
+               
+               <apex:pageBlockSectionItem >
+                    Do You Want SeatWise PNR Update?<apex:actionRegion >
+                    <apex:inputCheckbox value="{!showSeatWisePNR}">
+                        <apex:actionSupport event="onchange" reRender="panelId,errMsg"/>
+                    </apex:inputCheckbox></apex:actionRegion>
+                    
+               </apex:pageBlockSectionItem>
+            
+           </apex:pageBlockSection>
+           
+           <apex:outputPanel id="panelId">
+           <apex:outputPanel rendered="{!showSeatWisePNR}" >  
+               
+               <apex:outputText > <font style="background-color: yellow;margin-left:28em;"><B>Seat Wise PNR Update Details</B></font></apex:outputText>           
+               <apex:pageBlockTable value="{!seatWrapper}" var="wrap" title="SeatWise PNR Details" style="margin-left: 8%;width: 70%;">
+                    <center><apex:column headerValue="SeatNo" ><apex:inputText value="{!wrap.seatNo}"/></apex:column></center>
+                    <center><apex:column headerValue="Seat PNR"><apex:inputText value="{!wrap.seatPnr}"/></apex:column></center>                                           
+                </apex:pageBlockTable>
+           
+           </apex:outputPanel> </apex:outputPanel>
+        <!--   <apex:commandButton value="Update & Send Notification" status="butnStatus" reRender="formId,errMsg" style="background:#04B431;color:white;margin-left:26em" rendered="{!isNotificationAllowed}" action="{!mimPnrUpdation}"/> -->
+
+         
+            
+            <apex:actionStatus id="butnStatus" rendered="{!AND(isShowPageBlock,NOT(orIt.isMIM_PNR_Updated__c))}">
+               <apex:facet name="stop" >                 
+                   <apex:commandButton value="Update & Send Notification" reRender="formId,errMsg" status="butnStatus" style="margin-left:20em" styleClass="slds-button slds-button_success" action="{!mimPnrUpdation}"/>
+              </apex:facet>      
+              
+                <apex:facet name="start">
+                   <apex:commandButton value="Updating Data.." status="butnStatus" style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;margin-left:20em" disabled="true"/>
+               </apex:facet>
+           </apex:actionStatus>
+            
+         
+        </apex:pageBlock>
+        </apex:outputPanel>
+<apex:outputPanel rendered="{!AND(busnsUnit=='REDBUS_IN',!isMIMbooking)}">
+<center>
+   <br/>
+   <br/>
+   <p><b>This Is Not A MIM Transaction .So,You Can Not Perform This Action</b> </p>
+ </center>
+</apex:outputPanel>
+    </apex:form>
+    </div>
+</apex:page>

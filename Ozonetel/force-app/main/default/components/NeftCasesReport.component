@@ -1,0 +1,78 @@
+<apex:component access="global" controller="NEFTcasesReportController">
+
+<apex:attribute name="displayNeftAgingCases" description="To Display daily bot mertics" type="Boolean" assignTo="{!NeftAgeGrouping}"/>   
+<apex:attribute name="displayGroupByStatus" description="To Display daily bot mertics" type="Boolean" assignTo="{!GroupByStatus}"/>   
+   
+    <!-- Stat--Daily NEFT Metrics Report-->
+        <apex:outputPanel rendered="{!NeftAgeGrouping}">
+            <table border="1" cellpadding="4" cellspacing="0" allign="center">
+                <thead bgcolor="mediumspringgreen" style="font-family: Arial; font-size: 9pt;">    
+                    <tr><th colspan="5">Age bucket from time NEFT Cases OpenQueue</th></tr>
+                    <tr>
+                        <th>Aging</th> 
+                        <th>IDN</th>
+                        <th>LATAM</th>
+                        <th>Total Count</th>         
+                        <th>%</th>   
+                    </tr>
+                </thead>        
+                <tbody  style="font-family: Arial; font-size: 9pt;">
+                    <apex:repeat value="{!NeftCases}" var="ms">
+                        <tr>
+                            <td>{!ms.Ageing}</td>
+                            <td>{!ms.IDNCount}</td>
+                            <td>{!ms.LatamCount}</td>
+                            <td>{!ms.totalContributon}</td>
+                            <td>{!ms.percentageContributon}</td>
+                        </tr>       
+                    </apex:repeat>
+                    <tr>
+                        <th bgcolor="mediumspringgreen">Total</th>
+                        <td><B>{!totaliDNcount}</B></td>
+                        <td><B>{!totalLatamCount}</B></td>
+                        <td><B>{!TotalCount}</B></td>
+                        <td><B>100.00%</B></td>
+                    </tr>
+                     
+                </tbody>
+              </table>
+        </apex:outputPanel>
+    <!-- End--Daily NEFT Metrics Report-->
+
+     <!-- Stat--Daily Bot Metrics Report-->
+    <apex:outputPanel rendered="{!GroupByStatus}">
+        <br></br>
+        <table border="1" cellpadding="4" cellspacing="0" allign="center">
+            <thead bgcolor="mediumspringgreen" style="font-family: Arial; font-size: 9pt;">    
+                <tr>
+                    <th>status</th> 
+                    <th>IDN</th>
+                    <th>LATAM</th>
+                    <th>Total Count</th>         
+                    <th>%</th>   
+                </tr>
+            </thead>        
+            <tbody  style="font-family: Arial; font-size: 9pt;">
+                <apex:repeat value="{!StatusGroup}" var="ms">
+                    <tr>
+                        <td>{!ms.status}</td>
+                        <td>{!ms.IDNCount}</td>
+                        <td>{!ms.LatamCount}</td>
+                        <td>{!ms.totalContributon}</td>
+                        <td>{!ms.percentageContributon}</td>
+                    </tr>       
+                </apex:repeat>
+                <tr>
+                    <th bgcolor="mediumspringgreen">Total</th>
+                    <td><B>{!totaliDNcount}</B></td>
+                    <td><B>{!totalLatamCount}</B></td>
+                    <td><B>{!TotalCount}</B></td>
+                    <td><B>100.00%</B></td>
+                </tr>
+                 
+            </tbody>
+          </table>
+    </apex:outputPanel>
+<!-- End--Daily Bot Metrics Report-->
+
+</apex:component>

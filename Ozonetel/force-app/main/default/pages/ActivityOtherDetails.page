@@ -1,0 +1,20 @@
+<apex:page standardController="Activities__c" extensions="ActivityDetails">
+ <apex:includeScript value="/soap/ajax/45.0/connection.js" />
+    <apex:includeScript value="/support/console/45.0/integration.js" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <apex:includeLightning />
+    <div id="container">
+    </div>
+
+    <script>
+        $Lightning.use("c:AddOnsListViewApp", function () {
+            $Lightning.createComponent(
+                "c:activityDetails",
+                {'sfrecordId2': '{!$CurrentPage.parameters.id}'},
+                "container",
+                function (cmp) {
+                    console.log('component created');
+                });
+        });
+    </script>
+</apex:page>

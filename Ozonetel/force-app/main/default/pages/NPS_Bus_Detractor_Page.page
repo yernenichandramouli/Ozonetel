@@ -1,0 +1,147 @@
+<apex:page controller="NPSBusDetractorController" docType="html-5.0" showheader="false" id="pg" lightningStylesheets="true">
+   
+    <apex:form id="fm" >
+    <apex:slds />
+    <apex:pageMessages id="msg" ></apex:pageMessages>
+        <apex:pageBlock id="pb" >
+                    <apex:inputHidden id="selId" value="{!selCsId}"/>
+                    <apex:inputHidden id="reqId" value="{!requestId}"/>
+                    <apex:inputHidden id="tinNo" value="{!tinNo}"/>
+
+            
+            <script type="text/javascript">
+            $(document).ready(function(){
+                $('.pbstyle').DataTable();
+            });
+            </script>
+            
+         
+            <apex:pageBlockSection columns="3">
+             
+               <apex:pageblocksectionItem >
+                   Date of Journey<apex:input value="{!doj}" type="date" styleClass="slds-input"/>
+                    </apex:pageblocksectionItem>
+                   <apex:pageblocksectionItem >
+                     Customer Submit Date<apex:input value="{!submitdate}" type="date" styleClass="slds-input"/>
+                     </apex:pageblocksectionItem>
+                    <apex:pageblockSectionItem >
+                    <!-- <div class="" align="right"> -->
+                        <apex:actionStatus id="status" >
+                            <apex:facet name="start" >
+                                <apex:commandButton value="Searching..." style="width:100px" disabled="true" status="status" styleClass="slds-button slds-button_success"/>                                       
+                            </apex:facet>
+                            <apex:facet name="stop">
+                                <apex:commandButton value="Search" style="width:100px" reRender="popCS,pb,msg,npsDetractorTable" status="status" action="{!search}" styleClass="slds-button slds-button_success"/>                   
+                            </apex:facet>
+                        </apex:actionStatus> 
+                 </apex:pageblockSectionItem>
+            </apex:pageblocksection>  
+            <apex:pageblocktable value="{!caseList}" var="c" styleClass="pbstyle">
+              <apex:column headerValue="Case Number">
+                 <apex:facet name="header" >Case Number</apex:facet>
+                  <a HREF="#" onclick="javascript:isLightningExperience('{!c.id}','{!c.casenumber}');return false">
+                        <apex:outputLabel value="{!c.casenumber}"/>
+                    </a> 
+                    
+                <!--    <apex:outputLink onclick="javascript:isLightningExperience();return false;-->
+               </apex:column>
+               
+               <apex:column headerValue="Date of Journey" value="{!c.SS_DOJ__c}"/>
+                <apex:column headerValue="TIN" value="{!c.TIN_No__c}"/>
+                <apex:column headerValue="Submitted Date" value="{!c.Nps_Response_Date__c}"/>
+                <apex:column headerValue="Phone No" value="{!c.Phone_No_ct__c}"/>
+                <apex:column headerValue="Email Id" value="{!c.Email_Id_ct__c}"/>
+                <apex:column headerValue="NP Score"  headerClass="TableTitle" value="{!c.NP_Score__c}"/>
+                <apex:column headerValue="BO Name" value="{!c.Bus_Operator_Namee__c}"/>
+                <apex:column headerValue="Source - Destination" value="{!c.Source_And_Destination__c}"/>
+                 <apex:column headerValue="Feedback" value="{!c.Feedback__c}"/>
+                <apex:column >
+                    <apex:commandButton value="Action" onclick="openPopup('{!c.id}','{!c.Request_Id__c}','{!c.TIN_No__c}');return false;" id="popup" styleClass="slds-button slds-button_success"/>
+                                        
+                </apex:column>
+            </apex:pageblocktable>
+        </apex:pageBlock>
+        
+        <apex:outputPanel id="popup" styleClass="exRefdPopupPanel" style="display:none">            
+                <apex:outputPanel styleClass="popupBackground" layout="block" />                    
+                <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block" style="width: 500px !Important;">                        
+                      <apex:pageBlock title="Case Comment">
+                      <apex:pageblocksection columns="1">
+                        <apex:inputtextarea value="{!comment}" id="comIds" styleClass="msgCls" style="width:300px;height: 56px;"/>
+                      <apex:pageblocksectionItem >
+                        <apex:actionStatus id="butnStatus2" >
+                            <apex:facet name="stop" >
+                            <apex:commandButton value="Update" action="{!caseUpdate}" oncomplete="closepopup()"  reRender="msg,popCS" status="butnStatus2" styleClass="slds-button slds-button_success"/>
+                            </apex:facet>
+
+                            <apex:facet name="start">
+                            <apex:commandButton value="Updating.." oncomplete="closepopup()" status="butnStatus2" disabled="true"/>
+                            </apex:facet>
+                        </apex:actionStatus>
+                        <apex:commandButton value="Cancel" onclick="closePopup();return false;" styleClass="slds-button slds-button_success"/>
+                        </apex:pageblocksectionItem>
+                     </apex:pageblocksection>  </apex:pageBlock>
+                </apex:outputpanel>
+            </apex:outputpanel>
+      
+       
+        <script type="text/javascript">
+        
+        function isLightningExperience(recId,csNum)
+        {
+             alert(sforce.console.isInConsole());
+            if(sforce.console.isInConsole())
+            {
+                sforce.console.getEnclosingPrimaryTabId(function(result)
+                {
+             
+                sforce.console.openPrimaryTab(undefined,'/'+recId, true,csNum);
+             
+                });
+            }
+            
+            else
+            {
+            
+                if (UITheme.getUITheme() === 'Theme4d' || UITheme.getUITheme() === 'Theme4u')                  
+                     sforce.one.navigateToSObject(recId,'detail');
+                else 
+                    window.open('/' + recId);
+            }
+        }
+        
+        function closePopup()
+        {
+           $('.exRefdPopupPanel').hide();
+           document.getElementById('pg:fm:pb:selId').value = '';
+        
+        }
+        function openPopup(caseId,requestId,tinNo)  
+        {
+          
+            $('.exRefdPopupPanel').show();
+              document.getElementById('pg:fm:pb:selId').value = caseId;
+              document.getElementById('pg:fm:pb:reqId').value = requestId;
+              document.getElementById('pg:fm:pb:tinNo').value = tinNo;
+              console.log('caseId-->'+caseId);
+        }
+            </script>         
+        
+        <apex:outputPanel id="popCS">
+               <script>                
+                    if('{!popupCS}' == 'true')
+                    {
+                        $('.exRefdPopupPanel').hide();
+                        document.getElementById('pg:fm:pb:selId').value = '';
+                    }
+               </script>
+            </apex:outputPanel>
+    </apex:form>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"/>
+            <script src="/soap/ajax/46.0/connection.js"/>
+            <script src="/support/console/46.0/integration.js"/>
+            
+            <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"/>
+            <apex:stylesheet value="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
+            <apex:stylesheet value="{!$Resource.LoadingStatus}" />
+</apex:page>

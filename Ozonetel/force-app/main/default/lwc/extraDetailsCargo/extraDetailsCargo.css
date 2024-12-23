@@ -1,0 +1,7 @@
+/* parentComponent.css */
+.section-container {
+    margin: 20px; /* Add margin for spacing between sections */
+    padding: 15px; /* Add padding inside each section */
+    border: 1px solid #d8dde6; /* Add a border for visual separation */
+    border-radius: 5px; /* Add border-radius for rounded corners */
+}

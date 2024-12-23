@@ -1,0 +1,118 @@
+<apex:page standardController="Order_Items__c" extensions="casePrepopulating_cls" sidebar="false" showHeader="false" id="pag" lightningStylesheets="true">
+    <apex:slds />
+    <div class="slds-scope">
+    <apex:form id="formId">
+   
+       <apex:pageBlock >
+        <apex:pageMessages id="errorMsg"></apex:pageMessages>
+            <apex:pageBlockSection title="New Case Information" columns="2" collapsible="false">
+                <apex:outputField value="{!cs.Transaction_ID__c}"/> 
+                <apex:outputText value="{!tripId}" label="Trip ID"></apex:outputText>
+                <apex:inputField value="{!cs.Country__c}" html-disabled="true"/>
+                <apex:inputField value="{!cs.Business_Type__c}" html-disabled="true"/>
+                <apex:inputField value="{!cs.Issue_Type__c}" required="true"/>
+                 <apex:inputField value="{!cs.status}" required="true"/>
+                <apex:inputField value="{!cs.Issue_Sub_Category__c}" required="true"/>          
+                <apex:inputField value="{!cs.Origin}" required="true"/>
+              
+                <apex:inputField value="{!cs.Description}"/>
+                
+                <apex:inputField value="{!cs.Priority}"/> 
+               
+               
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Does Customer Require CallBack?" for="stId"/>
+                    <apex:actionRegion >
+                           <apex:inputField value="{!cs.Does_Customer_Require_CallBack__c}" id="stId">
+                               <apex:actionSupport event="onchange" reRender="cbr,cbres" />
+                           </apex:inputField>
+                    </apex:actionRegion> 
+                </apex:pageBlockSectionItem>
+                
+            </apex:pageBlockSection>
+            
+            <apex:pageblockSection id="cbr" columns="1" >
+             
+                   <apex:inputfield id="cbtime" value="{!cs.Call_Back_Time__c}"  rendered="{!If(cs.Does_Customer_Require_CallBack__c,true,false)}" html-placeholder="In Hours"/>
+                           
+          </apex:pageblockSection>
+          
+          <apex:pageblockSection id="cbres" columns="1" >
+             
+                   <apex:inputfield id="cbtime" value="{!cs.Call_Back_Reason__c}"  required="true" rendered="{!If(cs.Does_Customer_Require_CallBack__c,true,false)}"/>
+                           
+          </apex:pageblockSection>
+          
+            <apex:pageBlockButtons >
+                
+                <apex:actionStatus id="status" >
+                    <apex:facet name="start" >
+                        <apex:commandButton value="Saving..." style="height:30px;width:130px;font-size:15px;background:#04844b;color:white;font-family:Arial;"
+ disabled="true" status="status"/>                                       
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton value="Save" styleClass="slds-button slds-button_success" action="{!showPopup}" reRender="errorMsg,popup,formId" status="status">                   
+                        </apex:commandButton>
+                    </apex:facet>
+                </apex:actionStatus>   
+                        
+                <apex:commandButton value="Cancel" styleClass="slds-button slds-button_success slds-m-left-small" action="{!Cancel}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+
+
+
+       <apex:pageBlock >
+             <apex:outputPanel id="popup">
+                <apex:outputPanel id="popInnerOutputPnl" styleClass="customPopup" layout="block" rendered="{!displayPopUp}">
+                     <apex:commandButton value="X" title="Close the popup" action="{!closePopup}" styleClass="closeButton" rerender="popup,formId" immediate="true">
+                     </apex:commandButton>
+                     <apex:pageblockSection columns="1">
+                         <apex:pageblockSectionItem >
+                          <apex:outputLabel value="Open case is already exist for this transaction, Please write description here for why you want to create one more case." style="background-color:#ffb75d;color:#080707;"></apex:outputLabel>
+                          </apex:pageblockSectionItem>
+                         <apex:pageblockSectionItem >
+                          <apex:outputLabel value="Description" for="address" ></apex:outputLabel>
+                          <apex:inputfield value="{!cs.Description_P__c}" required="true"/>
+                         </apex:pageblockSectionItem>
+                     </apex:pageblockSection>
+                     
+                      <apex:actionStatus id="status" >
+                    <apex:facet name="start" >
+                        <apex:commandButton value="Saving..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;" disabled="true" status="status"/>                                       
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton value="Proceed" action="{!saveMethod}" styleClass="slds-button slds-button_success"
+  rerender="errorMsg,popup,formId" status="status">                   
+                        </apex:commandButton>
+                    </apex:facet>
+                </apex:actionStatus>   
+                 
+                </apex:outputPanel>
+            </apex:outputPanel>
+            
+          </apex:pageBlock>  
+             
+              
+<style type="text/css">
+.customPopup {
+    background-color: white;
+    border-style: solid;
+    border-width: 2px;
+    left: 20%;
+    padding: 10px;
+    position: absolute;
+    z-index: 9999;
+    width: 500px;
+    top: 20%;
+}
+.closeButton {
+    float: right;
+}
+
+
+</style>
+ </apex:form>
+ </div>
+</apex:page>

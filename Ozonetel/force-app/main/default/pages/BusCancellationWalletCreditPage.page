@@ -1,0 +1,71 @@
+<apex:page standardcontroller="Case" extensions="BusCancelWalletCreditCntrl" showchat="false" showheader="false" lightningStylesheets="true">
+<apex:slds />
+<script><apex:includeScript value="/support/console/26.0/integration.js"/> </script>
+<script type="text/javascript" language="javascript">
+        function confirmDialog(statusVal) {
+            alert(statusVal);
+            console.log('Pop Up Done  ' );
+            RefreshPrimaryTab();
+        }
+        
+        
+        function confirmDBT(){
+   var r = confirm("Are you sure want to confirm DBT?");
+   if(r)
+  callDBT();
+ // hold();
+ }
+ 
+  function BusCancelPopup(pageParm)
+        {
+             var newwindow=window.open('/apex/NEFTCustAccntDetailPopup'+pageParm, 'Popup','height=270,width=730px,left=280,top=200,resizable=no,scrollbars=no,toolbar=no,status=no');
+             newwindow.focus();
+        }
+        
+</script>
+<div class="slds-scope">
+    <apex:form id="fmID">
+    <apex:actionFunction action="{!Submit}" name="callDBT" rerender="msg"/>
+
+         <apex:pagemessages id="msg"></apex:pagemessages>     
+            <apex:actionStatus id="butnStatus" >
+               <apex:facet name="stop" >
+                   <apex:commandButton value="Refund To Wallet" action="{!refundintoWallet}" reRender="formId" status="butnStatus" styleClass="slds-button slds-button_success" onComplete="confirmDialog('{!statusMessage}'); return false;" rendered="{!enableButton}"/>
+               </apex:facet>
+              
+                <apex:facet name="start">
+                   <apex:commandButton value="Updating Data.." status="butnStatus" style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;" disabled="true"/>
+               </apex:facet>
+           </apex:actionStatus>
+           
+            <apex:actionStatus id="callButnStatus" rendered="{!enableCallButton}">
+               <apex:facet name="stop" >
+                   <apex:commandButton value="Call To BO" onclick="BusCancelPopup('?recId={!csId}&sitCall=true')" styleClass="slds-button slds-button_success slds-m-left_x-small" rerender="popup" status="callButnStatus"/>
+               </apex:facet>
+              
+                <apex:facet name="start">
+                   <apex:commandButton value="Please wait.." status="callButnStatus" style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;" disabled="true"/>
+               </apex:facet>
+           </apex:actionStatus>
+           
+           <apex:outputpanel rendered="{!enableChatBt}">
+           <apex:selectList value="{!UserSelectVal}" multiselect="false" size="1">
+     Select BO Mobile Number &nbsp;&nbsp;&nbsp; <apex:selectOptions value="{!ListVal}"/>
+            </apex:selectList>&nbsp;&nbsp;&nbsp;
+           
+                   <apex:actionStatus id="loadStatus" >
+                        <apex:facet name="start" >
+                            <apex:commandButton value="Sending Request..."  disabled="true" status="loadStatus" style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:commandButton value="Enable Chat" styleClass="slds-button slds-button_success" action="{!chatEnable}" reRender="msg,fmID" status="loadStatus" disabled="{!disChatBt}"/>                   
+                        </apex:facet>
+                    </apex:actionStatus>
+           </apex:outputpanel>
+       <center>    <apex:commandButton value="Confirm DBT" onclick="confirmDBT();" rendered="{!enableDBT}" rerender="msg" styleClass="slds-button slds-button_success"/> </center>
+  
+       
+    </apex:form>
+    </div>
+     <script src="/support/console/46.0/integration.js"/>
+</apex:page>

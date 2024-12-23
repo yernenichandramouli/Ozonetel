@@ -1,0 +1,181 @@
+<apex:page standardController="Order_Items__c" extensions="B2BCancellation" docType="html-5.0" sidebar="false" showHeader="false" showChat="false">
+ <apex:slds />
+
+    <apex:form >  
+        <apex:pageBlock title="Cancellation & Exceptional Refund" >  
+            <apex:pageMessages id="msg"/>   
+            <apex:outputPanel rendered="{!ordItm.status__c=='TR_CANCELLED_PO_COMPLETED'}">
+                <div style="font-weight:bold;font-size:15px;color:red;margin-left:30em !important"><b><i>Ticket is already Cancelled</i></b></div> 
+            </apex:outputPanel>  <br/>
+            
+            <apex:outputPanel rendered="{!excepCs}">
+                <div style="font-weight:bold;font-size:15px;color:green;margin-left:25em !important"><b><i>Exceptional Refund case has already submitted for Approval.</i></b></div>
+            </apex:outputPanel> 
+            
+            <apex:pageblocksection rendered="{!ordItm.status__c!='TR_CANCELLED_PO_COMPLETED'}" >
+                <center>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                            <apex:actionStatus id="loadStatus" >
+                                <apex:facet name="start" >
+                                    <img src="/img/loading.gif" />
+                                    <apex:commandButton value="Processing..." style="width:150px" disabled="true" status="loadStatus"/>                                       
+                                </apex:facet>
+                                <apex:facet name="stop">
+                                    <apex:commandButton value="Initiate Cancellation" style="width:150px" action="{!IsTicketCancellable}" reRender="cancelpn,exprefblk,msg" status="loadStatus" rendered="{!canexpBts}">                   
+                                    </apex:commandButton>
+                                </apex:facet>
+                            </apex:actionStatus> &nbsp;&nbsp;
+                            
+                            <apex:actionStatus id="exploadStatus" >
+                                <apex:facet name="start" >
+                                    <img src="/img/loading.gif" />
+                                    <apex:commandButton value="Processing..." style="width:150px" disabled="true" status="exploadStatus"/>                                       
+                                </apex:facet>
+                                <apex:facet name="stop">
+                                    <!-- rendered="{!!excepCs}"-->
+                                    <apex:commandButton value="Exceptional Refund" style="width:150px" action="{!ExceptionalRefundBlock}" reRender="exprefblk,cancelpn,msg" status="exploadStatus" rendered="{!if(!excepCs && !canexpBts,true,false)}" >                   
+                                    </apex:commandButton>
+                                </apex:facet>
+                            </apex:actionStatus> 
+                            
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </center>
+            </apex:pageblocksection>
+            
+            <apex:outputPanel id="exprefblk">
+                <apex:pageBlockSection rendered="{!expBlk}" columns="1">
+                    <apex:pageBlockSectionItem >
+                        Type   &nbsp;   <apex:selectList size="1" value="{!cancellationType}" multiselect="false">
+                        <apex:actionSupport event="onchange" action="{!getReasonPickVals}" reRender="reasonPicklist" />
+                        <apex:selectOptions value="{!selectList}" />
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        Reason   &nbsp;   <apex:selectList size="1" value="{!refundreason}" id="reasonPicklist" multiselect="false">
+                        <apex:selectOptions value="{!reasonSelectList}" />
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        Amount    <apex:inputText value="{!expRefAmount}"/>   
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                            Parent Case<apex:inputText value="{!parentCase}"> 
+                                        <!-- <apex:actionSupport event="onchange" action="{!fetchMaxRefundAmount}" reRender="mmtMaxRefundAmnt"/> -->
+                                        <apex:actionsupport event="onchange" action="{!getSuggestedRefundAmount}" />
+                        </apex:inputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!isMMTchannel}">
+                        Max Refund Amount <apex:outputText value="{!mmtMaxRefundAmount}" id="mmtMaxRefundAmnt"></apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!isMMTchannel}">
+                        Suggested Amount <apex:outputText value="{!suggestedAmount}" id="suggestedAmnt"></apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        Description  <apex:inputTextarea value="{!description}"/>   
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        .  <apex:actionStatus id="expsubtatus" >
+                        <apex:facet name="start" >
+                            <img src="/img/loading.gif" />
+                            <apex:commandButton value="Processing..." style="width:150px" disabled="true" status="expsubtatus"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:commandButton value="Submit" style="width:150px" action="{!ExceptionalRefund}" reRender="msg" status="expsubtatus"/>                   
+                        </apex:facet>
+                        </apex:actionStatus> 
+                        <!--     .  <apex:commandButton style="width:100px" value="Submit" action="{!ExceptionalRefund}" rerender="msg"/>
+--></apex:pageBlockSectionItem>
+                    
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+            
+            <apex:outputpanel id="cancelpn" >
+                <apex:outputPanel rendered="{!cancelBlk}">
+                    
+                    <apex:pageblocksection columns="2" >
+                        <apex:pageBlockSectionItem >
+                            <!-- Cancelletion <apex:outputLabel value="{!IF(cancellation=='true','Allowed','Not Allowed')}" />   
+-->
+                            
+                            Full Cancellation <apex:outputText value="{!IF(cancellation=='true','Allowed','Not Allowed')}" style="font-weight:bold;font-size:15px;color:{!IF(cancellation=='true', 'green', 'red')};"/>
+                            
+                        </apex:pageBlockSectionItem> 
+                        <apex:pageBlockSectionItem >
+                            Partial Cancellation <apex:outputText value="{!IF(partialCancellation=='true' && !partialCancelled,'Allowed','Not Allowed')}" style="font-weight:bold;font-size:15px;color:{!IF(cancellation=='true'&& !partialCancelled, 'green', 'red')};"/>
+                            
+                        </apex:pageBlockSectionItem>
+                        
+                        
+                        <apex:pageBlockSectionItem >
+                            Cancelltion Type   &nbsp;   <apex:selectList size="1" value="{!cancellationType}" >
+                            <apex:selectOption itemLabel="--None--" itemvalue="--None--"></apex:selectOption>
+                            <apex:selectOption itemLabel="Full Cancellation" itemvalue="FC"></apex:selectOption>
+                            <apex:selectOption itemLabel="Partial Cancellation" itemvalue="PC" rendered="{!!partialCancelled}"></apex:selectOption>
+                            <apex:actionsupport event="onchange" action="{!CancellationBreakup}" reRender="fbrk1,cbt"/>
+                            </apex:selectList>
+                        </apex:pageBlockSectionItem>
+                        
+                        &nbsp;&nbsp;
+                        <apex:outputpanel id="fbrk1">
+                         <apex:pageblocktable value="{!fareList}" var="fl">
+                                <apex:column headerValue="Total Ticket Amount" value="{!totalTktAmount}"/>
+                                 <apex:column headerValue="Cancellation Charges" value="{!cancellationCharges}"/>
+                                  <apex:column headerValue="Refund Amount" value="{!refundAmount}"/>
+                                
+                                </apex:pageblocktable>
+                            <apex:pageBlockSectionItem >      
+                            
+                                
+                                <apex:pageBlockTable value="{!fareList}" var="fl" rendered="{!IF(partialCancellation =='true' && breakUpblk==true ,true,false)}"  >
+                                    <apex:column >
+                                        <apex:inputcheckbox value="{!fl.isSelected}"/>
+                                    </apex:column>
+                                    <apex:column headerValue="Seat" value="{!fl.seat}"/>
+                                    <apex:column headerValue="Ticket Amount" value="{!fl.ticketAmount}"/>
+                                    <apex:column headerValue="Cancellation Charge" value="{!cancelChargeMap[fl.seat]}"/>
+                                    
+                                </apex:pageBlockTable>
+                                
+                                
+                            </apex:pageBlockSectionItem>  
+                        </apex:outputpanel>   
+                        . <apex:outputpanel ></apex:outputpanel>
+                        <apex:outputpanel id="cbt" >
+                            <apex:actionStatus id="loadStatus" >
+                                <apex:facet name="start" >
+                                    <img src="/img/loading.gif" />
+                                    <apex:commandButton value="Processing..." style="width:100px" disabled="true" status="loadStatus"/>                                       
+                                </apex:facet>
+                                <apex:facet name="stop">
+                                    <apex:commandButton value="Cancel Ticket" style="width:100px" action="{!CancelTicket}" reRender="msg" status="loadStatus" rendered="{!cancelBt}">                   
+                                    </apex:commandButton>
+                                </apex:facet>
+                            </apex:actionStatus>  
+                        </apex:outputpanel>
+                        
+                    </apex:pageblocksection>     
+                </apex:outputpanel> 
+            </apex:outputPanel>
+        </apex:pageBlock>
+        
+        <!--   
+{!restResp}  <apex:outputpanel id="cancelblk">  </apex:outputpanel>-->
+        <!--
+Cancelltion Type      <apex:selectList size="1" value="{!cancellationType}" >
+<apex:selectOption itemLabel="--None--" itemvalue=""></apex:selectOption>
+<apex:selectOption itemLabel="Full Cancellation" itemvalue="FC"></apex:selectOption>
+<apex:selectOption itemLabel="Partial Cancellation" itemvalue="PC"></apex:selectOption>
+<apex:actionsupport event="onchange" action="{!CancellationBreakup}" reRender="fbrk"/>
+</apex:selectList>
+
+
+<apex:pageblock id="fbrk">
+
+
+</apex:pageblock>-->
+    </apex:form>
+</apex:page>

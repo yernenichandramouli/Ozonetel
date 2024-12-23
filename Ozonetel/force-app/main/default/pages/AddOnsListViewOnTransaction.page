@@ -1,0 +1,17 @@
+<apex:page standardController="Order_Items__c" extensions="AddOnsListViewOnTransaction" showHeader="true">
+    <apex:includeLightning />
+    <div id="container">
+    </div>
+
+    <script>
+        $Lightning.use("c:AddOnsListViewApp", function () {
+            $Lightning.createComponent(
+                "c:addonsFlowListView",
+                {'sfrecordId': '{!$CurrentPage.parameters.id}'},
+                "container",
+                function (cmp) {
+                    console.log('component created');
+                });
+        });
+    </script>
+</apex:page>

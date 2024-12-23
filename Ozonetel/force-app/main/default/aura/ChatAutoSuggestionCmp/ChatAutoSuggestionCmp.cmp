@@ -1,0 +1,36 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:appHostable,force:hasRecordId" access="global" controller="ChatMonitorController">
+    <lightning:conversationToolkitAPI aura:id="conversationToolkit" />
+    <aura:attribute name="workItemId" type="String" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="gptPrompt" type="String"/>
+    <aura:attribute name="chatTranscriptId" type="String" />
+    <aura:attribute name="gptResponse" type="String" />
+    <aura:attribute name="loaded" type="Boolean" default="false" />
+    <aura:attribute name="isButtonDisabled" type="Boolean" default="true" />
+    <aura:handler event="lightning:conversationNewMessage" action="{!c.onNewMessage}" />
+
+    <lightning:card title="Chat Recommendations" iconName="standard:einstein_replies">
+        <!-- <aura:attribute name="timestamp" type="String" default="11:15:19" /> -->
+        <!-- Recommendation Text -->
+        <div class="slds-box slds-theme_default slds-m-bottom_small">
+            <div class="slds-text-title"><b>Context</b></div>
+            <lightning:spinner aura:id="spinner" alternativeText="Loading..." size="medium" class="{!(v.loaded? 'slds-show': 'slds-hide')}" />
+            <div class="slds-m-top_x-small">
+                <lightning:formattedText value="{! v.gptPrompt }" />
+            </div>
+            
+            <div class="slds-grid slds-gutters slds-m-top_small">
+                <lightning:buttonGroup>
+                    <lightning:button label="Post" variant="success" class="slds-col small-button" onclick="{! c.sendMessageToCustomer }" disabled="{! v.isButtonDisabled }"/>
+                    <lightning:button label="Edit" class="slds-col small-button" onclick="{! c.prefillGPTMessage }" disabled="{! v.isButtonDisabled }"/>
+                </lightning:buttonGroup>
+                <lightning:button label="Not Helpful" variant="destructive" class="not-helpful-btn" onclick="{! c.handleNotHelpful }" disabled="{! v.isButtonDisabled }"/>
+            </div>
+        </div>
+
+            <!-- Disclaimer -->
+        <div class="slds-m-top_small slds-text-color_weak slds-text-body_small" style="font-size: smaller;">
+            This tool uses generative AI. Check the output for accuracy and safety before using.
+        </div>
+    </lightning:card>
+</aura:component>

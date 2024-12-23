@@ -1,0 +1,161 @@
+<template>
+    <!-- <template if:false={businessUnit}>
+        <div class="slds-text-heading_large slds-text-align_center" style="color:rgb(216, 78, 85);">Tracking Details Not avilable for this business Type.</div>
+    </template> -->
+    <!-- <template if:true={businessUnit}> -->
+        <template if:true={hideDetails}>
+            <div class="slds-align_absolute-center">
+                <lightning-button variant="success" label="Show Tracking Details" onclick={handlehideDetails}></lightning-button>
+            </div>
+        </template>
+        <template if:false={hideDetails}>
+            <c-spinner is-loading={isLoading}></c-spinner>
+            <div class="slds-card">
+                <div class="slds-p-around_small slds-text-body_regular">
+                    <template if:true={isGetAllBPsError}>
+                                <div class="slds-text-heading_large slds-text-align_center" style="color:rgb(216, 78, 85);">{allBPErrorMessage}</div>
+                    </template>
+                    <template if:false={isGetAllBPsError}>
+                        <lightning-layout>
+                            <lightning-layout-item  size="4" padding="around-small">
+                                <lightning-combobox  data-id="Available Values" name="types" label="Please Select BP Name" options={bpNameList} onchange={handleTypeChange}> </lightning-combobox> 
+                            </lightning-layout-item>                                        
+                        </lightning-layout>
+                    </template>
+                </div>
+                <div class="slds-align_absolute-center">
+                    <lightning-button variant="success" label="Get Details" onclick={handleClick} disabled='{disbaleGetDetialsBtn}'></lightning-button>
+                </div>
+            </div> 
+            <template if:true={areDetailsVisible}>
+                <div class="slds-card">
+                    <lightning-tabset>
+                        <lightning-tab label="YB Status">
+                            <template if:false={isTrackingDetailsError}>
+                                <div class="demo-only demo-only--sizing slds-grid slds-wrap">
+                                    <div class="slds-size_1-of-3">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Boarding Point: </b><b style="color:rgb(2, 151, 52);">{boardingPoint}</b></div>
+                                    </div>
+                                    <div class="slds-size_1-of-3">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Dropping Point: </b><b style="color:rgb(2, 151, 52);">{droppingPoint}</b></div>
+                                    </div>
+                                    <div class="slds-size_1-of-3">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Vehicle Number: </b><b style="color:rgb(2, 151, 52);">{vehicleNo}</b></div>
+                                    </div>
+                                </div>
+                                <div class="demo-only demo-only--sizing slds-grid slds-wrap">
+                                    <div class="slds-size_1-of-2">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Customer YB Link: </b><b style="color:rgb(18, 4, 148);"><a href={customerYBLink} target="_blank">{customerYBLink}</a></b></div>
+                                    </div>
+                                    <div class="slds-size_1-of-2">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Customer RB Link: </b><b style="color:rgb(18, 4, 148);"><a href={customerRBLink} target="_blank">{customerRBLink}</a></b></div>
+                                    </div>
+                                </div>
+                                <div class="demo-only demo-only--sizing slds-grid slds-wrap">
+                                    <div class="slds-size_1-of-2">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Driver Name 1: </b><b style="color:rgb(2, 151, 52);">{driverName1}</b></div>
+                                    </div>
+                                    <div class="slds-size_1-of-2">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Driver Mobile 1: </b><b style="color:rgb(2, 151, 52);">{driverMobile1}</b></div>
+                                    </div>
+                                </div>
+                                <div class="demo-only demo-only--sizing slds-grid slds-wrap">
+                                    <div class="slds-size_1-of-2">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Driver Name 2: </b><b style="color:rgb(2, 151, 52);">{driverName2}</b></div>
+                                    </div>
+                                    <div class="slds-size_1-of-2">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Driver Mobile 2: </b><b style="color:rgb(2, 151, 52);">{driverMobile2}</b></div>
+                                    </div>
+                                </div>
+                                <div class="demo-only demo-only--sizing slds-grid slds-wrap">
+                                    <div class="slds-size_1-of-2">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Conductor Name: </b><b style="color:rgb(2, 151, 52);">{conductorName}</b></div>
+                                    </div>
+                                    <div class="slds-size_1-of-2">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Conductor Mobile: </b><b style="color:rgb(2, 151, 52);">{conductorMobile}</b></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-border_left slds-border_right" aria-label="Example default base table of Opportunities">
+                                        <thead>
+                                            <tr class="slds-line-height_reset">
+                                                <th class="" scope="col">
+                                                    <div class="slds-truncate slds-align_absolute-center" title="BP Name">BP Name</div>
+                                                </th>
+                                                <th class="" scope="col">
+                                                    <div class="slds-truncate slds-align_absolute-center" title="Scheduled Time">Scheduled Time</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={trackingDetailsList} for:item="object">
+                                                <tr class="slds-hint-parent" key={object}>
+                                                    <td data-label="BP Name">
+                                                        <div class="slds-truncate slds-align_absolute-center">{object.bpName}</div>
+                                                    </td>
+                                                    <td data-label="Scheduled Time">
+                                                        <div class="slds-truncate slds-align_absolute-center">{object.time}</div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </template>
+                            <template if:true={isTrackingDetailsError}>
+                                <div class="slds-text-heading_large slds-text-align_center" style="color:rgb(216, 78, 85);">{trackingDetailsErrorMessage}</div>
+                            </template>
+                        </lightning-tab>
+                        <lightning-tab label="Arrival Patterns">
+                            <template if:false={isArrivalError}>
+                                <div class="demo-only demo-only--sizing slds-grid slds-wrap">
+                                    <div class="slds-size_1-of-2">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Customer BP: </b><b style="color:rgb(2, 151, 52);">{selectedBpValue}</b></div>
+                                    </div>
+                                    <div class="slds-size_1-of-2">
+                                        <div class="slds-box slds-box_x-small slds-text-align_center slds-m-around_x-small"><b style="color:rgb(121, 43, 7);">Schedule Time: </b><b style="color:rgb(2, 151, 52);">{getScheduledTime}</b></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-border_left slds-border_right" aria-label="Example default base table of Opportunities">
+                                        <thead>
+                                            <tr class="slds-line-height_reset">
+                                                <th class="" scope="col">
+                                                    <div class="slds-truncate slds-align_absolute-center" title="Arrival Date">Arrival Date</div>
+                                                </th>
+                                                <th class="" scope="col">
+                                                    <div class="slds-truncate slds-align_absolute-center" title="Arrival Time">Arrival Time</div>
+                                                </th>
+                                                <th class="" scope="col">
+                                                    <div class="slds-truncate slds-align_absolute-center" title="Arrival Time">Time (in Min)</div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={arrivalPatternsList} for:item="object">
+                                                <tr class="slds-hint-parent" key={object}>
+                                                    <td data-label="Arrival Date">
+                                                        <div class="slds-truncate slds-align_absolute-center">{object.doj}</div>
+                                                    </td>
+                                                    <td data-label="Arrival Time">
+                                                        <div class="slds-truncate slds-align_absolute-center">{object.arrivalTime}</div>
+                                                    </td>
+                                                    <th class="" scope="col">
+                                                        <div class="slds-truncate slds-align_absolute-center" title="Delay Time">{object.delay}</div>
+                                                    </th>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </template>
+                            <template if:true={isArrivalError}>
+                                <div class="slds-text-heading_large slds-text-align_center" style="color:rgb(216, 78, 85);">{arrivalErrorMessage}</div>
+                            </template>
+                        </lightning-tab>
+                    </lightning-tabset>
+            </div>
+            </template>
+        </template>
+    <!-- </template> -->
+</template>

@@ -1,0 +1,205 @@
+<apex:page controller="BpDpImagesCntrl" showHeader="false" id="pageB" lightningStylesheets="true" readOnly="true" >
+ <apex:form id="fmId">
+  <apex:pageBlock title="BP DP Image Moderation" id="pbl" >
+    <apex:pageMessages escape="false" id="msg"/>     
+           
+   <apex:pageBlockSection columns="2" id="pdid">
+   <apex:pageblocksectionItem >
+     Type <apex:outputPanel >
+       <apex:selectRadio value="{!selectedStatus}" style="width:100px;display:contents !important">
+         <apex:selectOption itemValue="NEW" itemLabel="NEW"></apex:selectOption>
+         <apex:selectOption itemValue="ALL" itemlabel="ALL"></apex:selectOption>
+          <apex:actionSupport event="onchange" reRender="regionid"  action="{!GetStatusVal}"/>
+        </apex:selectRadio>
+        </apex:outputPanel>
+   </apex:pageblocksectionItem>
+  
+  
+ <apex:pageblocksectionItem id="opNames">
+            Operator Names <apex:outputPanel id="operatornames"> 
+            <apex:selectList value="{!selectedOperatorid}" size="1"  style="width:100px" id="mOpId">
+            <apex:selectOptions value="{!totalOperatorids}"/>
+               <apex:actionSupport event="onchange" action="{!fetchBpNames}" reRender="bpids,msg" status="status"/> 
+            </apex:selectList>
+            <apex:actionStatus id="status">
+              <apex:facet name="start">
+                <img src="/img/loading.gif" />
+                        </apex:facet>
+                 </apex:actionStatus>
+            </apex:outputPanel>
+  </apex:pageblocksectionItem>
+  
+  
+   <apex:pageblocksectionItem id="regionid" >
+            Region  <apex:outputPanel > <apex:selectList value="{!region}" size="1" style="width:100px" >
+            <apex:selectOption itemValue="" itemLabel="--None--"/>
+            <apex:selectOption itemValue="IND" itemLabel="India"/>
+            <apex:selectOption itemValue="MYS" itemLabel="Malaysia"/>
+            <apex:selectOption itemValue="SGP" itemLabel="Singapore"/>
+            <apex:selectOption itemValue="IDN" itemLabel="Indonesia"/>
+            <apex:actionSupport event="onchange" action="{!fetchAllCities}" reRender="citynames,msg" status="status"/> 
+            </apex:selectList>
+            <apex:actionStatus id="status">
+              <apex:facet name="start">
+                <img src="/img/loading.gif" />
+                        </apex:facet>
+                 </apex:actionStatus>
+           </apex:outputPanel>  
+   </apex:pageblocksectionItem>
+  
+
+
+ <apex:pageblocksectionItem id="bpNames">
+           BP Names <apex:outputPanel id="bpids"> 
+            <apex:selectList value="{!selectedBpId}" size="1"  style="width:100px" id="mBpid">
+            <apex:selectOptions value="{!totalBpids}"/>
+            <apex:actionSupport event="onchange" action="{!fetchBpImages}" reRender="bpimgBlock,msg" status="status"/> 
+            </apex:selectList>
+            <apex:actionStatus id="status">
+              <apex:facet name="start">
+                <img src="/img/loading.gif" />
+                        </apex:facet>
+                 </apex:actionStatus>
+            </apex:outputPanel>
+  </apex:pageblocksectionItem>
+ 
+  
+  
+   <apex:pageblocksectionItem id="ctNames">
+            City Names <apex:outputPanel id="citynames"> 
+            <apex:selectList value="{!selectedCityid}" size="1"  style="width:100px" id="ctyNamId">
+            <apex:selectOptions value="{!totalCities}"/>
+               <apex:actionSupport event="onchange" action="{!fetchCityRelatedBpIds}" reRender="operatornames,msg" status="status"/> 
+            </apex:selectList>
+            <apex:actionStatus id="status">
+              <apex:facet name="start">
+                <img src="/img/loading.gif" />
+                        </apex:facet>
+                 </apex:actionStatus>
+            </apex:outputPanel>
+  </apex:pageblocksectionItem>
+  
+  
+  
+ </apex:pageblocksection>
+</apex:pageBlock>
+
+ <apex:pageBlock id="bpimgBlock">
+  <apex:pageMessages escape="false" id="errmsg"/>
+  <!--<apex:outputPanel rendered="{!AND(NOT(ISNULL(selectedBpId)),displayimageWrap.size<=0)}">
+         <span style="background-color:yellow;margin-left:30em;font-style:bold">No Images Found For This Search Criteria</span>
+  </apex:outputPanel>-->
+
+   <apex:pageblockSection id="section1" columns="1" >
+   
+   <apex:actionStatus id="upUpdateBtn">
+       <apex:facet name="start"> 
+           <apex:commandButton value="Updateing..." reRender="msg,errmsg" styleClass="aligColor" rendered="{!displayimageWrap.size>0}" status="upUpdateBtn"/>
+       </apex:facet>
+       
+       <apex:facet name="stop"> 
+           <apex:commandButton value="Update" action="{!UpdateBpImageStatus}" reRender="msg,errmsg,panId,bpimgBlock" styleClass="aligColor" rendered="{!displayimageWrap.size>0}" status="upUpdateBtn"/>
+       </apex:facet>
+     </apex:actionStatus>
+     
+     <apex:repeat value="{!imageStatus}" var="sta" >    
+      
+          <apex:pageblocksection title="{!sta}"  id="section2" columns="3" collapsible="true" >
+         
+              <apex:outputPanel rendered="{!IF(OR(sta=='APPROVE',sta=='DISCARD'),true,false)}">
+                   <script>twistSection(document.getElementById('img_{!$Component.section2}'));</script>
+              </apex:outputPanel>  
+             
+              <apex:repeat value="{!displayimageWrap}" var="res">
+                <apex:pageblocksection rendered="{!IF(sta==res.displayStatus,true,false)}" > 
+                    <table>
+                    <tr>
+                    <td>
+                     <apex:image url="{!res.bpImages.image}" width="300" height="200" id="MyImage"/>   
+                    </td>
+                    </tr>
+                    </table>
+                    
+                    <table>
+                        <tr> 
+                         <apex:pageBlockSectionItem >
+                            <apex:outputpanel >
+                         IMAGE LEFT : <apex:inputText value="{!res.bpImages.imgleft}" /><br/><br/>
+                          IMAGE RIGHT : <apex:inputText value="{!res.bpImages.imgright}" /> 
+                            <apex:selectRadio value="{!res.bpImages.side}">
+                             <apex:selectOption itemValue="NA" itemLabel="NA"></apex:selectOption>
+                             <apex:selectOption itemValue="SAME" itemLabel="SAME"></apex:selectOption>
+                             <apex:selectOption itemValue="OPPOSITE" itemlabel="OPPOSITE"></apex:selectOption>
+                            </apex:selectRadio> 
+                            
+                            <apex:selectRadio value="{!res.bpImages.daynight}">
+                             <apex:selectOption itemValue="DAY" itemLabel="DAY"></apex:selectOption>
+                             <apex:selectOption itemValue="NIGHT" itemlabel="NIGHT"></apex:selectOption>
+                            </apex:selectRadio> 
+                            
+                            
+                           <!-- <apex:selectRadio value="{!res.selStatus}" >
+                             <apex:selectOption itemValue="APPROVE" itemLabel="APPROVE"></apex:selectOption>
+                             <apex:selectOption itemValue="DISCARD" itemlabel="DISCARD"></apex:selectOption>
+                            </apex:selectRadio> -->
+                             STATUS : <apex:selectList value="{!res.selStatus}" size="1">
+                                    <apex:selectOption itemValue="" itemLabel="--None--"/>
+                                    <apex:selectOption itemValue="APPROVE" itemLabel="APPROVE"/>
+                                    <apex:selectOption itemValue="ImgNtclr" itemLabel="DISCARD-Image not clear"/>
+                                    <apex:selectOption itemValue="ImgNtRelvnt" itemLabel="DISCARD- Image not relevant"/>
+                                    <apex:selectOption itemValue="DuplImg" itemLabel="DISCARD-Duplicate image"/>
+                                  </apex:selectList>    
+                            
+                           
+                         </apex:outputpanel>
+                        </apex:pageBlockSectionItem>
+                        </tr> 
+                        </table>
+                    </apex:pageblocksection>
+                 </apex:repeat>
+               </apex:pageblocksection>
+      </apex:repeat>  
+   </apex:pageblockSection>
+     <apex:actionStatus id="downUpdateBtn">
+       <apex:facet name="start"> 
+           <apex:commandButton value="Updateing..." reRender="msg,errmsg,operatornames,bpids,bpimgBlock" styleClass="aligColor" rendered="{!displayimageWrap.size>0}" status="downUpdateBtn"/>
+       </apex:facet>
+       
+       <apex:facet name="stop"> 
+           <apex:commandButton value="Update" action="{!UpdateBpImageStatus}" reRender="msg,errmsg,bpimgBlock,panId" styleClass="aligColor" rendered="{!displayimageWrap.size>0}" status="downUpdateBtn"/>
+       </apex:facet>
+     </apex:actionStatus>
+     
+     
+ </apex:pageBlock>
+ </apex:form>
+ <apex:outputPanel id="panId">
+      <script>
+
+if(document.getElementById('pageB:fmId:pbl:pdid:opNames:mOpId'))
+{
+  
+  document.getElementById('pageB:fmId:pbl:pdid:bpNames:mBpid').value='';
+  
+  }
+</script>
+     </apex:outputPanel>
+     
+
+ <style>
+  
+  .displayRed td, .displayRedinput, .displayRed label
+  {
+   color:red;
+   
+  }
+  .aligColor
+  {
+     margin-left:40em !important;
+     background:#7af399 !important;
+     color:white !important;
+     font-size: 13px !important;
+     width:10% !important;
+  }
+  </style>
+</apex:page>

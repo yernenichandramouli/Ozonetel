@@ -1,0 +1,4 @@
+<apex:page StandardController="Account" extensions="ConsoleCase" action="{!getOpenCase}" >
+    <apex:messages />
+    <apex:outputText >hi welcome</apex:outputText>
+</apex:page>

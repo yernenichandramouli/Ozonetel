@@ -1,0 +1,132 @@
+<apex:page standardController="Order_Items__c" extensions="SendSmsEmailExtension" lightningStylesheets="false">
+    <apex:slds />   
+    <!-- <apex:form rendered="{!if(tObj.Business_Unit__c=='REDBUS_PE',true,false)}">
+<div align="center"><b><i>As of now e/m ticket not available for LATAM</i></b></div>
+</apex:form> -->
+    
+    <!-- Start - Send Notification Button -->
+    <div class="slds-scope">
+        <apex:form rendered="{!if((tObj.Item_Type__c =='COUPON' && tObj.Transaction_Status__c == 'Booked'),true,false)}">
+            <apex:actionStatus id="butnStatus" > 
+                <apex:facet name="stop" > 
+                    <apex:commandButton value="Send Notification" reRender="tabId,errId" status="butnStatus" action="{!sendNotification}"  styleClass="slds-button slds-button_success slds-align_absolute-center"/>
+                </apex:facet>
+                
+                <apex:facet name="start">
+                    <apex:commandButton value="Sending Notification..." status="butnStatus" disabled="true" styleClass="slds-button slds-button_success slds-align_absolute-center"/>
+                </apex:facet>                             
+            </apex:actionStatus>         
+            <br/>
+            <br/>
+            <div style="text-align:center;">
+                <apex:outputText id="tabId" style="font-weight:100; font-size:20px; font-align:center" value="{!response}" /><br />
+            </div>
+            <br/>
+        </apex:form>
+        
+    </div>
+    
+    <apex:form rendered="{if(((tObj.Order_Item_Reference_No__c!='') || 
+                         (tObj.Item_type__C =='COUPON && tObj.Transaction_Status__c.Contains('FT'))) ,true,false)}">
+        <!-- End - Send Notification Button  -->SSS        
+        <div align="center"><b><i>This Ticket is Not Booked.. Hence, You can not Send e/m ticket..!!!</i></b></div>
+    </apex:form>
+    
+    <apex:form id="mBlock" rendered="{!if(tObj.Order_Item_Reference_No__c!='',true,false)}">
+        
+        {!statusCode}
+        <apex:pageBlock >
+            <apex:pageMessages escape="false" id="msg"/>
+            <apex:pageblocksection title=" M Ticket" collapsible="false">
+                <apex:pageBlockSectionItem > 
+                    Booking Mobile Number:<b> {!tObj.Mobile__c} </b>
+                </apex:pageBlockSectionItem> 
+                
+                <apex:pageBlockSectionItem > 
+                    <apex:actionStatus id="loadStatus" rendered="{!!type}">
+                        <apex:facet name="start" >
+                            <apex:commandButton value="Sending..."  disabled="true" status="loadStatus"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">                   
+                            <apex:commandButton value="Send mTicket" action="{!send}" style="width:100px" reRender="mBlock,msg" status="loadStatus">
+                                <apex:param value="mTicket" assignTo="{!paramValue}" />
+                            </apex:commandButton>
+                        </apex:facet>
+                    </apex:actionStatus>
+                    
+                    <apex:actionStatus id="loadStatusb2b" rendered="{!type}">
+                        <apex:facet name="start" >
+                            <apex:commandButton value="Sending..."  disabled="true" status="loadStatusb2b"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">                   
+                            <apex:commandButton value="Send mTicket" action="{!sendTicket}" style="width:100px" reRender="mBlock,msg" status="loadStatusb2b">
+                                <apex:param value="mTicket" assignTo="{!paramValue}" />
+                            </apex:commandButton>
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >                    
+                    Send to Other Phone No <apex:inputCheckbox value="{!mCheck}" >                    
+                    <apex:actionsupport event="onchange" rerender="p"/> </apex:inputCheckbox>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputpanel id="p">
+                        <apex:selectList value="{!selectedCountry}" size="1" rendered="{!if(mCheck==true,true,false)}">
+                            <apex:selectOptions value="{!countryCodes}"/>
+                        </apex:selectList>
+                        <!-- <apex:outputpanel rendered="{!if(mCheck==true,true,false)}"><b >+91</b>  &nbsp; </apex:outputpanel>     -->             
+                        <apex:inputtext value="{!mobile}" html-placeholder="Mobile Number" rendered="{!if(mCheck==true,true,false)}"/>                        
+                    </apex:outputpanel> 
+                </apex:pageBlockSectionItem>
+                
+            </apex:pageblocksection>
+            <!--   
+<apex:pageblocksection >
+</apex:pageblocksection> -->
+            
+            <apex:pageblocksection title=" E Ticket" collapsible="false">
+                
+                <apex:pageblocksection >
+                    Booking Email Id:<b> {!tObj.Email__c} </b>
+                </apex:pageblocksection>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:actionStatus id="loadStatus" rendered="{!!type}">
+                        <apex:facet name="start" >
+                            <apex:commandButton value="Sending..."  disabled="true" status="loadStatus"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:commandButton value="Send eTicket" style="width:100px" action="{!send}" reRender="mBlock,msg" status="loadStatus">                   
+                                <apex:param value="eTicket" assignTo="{!paramValue}" />
+                            </apex:commandButton>
+                        </apex:facet>
+                    </apex:actionStatus> 
+                    
+                    <apex:actionStatus id="loadStatusb2b" rendered="{!type}" >
+                        <apex:facet name="start" >
+                            <apex:commandButton value="Sending..."  disabled="true" status="loadStatusb2b"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:commandButton value="Send eTicket" style="width:100px" action="{!sendTicket}" reRender="mBlock,msg" status="loadStatusb2b">                   
+                                <apex:param value="eTicket" assignTo="{!paramValue}" />
+                            </apex:commandButton>
+                        </apex:facet>
+                    </apex:actionStatus>    
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    Send to Other email Id <apex:inputCheckbox value="{!eCheck}" >
+                    <apex:actionsupport event="onchange" rerender="p2"/> </apex:inputCheckbox>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputpanel id="p2">                        
+                        <apex:inputtext value="{!email}" html-placeholder="Email Id" rendered="{!if(eCheck==true,true,false)}"/>
+                    </apex:outputpanel> 
+                </apex:pageBlockSectionItem>           
+            </apex:pageblocksection> 
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

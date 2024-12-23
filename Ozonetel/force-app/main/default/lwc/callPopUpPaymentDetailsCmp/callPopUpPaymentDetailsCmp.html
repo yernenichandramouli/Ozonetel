@@ -1,0 +1,169 @@
+<template>
+    <!-- Spinner component-->
+    <template if:true={isLoading} style="height: 200px; position:relative">
+        <lightning-spinner variant="base" size="medium"></lightning-spinner>
+    </template>
+
+    <!-- To show error message-->
+    <template if:true={isErrorOccured}>
+        <lightning-card title="Refund Details">
+            <b><span class="slds-align_absolute-center" style="color: #a30808;">{errorMessage}</span></b>
+        </lightning-card>
+    </template>
+
+    <!-- To show the refund details-->
+    <template if:false={isErrorOccured}>
+        <lightning-card title="Refund Details">
+            <template if:true={paymentDetails}>
+                <template for:each={paymentDetails} for:item="record">
+                    <div key={record.arnNumber}>
+                        <div class="slds-box slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none slds-theme_shade" >
+                            <b><span style="color: #337ab7;padding-left: 1%;" class="slds-p-top_small">Refund Details - {record.refundSlNO} - {record.refundReason}</span></b>
+                            <lightning-layout multiple-rows>
+                                <lightning-layout-item padding="around-small" >
+                                    <div class="custom-box slds-box slds-box_x-small slds-p-around_medium slds-text-align_center slds-theme_shade" style = {record.sldsBoxWidth}>
+                                        <lightning-progress-indicator type="base" variant="base" size="large" current-step={record.currentActivePath}>
+                                            <lightning-progress-step label="Booked" value={record.pathListwithTime.CreationTime}></lightning-progress-step>
+                                            <lightning-progress-step label={isGFTTransaction} value={record.pathListwithTime.BookingTime}></lightning-progress-step>
+                                            <template if:true={record.cancellationApplicable}>
+                                                <lightning-progress-step label="Cancelled" value={record.pathListwithTime.CancellationTime}></lightning-progress-step>
+                                            </template>
+                                            <lightning-progress-step label="Refund Initiated" value={record.pathListwithTime.RefundCreationTime}></lightning-progress-step>
+                                            <lightning-progress-step label="Refunded credited" value={record.pathListwithTime.RefundedOn}></lightning-progress-step>
+                                        </lightning-progress-indicator>
+                                        <div class="slds-progress">
+                                            <ol class="slds-progress__list">
+                                                <div data-id="creationTimeColour" style="margin-left: -0.5rem;color: #019c54;"><b>Booked</b>
+                                                    <b>
+                                                        <div>
+                                                            {record.pathListwithTime.CreationTime}
+                                                        </div>
+                                                    </b>
+                                                </div>
+                                                <div data-id="BookingTimeColour" style="margin-left: -0.5rem;color: #019c54;"><b>{isGFTTransaction}</b>
+                                                    <b>
+                                                        <div>
+                                                            {record.pathListwithTime.BookingTime}
+                                                        </div>
+                                                    </b>
+                                                </div>
+                                                <template if:true={record.cancellationApplicable}>
+                                                    <div data-id="CancellationTimeColour" style="margin-left: -0.5rem;color: #019c54;"><b>Cancelled</b>
+                                                        <b>
+                                                            <div>
+                                                                {record.pathListwithTime.CancellationTime}
+                                                            </div>
+                                                        </b>
+                                                    </div>
+                                                </template>
+                                                
+                                                <div data-id="RefundCreationTimeColour" style="margin-left: -0.5rem;color: #019c54;"><b>Refund Initiated</b>
+                                                    <b>
+                                                        <div>
+                                                            {record.pathListwithTime.RefundCreationTime}
+                                                        </div>
+                                                    </b>
+                                                </div>
+                                                <div data-id="RefundedOnColour" style="margin-left: -0.5rem;color: #019c54;"><b>Refunded credited</b>
+                                                    <b>
+                                                        <div>
+                                                            {record.pathListwithTime.RefundedOn}
+                                                        </div>
+                                                    </b>
+                                                </div>
+                                            </ol>
+                                        </div>
+                                        <div class="slds-text-align_center slds-text-body_regular slds-p-top_medium "><b>Refund of </b><b style="color: #019c54;">{record.refundAmount}</b> <b> has been {record.refundStatus}.</b></div>
+                                    </div>
+                                </lightning-layout-item>
+                            </lightning-layout>
+
+                            <lightning-layout multiple-rows>
+                                    <lightning-layout vertical-align=center >
+                                        <lightning-layout-Item padding=around-small>
+                                            <legend class="slds-form-element__legend slds-form-element__label">ARN/RRN Number</legend>
+                                            <lightning-input type="Text" name="arnNumber" disabled="true" value={record.arnNumber}>
+                                            </lightning-input>
+                                        </lightning-layout-Item>
+    
+                                        <lightning-layout-Item padding=around-small>
+                                            <legend class="slds-form-element__legend slds-form-element__label">Transaction Id</legend>
+                                            <lightning-input type="Text" name="transactionId" disabled="true" value={record.transactionId}>
+                                            </lightning-input>
+                                        </lightning-layout-Item>
+    
+                                        <lightning-layout-Item padding=around-small>
+                                            <legend class="slds-form-element__legend slds-form-element__label">PG Name</legend>
+                                            <lightning-input type="Text" name="pgName" disabled="true" value={record.pgName}>
+                                            </lightning-input>
+                                        </lightning-layout-Item>
+
+                                        <lightning-layout-Item padding=around-small>
+                                            <legend class="slds-form-element__legend slds-form-element__label">PG Reference Id</legend>
+                                            <lightning-input type="Text" name="pgReferenceId" disabled="true" value={record.pgReferenceId}>
+                                            </lightning-input>
+                                        </lightning-layout-Item>
+
+                                        <lightning-layout-Item padding=around-small>
+                                            <legend class="slds-form-element__legend slds-form-element__label">Transaction Status</legend>
+                                            <lightning-input type="Text" style="width: 200%;" name="transactionStatus" disabled="true" value={transactionStatus}>
+                                            </lightning-input>
+                                        </lightning-layout-Item>
+                                        
+                                    </lightning-layout>
+                                    <!-- Row 2-->
+                                    <lightning-layout vertical-align=center >
+                                        <lightning-layout-Item padding=around-small>
+                                            <legend class="slds-form-element__legend slds-form-element__label">PG LINK</legend>
+                                            <a href={record.pgLink} target="_blank" rel="noopener noreferrer">
+                                                <lightning-input type="Text" name="pgLink"  value={record.pgLink}></lightning-input>
+                                            </a>
+                                        </lightning-layout-Item>
+    
+                                        <lightning-layout-Item padding=around-small>
+                                            <legend class="slds-form-element__legend slds-form-element__label">Bank Name</legend>
+                                            <lightning-input type="Text" name="bankName" disabled="true" value={record.bankName}>
+                                            </lightning-input>
+                                        </lightning-layout-Item>
+
+                                        <lightning-layout-Item padding=around-small>
+                                            <legend class="slds-form-element__legend slds-form-element__label">Refund Type</legend>
+                                            <lightning-input type="Text" name="refundType" disabled="true" value={record.refundType}>
+                                            </lightning-input>
+                                        </lightning-layout-Item>
+
+                                        <lightning-layout-Item padding=around-small>
+                                            <legend class="slds-form-element__legend slds-form-element__label">Refund Initiated By</legend>
+                                            <lightning-input type="Text" name="refundInitiatedBy" disabled="true" value={record.refundCreatedBy}>
+                                            </lightning-input>
+                                        </lightning-layout-Item>
+
+                                        
+
+                                        <lightning-layout-Item padding=around-small>
+                                            <legend class="slds-form-element__legend slds-form-element__label">Payment Type</legend>
+                                            <lightning-input type="Text" name="paymentType" disabled="true" value={record.paymentType}>
+                                            </lightning-input>
+                                        </lightning-layout-Item>
+
+                                        <template if:false={record.isUpiPayment}>
+                                            <lightning-layout-Item padding=around-small>
+                                                <legend class="slds-form-element__legend slds-form-element__label">Card Number</legend>
+                                                <lightning-input type="Text" field-level-help="Displays the last 4 digits of the card number." name="cardNumber" disabled="true" value={record.cardNumber}>
+                                                </lightning-input>
+                                            </lightning-layout-Item>
+                                        </template>
+                                        
+                                        
+                                    </lightning-layout>
+                            </lightning-layout>
+                            <template if:false={record.refundHappened}>
+                                <div class="slds-text-align_center slds-text-body_regular slds-p-left_small slds-p-top_medium "><span><b>Note : </b>Your refund will be credited into the account submitted above within <b> 2 </b> days <b>({record.tentativeRefundDate})</b>.</span></div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </template>
+        </lightning-card>
+    </template>
+</template>

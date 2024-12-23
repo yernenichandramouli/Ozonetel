@@ -1,0 +1,17 @@
+<!-- genericDisplayComponent.html -->
+
+<template>
+
+    <div class="slds-m-around_medium">
+        <div class="slds-m-around_medium">
+            <lightning-datatable
+                key-field="name"
+                data={objectProperties}
+                columns={columns}
+                hide-checkbox-column
+         class="slds-table slds-table_cell-buffer slds-table_bordered">
+            </lightning-datatable>
+        </div>
+    </div>
+
+</template>

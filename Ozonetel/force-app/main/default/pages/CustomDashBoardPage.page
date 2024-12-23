@@ -1,0 +1,5 @@
+<apex:page >
+<apex:outputPanel rendered="{!IF(CONTAINS($User.Alias,'PJara'),True,False)}">
+<apex:iframe src="/01Z280000011FrN" scrolling="true" height="1000px" width="100%"/>
+</apex:outputPanel>
+</apex:page>

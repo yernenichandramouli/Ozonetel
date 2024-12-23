@@ -1,0 +1,45 @@
+<template>
+    <lightning-card>
+        <template if:true={showUpdMsg}>
+            <c-generic-toast-messages notificationtype={notifType} notificationmessage={notifMsg}>
+            </c-generic-toast-messages>
+            <div class="slds-m-bottom_x-small"></div>
+        </template>
+
+        <center>
+            <lightning-button variant="success" label="Fetch More Ticket Details" onclick={handleClick}
+                class="slds-m-left_x-small"></lightning-button>
+            <div if:true={fetchLoad} style="display:flex;flex-wrap: wrap;">
+                <lightning-spinner alternative-text="Updating..." variant="brand" size="small" class="slds-is-absolute">
+                </lightning-spinner>
+            </div>
+        </center>
+
+        <lightning-accordion if:true={showSection} allow-multiple-sections-open active-section-name={activeSections}>
+
+            <lightning-accordion-section name="A" label="Traveller Info">
+                <lightning-datatable key-field="Id" data={travellerInfo} columns={fields}></lightning-datatable>
+            </lightning-accordion-section>
+
+            <lightning-accordion-section name="B" label="Fare Breakup">
+                <center>
+                    <div>Ticket Fare: {ticketFare}
+                        &nbsp;&nbsp;&nbsp;&nbsp; Discount: {discount}
+                    </div>
+                </center>
+                <lightning-datatable key-field="Id" data={priceBreakup} columns={cpfields}></lightning-datatable>
+            </lightning-accordion-section>
+
+            <lightning-accordion-section name="C" label="Service Notes">
+                <template for:each={policyValues} for:item="pv">
+
+                    <p class="slds-p-horizontal_small" key={pv.PolicyTitle}> <b style="color:green;"> {pv.PolicyTitle}
+                        </b>
+                        <br />
+                        {pv.Items} </p> <br key={pv.PolicyTitle} />
+                </template>
+            </lightning-accordion-section>
+
+        </lightning-accordion>
+    </lightning-card>
+</template>

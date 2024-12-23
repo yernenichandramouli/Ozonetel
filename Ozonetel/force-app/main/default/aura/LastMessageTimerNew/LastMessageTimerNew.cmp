@@ -1,0 +1,78 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" controller="LiveChatTranscriptController" access="global" >
+	<lightning:conversationToolkitAPI aura:id="conversationKit" />
+    <lightning:workspaceAPI aura:id="workspace"/>   
+    
+    <aura:attribute type="String" name="agentCxTimer"/>
+    <aura:attribute type="String" name="agentcxIntervalId"/>
+    <aura:attribute type="Boolean" name="tabHighlighted" default ="false" />
+	<aura:attribute name="minutes" type="String" default="00" />
+    <aura:attribute name="seconds" type="String" default="00" />
+    
+    <aura:attribute type="Boolean" name="isOnDoInit" default ="false" />
+
+    
+    <aura:handler  name="init" value="{!this}" action="{!c.doInit}"/>
+    
+   <!-- <aura:handler event="lightning:omniChannelWorkAccepted" action="{!c.sampleAccetptTest}"/> -->
+
+    <aura:handler event="lightning:conversationAgentSend" action="{!c.handleMessageSentOrReceived}" />
+    <aura:handler event="lightning:conversationNewMessage" action="{!c.handleMessageSentOrReceived}" />
+    <aura:handler event="lightning:conversationChatEnded" action="{!c.onChatEnded}" />
+    
+     <aura:attribute name="caseList" type="List" />
+
+    <aura:attribute name="columns" type="List" default="[
+     { label: 'Case Number', fieldName: 'CaseId', type: 'url', 
+      typeAttributes: { label: { fieldName: 'CaseNumber' }, target: '_self' } },
+    { label: 'Issue Type', fieldName: 'IssueType', type: 'text' },
+    { label: 'Sub Issue Type', fieldName: 'SubIssueType', type: 'text' },
+    { label: 'Status', fieldName: 'Status', type: 'text' }
+]" />
+    
+    <lightning:card title="Timer Remainder" iconName="standard:real_time">
+        <div class="timer-container" style="text-align: center; padding: 20px; font-family: Arial, sans-serif;">
+        <div style="display: flex; justify-content: center; gap: 12px; align-items: center;">
+            <div style="text-align: center;">
+                <div style="font-size: 60px; font-weight: bold; color: #0078D7; margin-bottom: 5px;">
+                    {!v.minutes}
+                </div>
+                <div style="font-size: 18px; color: #555; margin-top: 0;">Mins</div>
+            </div>
+            <div style="font-size: 60px; font-weight: bold; color: #0078D7;">:</div>
+            <div style="text-align: center;">
+                <div style="font-size: 60px; font-weight: bold; color: #0078D7; margin-bottom: 5px;">
+                    {!v.seconds}
+                </div>
+                <div style="font-size: 18px; color: #555; margin-top: 0;">Secs</div>
+            </div>
+        </div>
+		</div>
+        
+         
+              <div class="button-container" style="margin-top: 20px;">
+        <button onclick="{!c.handleHoldClick}" style="margin: 5px; padding: 10px; font-size: 16px;">Hold</button>
+        <button onclick="{!c.handleResumeClick}" style="margin: 5px; padding: 10px; font-size: 16px;">Resume</button>
+        <button onclick="{!c.handleOnlineClick}" style="margin: 5px; padding: 10px; font-size: 16px;">Online</button>
+    </div>
+        
+    </lightning:card>
+	
+    
+    
+    <!-- Table to display the cases -->
+    <lightning:datatable
+        data="{! v.caseList }"
+        columns="{! v.columns }"
+        keyField="CaseNumber"
+        hideCheckboxColumn="true"
+        onrowaction="{! c.handleRowAction }"
+        tableStyle="table-layout:auto;"
+    />
+	
+  <aura:if isTrue="{!empty(v.caseList)}">
+    <div style="text-align: center; padding: 10px;">
+        <p style="font-weight: bold; color: red;">No cases found.</p>
+    </div>
+</aura:if>
+    
+</aura:component>

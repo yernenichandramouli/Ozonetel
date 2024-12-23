@@ -1,0 +1,110 @@
+<apex:page Controller="LtngrefundBreakupCntrl"  action="{!refund}" showHeader="false" sidebar="false" standardStylesheets="false">
+    <!-- <apex:slds /> -->
+  <apex:outputPanel rendered="{!sizeofRefundOrditms>0}">
+    <apex:form >
+        <head>
+            <style>
+              
+                .hrline{
+                border-top: 1px solid black;
+             }
+                .hrlinebotm{
+                 margin-top: 70px;
+                border-bottom: 1px solid black;
+             }
+                .deductions
+                {
+                color:red;
+             }
+             p {
+              line-height: 0px;
+               margin: 17px 6px 7px 0px;
+            }
+               
+            </style>
+        </head>
+        <apex:pageBlock >
+            <center>
+                <h2><P style=" font-size: 110%;color:#0080FF"><b>Refund Amount Details</b></P></h2></center>
+            <table align="center"  cellspacing="0" frame="box">
+                <tbody style="font-family: Arial; font-size: 13pt;">
+                    
+                
+                    <tr >
+                        <td style="float:left">Base Fare:</td><td style="float:right"><apex:outputText value="{!currencyType} {!wpprcls.totalBFare }"/></td>
+                    </tr>
+                    <tr>
+                        <td style="float:left">Total ServiceTax:</td> <td style="float:right"><apex:outputText value="{!currencyType} {!wpprcls.totalStax}"/></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="float:left">Total Insurance:</td> <td style="float:right"><apex:outputText value="{!currencyType} {!wpprcls.totalInsurance}"/></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="float:left">Convenience fee:</td> <td style="float:right"><apex:outputText value="{!currencyType} {!wpprcls.convenienceFee}"/></td>
+                    </tr>
+                    <tr bgcolor="#4CAF50">
+                        <td class="hrline" style="float:left"><B><font color="white">Total Ticket Fare:</font></B></td><td class="hrline" style="float:right"><font color="white">{!currencyType} {!wpprcls.totalamount}</font></td>
+                      <!-- <td style="float:left"><b>Total amount paid:</b></td><td style="color:red;float:right"><b>{!currencyType} {!wpprcls.totalamount}</b></td> -->
+                       
+                    </tr>
+                  <!--  <tr ><td><hr/></td><td><hr/></td></tr>
+                    <tr ></tr> -->
+                    <tr>
+                        <td style="float:left">Convenience Fee :</td><td class="deductions" style="float:right">- {!currencyType} {!wpprcls.totalconNonrefund}</td>
+                    </tr>
+                    <tr>
+                        <td style="float:left">Cancelation Charges :</td><td class="deductions" style="float:right">- {!currencyType} {!wpprcls.cancelationcharge}</td>
+                    </tr>
+                    <tr>
+                        <td style="float:left">Discounts:</td> <td style="color:red;float:right"><apex:outputText value="-{!currencyType} {!wpprcls.discount}"/></td><br/>
+                    </tr>
+                     <tr bgcolor="#4CAF50">
+                        <td class="hrline" style="float:left"><font color="white"><b>Total Deduction:</b></font></td><td class="hrline" style="float:right"><font color="white">{!currencyType} {!wpprcls.nonRefundamount}</font></td>
+                    </tr>
+                   
+                    <tr>
+                        <td><P style=" font-size: 93%;color:#0080FF" ><b>Final Calculation:</b></P></td>
+                    </tr>
+                    <tr>
+                        <td style="float:left">Total Amount Paid :</td><td style="float:right">{!currencyType} {!wpprcls.totalamount}</td>
+                    </tr>
+                    <tr>
+                        <td style="float:left">Total Deduction:</td><td class="deductions" style="float:right">- {!currencyType} {!wpprcls.nonRefundamount} </td>
+                    </tr>
+                    
+                    <tr bgcolor="#4CAF50">
+                        <td class="hrline" style="float:left"><font color="white"><b>Eligible Refund Amount</b></font></td><td class="hrline" style="float:right"><font color="white">{!currencyType} {!wpprcls.totalRefund}</font></td>
+                    </tr>
+                   
+                 
+                   
+                     <tr>
+                        <td><P style=" font-size: 93%;color:#0080FF" ><b>How is Cancellation Charges Calculated?</b></P></td>
+                    </tr>
+                    
+                    <tr>
+                        <td style="float:left">Cancelation Time : </td><td style="float:right"><apex:outputfield value="{!orIt.Cancelled_Time__c}"/></td>
+                    </tr>
+                    <tr>
+                        <td style="float:left">Cancelation Policy :</td><td style="float:right"><apex:outputText value="{!wpprcls.cancelstionPercentage}"/>% of the amount </td>
+                    </tr>
+                       <tr>
+                        <td style="float:left">Cancellation Charge: </td><td style="float:right"><apex:outputText value="{!currencyType} {!wpprcls.cancelationcharge}"/></td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+
+        </apex:pageBlock>
+    </apex:form>
+ </apex:outputpanel>
+<apex:outputPanel rendered="{!sizeofRefundOrditms<1}">
+<center>
+   <br/>
+   <br/>
+   <p><b>Ticket is Not Cancelled or There is no existing refund order item to show the refund breakup</b></p>
+ </center>
+</apex:outputPanel>
+</apex:page>

@@ -1,0 +1,81 @@
+<template>
+<template if:true={isRefundList}> 
+         <template if:true={responseRefundListData}>
+            <template for:each={responseRefundListData} for:item="item">
+                <div key={item.itemUuid} class="container">
+                    <h3 class="header">{item.itemType}</h3>
+                    <table class="custom-table" title="Refund List">
+                        <tr>
+                            <th>Ticket No</th>
+                            <th>Refund Amount</th>
+                            <th>Cancellation Time</th>
+                            <th>Refund Time</th>
+                            <!-- Add other properties as needed -->
+                        </tr>
+                        <tr>
+                            <td>{item.ticketNo}</td>
+                            <td>{item.refundAmount}</td>
+                            <td>{item.cancellationTime}</td>
+                            <td>{item.refundTime}</td>
+                            <!-- Add other properties as needed -->
+                        </tr>
+                    </table></br>
+                    <lightning-button label="View BreakUp" variant="Success" onclick={handleViewRefundBrkButtonClick} data-item-uuid={item.itemUuid} class="button"></lightning-button>
+                </div>
+            </template>
+
+        </template>
+       
+        <template if:false={responseRefundListData}>
+                <p>No data available</p>
+        </template>
+
+     </template>
+
+<template if:true={isRefundBrkupView}> 
+     <div class="viewContainer">
+         <template if:true={sgHeading}>
+           <p class="bold-center">{sgHeading}--{sgOffrText}</p>
+        </template>
+    <table class="vertical-table">
+        <caption>Refund BreakUp View</caption>
+        <thead>
+            <tr>
+                <th>Component Name</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <template for:each={responseRefundBrkViewList} for:item="breakDown">
+                <tr key={breakDown.componentName}>
+                    <td style="font-weight: bold;">{breakDown.componentName}</td>
+                    <td style="font-weight: bold;">{breakDown.amount}</td>
+                </tr>
+                <template for:each={breakDown.detailedBreakDown} for:item="detailed">
+                    <tr key={detailed.componentName}>
+                        <td>{detailed.componentName}</td>
+                        <td>{detailed.amount}</td>
+                    </tr>
+                </template>
+            </template>
+        </tbody>
+
+    </table></br>
+     <template if:true={sgHeading}>
+           <p class="bold-center">{sgHeading}--{sgOffrText}</p>
+        </template></br>
+        
+<div style="text-align: center;">
+ <lightning-button label="Back to Refund List" variant="Success" onclick={handleBacktToRfndLstClick} class="button"></lightning-button>
+</div>
+    </div></br>
+
+</template>
+
+ <template if:true={isError}>
+        <center>  <br/><p><b style="color: rgb(255, 0, 0);">ErrorMessage : {errordtlMessage}</b></p></center> 
+        <center>  <br/><p><b style="color: rgb(255, 0, 0);">ApiResponse : {errorMsg}</b></p></center> 
+        <center>  <br/><p><b style="color: rgb(255, 0, 0);">ErrorCode : {errorCod}</b></p></center> 
+    </template></br>
+
+</template>

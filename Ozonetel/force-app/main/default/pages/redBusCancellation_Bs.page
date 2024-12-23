@@ -1,0 +1,716 @@
+<!--
+* (c) 2017 RedBus
+*
+* Name           : redBusCancellationPage
+* Created Date   : 18 Dec 2017
+* Created By     : Sreenivas M
+* Purpose        : Visual force page to perform the cancellations,exceptional refunds and force cancellation updates
+*
+-->
+<apex:page showHeader="false" standardController="Order_Items__c" extensions="redBusCancellation" docType="html-5.0" standardStylesheets="false" lightningStylesheets="false">
+ 
+  <apex:slds />
+  
+  <apex:form id="formId">
+  <script>
+      if (typeof overridePageMessages == 'function') {
+          overridePageMessages(); 
+   }      
+   </script>
+   
+    <apex:outputPanel rendered="{!AND(!refundCaseExists,OR(NOT(IsBlank(orIt.Order_Item_Reference_No__c)),orIt.Item_Type__c =='COUPON'),NOT(contains(orIt.Transaction_Status__c,'GFT - Payment')),NOT(contains(orIt.Transaction_Status__c,'Ticket Cancelled')),NOT(contains(orIt.Transaction_Status__c,'Coupon')),NOT(contains(orIt.Transaction_Status__c,'FT')))}">
+                  <apex:outputPanel >
+                   
+                     <table width="100%"> 
+                         <tr >
+                             <td class="slds-text-align_center">
+                                 <apex:commandButton styleClass="btn btn-lg btn-primary nextBtn pull-center greenWhiteBtn" value="Get Refundable Amount" rendered="{!!hide1stButton}" action="{!getRefundAmount}" reRender="refundDetails" status="status1"/>
+                             </td>
+                             
+                             <td class="slds-text-align_center">
+                                 <apex:commandButton styleClass="btn btn-lg btn-primary nextBtn pull-center greenWhiteBtn" value="Initiate Cancellation" rendered="{!!hide1stButton}" action="{!IsTicketCancellable}" reRender="formId" status="status1"/>
+                             </td>
+                             
+                             
+                         </tr>
+                      
+                     </table> 
+                  </apex:outputPanel>
+                  
+              <apex:actionStatus id="status1">
+                   <apex:facet name="start">
+                      <div class="demo-only" style="height:6rem">
+                        <div class="slds-spinner_container" style="position:fixed">
+                            <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+                                <span class="slds-assistive-text">Loading</span>
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                     </div>
+                 </apex:facet> 
+             </apex:actionStatus>
+                
+        
+        <!-- Show The Cancellation Refund Amount Breakup Start-->
+        <apex:outputPanel id="refundDetails">
+            <div class="slds-text-heading_large slds-text-align_center slds-text-color_success"><b><i><apex:outputText value="{!detailed_msg }" rendered="{!Is_non_refundable}" /></i></b></div>
+        
+         <div>
+         <apex:outputpanel rendered="{!showBreakUp}">
+          
+             <div class="table-responsive" style="margin-top: 1%;">
+                  <table class="responsive" align="center" border="2" style="width:80% !important">
+                      <tr>
+                          <td width="20%" class="FontSize"><b>Total Amount Paid</b></td>
+                          <td width="10%" class="FontSize"><apex:outputText value="{!Tot_amount_paid }"/></td>
+                      </tr>
+                      <tr>
+                          <td width="20%" class="FontSize"><b>Insurance Charges</b></td>
+                          <td width="10%" class="FontSize"><apex:outputText value="{!Insurance_charge}"/></td>
+                      </tr>
+                      <tr>
+                          <td width="20%" class="FontSize"><b>Cancellation Charges</b></td>
+                          <td width="10%" class="FontSize"><apex:outputText value="{!Cancellation_charge}"/></td>
+                      </tr>
+                      <tr>
+                          <td width="20%" class="FontSize"><b>Redbus Discount</b></td>
+                          <td width="10%" class="FontSize"><apex:outputText value="{!Redbus_discount}"/></td>
+                      </tr>
+                      <tr>
+                          <td width="20%" class="FontSize"><b>Operator Discount</b></td>
+                          <td width="10%" class="FontSize"><apex:outputText value="{!Operator_discount}"/></td>
+                      </tr>
+                      <tr>
+                          <td width="20%" class="FontSize"><b>Addons Refund</b></td>
+                          <td width="10%" class="FontSize"><apex:outputText value="{!addOnsRefund}"/></td>
+                      </tr>
+                      <tr>
+                          <td width="20%" class="FontSize" style=" background-color: #4CAF50;-webkit-text-fill-color: aliceblue;"><b>Refund Amount</b></td>
+                          <td width="10%" class="FontSize" style=" background-color: #4CAF50;-webkit-text-fill-color: aliceblue;"><apex:outputText value="{!Order_Items__c.Total_Fare_Currency__c} {!canRefundAmount}"/></td>
+                      </tr>
+                  </table>
+              </div>     
+            </apex:outputpanel>
+         </div>
+       </apex:outputPanel>
+        <!-- Show The Cancellation Refund Amount Breakup End-->
+
+        <!--Normal Cancellation And Exceptional Refund Section Start-->
+            <!-- Exceptional Refunds Start-->
+              <div class="container">
+                <apex:pageMessages id="busCreationMsg" escape="false"></apex:pageMessages>
+
+                  <apex:outputPanel id="expId" rendered="{!cp.Message_Valid__c && cp.isTicketCancellable__c=false && cp.Max_Refundable_Amount__c>0  && !forceAPICalled && !normalAPICalled && orIt.Item_Type__c!='COUPON' }">
+                  
+                  <div class="slds-text-heading_large slds-text-align_center" style="color:red;background-color:yellow;font-weight: bold">Exceptional Refunds</div>
+                 <div style="font-size: initial;">Note: Please Enter the Amount to be refunded and submit the reason:Exceptional Refunds</div>
+                 <div class="table-responsive">
+                      <table class="responsive" width="80%" align="center">
+                          <tr>
+                              <td width="30%" class="FontSize"><b>Max Refundable Amount</b></td>
+                              <td width="70%" class="FontSize"><apex:outputText value="{!Order_Items__c.Total_Fare_Currency__c} {!cp.Max_Refundable_Amount__c}"/></td>
+                          </tr>
+                          <tr>
+                              <td width="30%" class="FontSize"><b>Amount to be Refunded</b></td>
+                              <td width="70%" class="FontSize"><apex:inputField styleClass="form-control" value="{!cp.FC_Refund_Amount__c}"/></td>
+                          </tr>
+                          <tr>
+                              <td width="30%" class="FontSize"><b>Refund Reason</b></td>
+                              <td width="70%" class="FontSize">
+                                  <apex:selectList styleClass="form-control" value="{!cp.Refund_Reason__c}" size="1" style="font-size: 11px;">
+                                      <apex:selectOption itemLabel="Collectible From BO" itemValue="Collectible From BO"/>
+                                      <apex:selectOption itemLabel="Customer Delight" itemValue="Customer Delight"/>
+                                      <apex:selectOption itemLabel="Zero Question Policy-Incorrect Booking" itemValue="ZQP Incorrect Booking"/>
+                                      <apex:selectOption itemLabel="Zero Question Policy-Incorrect Source/destination" itemValue="ZQP Incorrect source-destination"/>
+                                      <apex:selectOption itemLabel="Zero Question Policy-Incorrect Gender/Name Change" itemValue="ZQP Incorrect gender-nameChange"/>
+                                      <apex:selectOption itemLabel="Technical Error" itemValue="Technical Error"/>
+                                      <apex:selectOption itemLabel="Instant refund - customer delight" itemValue="Instant refund - customer delight" rendered="{!enableBolt}"/>
+                                      <apex:selectOption itemLabel="Instant refund - Collectible from BO" itemValue="Instant refund - Collectible from BO" rendered="{!enableBolt}"/>
+                                      <apex:selectOption itemLabel="OTG Refund" itemValue="OTG Refund" rendered="{!orIt.Business_Unit__c=='REDBUS_IN'}"/>
+                                     <apex:actionSupport event="onchange" action="{!selectRefundreason}"  reRender="formId,expId"/>
+
+                                  </apex:selectList>
+                              </td>
+                          </tr>
+                          
+                         <apex:outputLabel rendered="{!isZQPrefundType}" id="oldTinId">
+                         <tr>
+                          <td width="30%" class="FontSize"><b>Tin Number</b></td>
+                          <td width="70%" class="FontSize">
+                              <apex:inputtext value="{!ZQPtin}" styleClass="form-control"/>
+                          </td>
+                          </tr>
+                        </apex:outputLabel>
+                        
+                          <tr>
+                              <td width="30%" class="FontSize"><b>Parent Case Number</b></td>
+                              <td width="70%" class="FontSize">
+                                  <apex:inputtext value="{!parentCase}" styleClass="form-control">
+                                 <apex:actionsupport event="onchange" action="{!getSuggestedRefundAmount}" reRender="expId"/>
+                                  </apex:inputtext>
+                              </td>
+                          </tr>
+                          
+                          <tr>
+                           <td width="30%" class="FontSize"><b>Suggested Amount</b></td>
+                            <!-- <td width="30%" class="FontSize"><b>{!suggestedAmount}</b></td> -->
+                            <td width="70%" class="FontSize">
+                                <apex:input value="{!suggestedAmount}" disabled="true" styleClass="form-control"/>
+                            </td>
+                       
+                          </tr>
+                          
+                          <tr>
+                              <td width="30%" class="FontSize"><b>Refund Description</b></td>
+                              <td width="70%" class="FontSize"><apex:inputText styleClass="form-control" value="{!refundDescription}"/></td>
+                          </tr>
+                          <apex:outputLabel rendered="{!AND(NOT(cp.NC_API_Ping__c),cp.Refund_Reason__c=='Technical Error')}" styleClass="FontSize" style="width: 17.5%;margin-left: 272px;"></apex:outputLabel><apex:inputText value="{!refundDescription}" rendered="{!AND(NOT(cp.NC_API_Ping__c),cp.Refund_Reason__c=='Technical Error')}" style="width: 40.6%;font-size: 16px;border: 1px solid #ccc;border-radius: 4px;margin-top: 10px;"></apex:inputText>
+                      </table>
+                  </div>
+                    <apex:commandButton value="Submit For Approval" styleClass="btn btn-lg btn-primary nextBtn pull-center greenWhiteBtn" action="{!submitForApproval}" reRender="formId,expId" status="status1"/>
+                  </apex:outputPanel>
+
+                  <apex:outputPanel rendered="{!cp.FC_IsSuccess__c && forceAPICalled}" id="force">
+                      <div class="table-responsive">
+                          <table  width="80%" align="center">
+                              <tr>    
+                                  <td class="FontSize"><b>Message</b></td>
+                                  <td class="FontSize">{!cp.FC_Response_Message__c}</td>
+                              </tr>
+                              <tr>    
+                                  <td class="FontSize"><b>Refunded Amount</b></td>
+                                  <td class="FontSize"><apex:outputField value="{!cp.FC_Refund_Amount__c}"/> </td>
+                              </tr>
+                            </table>
+                      </div>
+                  </apex:outputPanel>
+               </div>
+            <!-- Exceptional Refunds End-->
+           
+           <!-- Normal Cancellation Start-->
+            <apex:outputPanel rendered="{!cp.isTicketCancellable__c  && !normalAPICalled}">
+            <apex:outputLabel rendered="{!!cp.isPartialCancellation__c}" style="background-color:yellow;margin-left:40em;margin-bottom:0em;font-style: italic;font-size: 11px;">Note: This Ticket is not eligible for Partial Cancellation</apex:outputLabel>
+            <apex:outputLabel rendered="{!cp.isPartialCancellation__c}" style="background-color:yellow;margin-left:40em;margin-bottom:0em;font-style: italic;font-size: 11px;">Note: This Ticket is eligible for Partial Cancellation</apex:outputLabel>
+             
+             <apex:outputpanel rendered="{!showRefundBreakup}" >
+              
+                <div class="table-responsive" style="margin-top: .5%;margin-bottom:.5%">
+               <!--        <table class="responsive" align="center" border="2" style="width:60% !important">
+                          <tr>
+                              <th width="15%" class="FontSize"><b>Name</b></th>
+                              <th width="15%" class="FontSize"><b>Total Amount Paid</b></th>
+                              <th width="15%" class="FontSize"><b>Cancellation Charges</b></th>
+                              <th width="15%" class="FontSize"><b>Redbus Discount</b></th>
+                              <th width="15%" class="FontSize" style=" background-color: #4CAF50;-webkit-text-fill-color: aliceblue;"><b>Refundable Amount</b></th>
+                              
+                          </tr>
+                          
+                          <tr>
+                            <td width="15%" class="FontSize"><b>Ticket</b></td>
+                            <td width="15%" class="FontSize"><apex:outputText value="{!Tot_amount_paid }"/></td>
+                            <td width="15%" class="FontSize">(-)<apex:outputText value="{!Cancellation_charge}"/></td>
+                            <td width="15%" class="FontSize">(-)<apex:outputText value="{!Redbus_discount}"/></td>
+                            <td width="15%" class="FontSize" style=" background-color: #4CAF50;-webkit-text-fill-color: aliceblue;"><apex:outputText value="{!Order_Items__c.Total_Fare_Currency__c} {!Refund_amount}"/></td>
+                          </tr>
+                          <tr>
+                            <td width="15%" class="FontSize"><b>Addon 1</b></td>
+                             <td width="15%" class="FontSize"><apex:outputText value="{!Tot_amount_paid }"/></td>
+                            <td width="15%" class="FontSize">(-)<apex:outputText value="{!Cancellation_charge}"/></td>
+                            <td width="15%" class="FontSize">(-)<apex:outputText value="{!Redbus_discount}"/></td>
+                            <td width="15%" class="FontSize" style=" background-color: #4CAF50;-webkit-text-fill-color: aliceblue;"><apex:outputText value="{!Order_Items__c.Total_Fare_Currency__c} {!Refund_amount}"/></td>
+                          </tr>
+                          <tr>
+                            <td width="15%" class="FontSize"><b>Addon 2</b></td>
+                            <td width="15%" class="FontSize"><apex:outputText value="{!Tot_amount_paid }"/></td>
+                            <td width="15%" class="FontSize">(-)<apex:outputText value="{!Cancellation_charge}"/></td>
+                            <td width="15%" class="FontSize">(-)<apex:outputText value="{!Redbus_discount}"/></td>
+                            <td width="15%" class="FontSize" style=" background-color: #4CAF50;-webkit-text-fill-color: aliceblue;"><apex:outputText value="{!Order_Items__c.Total_Fare_Currency__c} {!Refund_amount}"/></td>
+                          </tr>
+                          </table>
+                          -->
+                     <table class="responsive" align="center" border="2" style="width:60% !important">  
+                         <tr>
+                              <th width="15%" class="FontSize"><b>Name</b></th>
+                              <th width="15%" class="FontSize"><b>Total Amount Paid</b></th>
+                              <th width="15%" class="FontSize"><b>Cancellation Charges</b></th>
+                              <th width="15%" class="FontSize"><b>Redbus Discount</b></th>
+                              <th width="15%" class="FontSize" style=" background-color: #4CAF50;-webkit-text-fill-color: aliceblue;"><b>Refundable Amount</b></th>
+                              
+                          </tr>
+                          
+                          <tr>
+                            <td width="15%" class="FontSize"><b>Bus Ticket</b></td>
+                            <td width="15%" class="FontSize"><apex:outputText value="{!Tot_amount_paid }"/></td>
+                            <td width="15%" class="FontSize">(-)<apex:outputText value="{!Cancellation_charge}"/></td>
+                            <td width="15%" class="FontSize">(-)<apex:outputText value="{!Redbus_discount}"/></td>
+                            <td width="15%" class="FontSize" style=" background-color: #4CAF50;-webkit-text-fill-color: aliceblue;"><apex:outputText value="{!Order_Items__c.Total_Fare_Currency__c} {!Refund_amount}"/></td>
+                          </tr>
+                  <apex:repeat value="{!addonList}" var="v">
+                 
+                  <tr>
+                  <td width="15%" class="FontSize"><b><apex:outputText value="{!v.itemName}"/></b></td>
+                   
+                  <td width="15%" class="FontSize"><apex:outputText value="{!v.totalFare}"/></td>
+                  <td width="15%" class="FontSize"></td><td width="15%" class="FontSize">0</td>
+                   <td width="15%" class="FontSize" style=" background-color: #4CAF50;-webkit-text-fill-color: aliceblue;"><apex:outputText value="{!v.refundableAmount}"/></td>
+                  <!-- <td width="15%" class="FontSize"><apex:outputText value="{!v.isAddOnCancellable}"/></td>-->
+                  </tr>
+                  
+                  
+                  </apex:repeat>
+                   <tr>
+                   <td width="15%" class="FontSize"><b>Total</b></td>
+                   <td></td> <td></td> <td></td>                
+                  <td width="15%" class="FontSize" style=" background-color: #4CAF50;-webkit-text-fill-color: aliceblue;"><apex:outputText value="{!canRefundAmount}"/></td>
+                   </tr> 
+                 
+                   </table>
+                  </div> 
+                
+             </apex:outputpanel>
+                          
+            <apex:outputPanel rendered="{!cp.isPartialCancellation__c}" >
+            <div class="container">
+                <div class="row">
+                    <div class="table-responsive" >
+                      <table class="responsive" align="center" style="width:58% !important">
+                          <tr>
+                              <td width="30%" class="FontSize"><b>Cancellation Type</b></td>
+                              <td width="80%">
+                                  <apex:selectList value="{!cp.Full_Cancellation_Type__c}" size="1" rendered="{!cp.NC_API_Ping__c=false}" styleClass="form-control" style="font-size:11px;">
+                                      <apex:selectOption itemValue="Full Cancelllation" itemLabel="Full Cancelllation"/>
+                                      <apex:selectOption itemValue="Partial Cancellation" itemLabel="Partial Cancellation"/>
+                                      <apex:actionSupport event="onchange"  action="{!seatSelection}" reRender="formId" status="status1"/>
+                                  </apex:selectList>
+                              </td>
+                          </tr>
+                      </table>
+                  </div> 
+                  <apex:outputPanel rendered="{!cp.Full_Cancellation_Type__c=='Partial Cancellation'}">
+                    <div class="col-md-12">
+                        <div class="table-responsive" style="width:80%;margin-left:30em;">   
+                     <apex:outputLabel style="background-color:yellow;margin-right:50em;margin-bottom:0em;font-style: italic;font-size: 11px;">{!primarySeatMsg}</apex:outputLabel>
+  
+                        
+                            <table id="mytable" class="table table-bordred table-striped" style="width:73% !important">
+                                <thead>
+                                    <th><apex:inputCheckbox onclick="checkAll(this)"/></th>
+                                    <th style="font-size:small;">Seats</th>
+                                </thead>
+                                <apex:repeat value="{!SeatAvailable}" var="seat"  id="seatNo" >
+                                <tr>
+                                    <td class="FontSize" style="padding-top: .5em;padding-bottom: 0em;"><apex:inputCheckbox value="{!seat.isSelected}" id="checkedone" styleClass="checkthis"/></td>
+                                    <td class="FontSize" style="padding-top: .5em;padding-bottom: 0em;">{!seat.SeatNO}</td>
+                                </tr>
+                                </apex:repeat>
+                            </table>
+                        </div>
+                    </div>
+                    </apex:outputPanel>
+                </div>
+            </div>
+          
+          </apex:outputPanel>
+          
+          
+            <apex:outputPanel rendered="{!!cp.isPartialCancellation__c}">
+          
+              <div class="table-responsive">
+                  <table class="responsive" align="center" style="width:58% !important">
+                      <tr>
+                          <td width="30%" class="FontSize"><b>Cancellation Type</b></td>
+                          <td width="80%">
+                              <apex:selectList value="{!cp.Full_Cancellation_Type__c}" size="1" rendered="{!cp.NC_API_Ping__c=false}" styleClass="form-control" style="font-size: 11px;" readonly="true">
+                                  <apex:selectOption itemValue="Full Cancelllation" itemLabel="Full Cancelllation"/>
+                              </apex:selectList>
+                          </td>
+                      </tr>
+                  </table>
+               </div>
+            </apex:outputPanel>  
+            
+            <div class="table-responsive" style="margin-top:4px;">
+              <table class="responsive" align="center" style="width:55% !important">
+                   <tr>
+                      <td width="30%" class="FontSize"><b>Refund Reason</b></td>
+                      <td width="80%" class="FontSize">
+                          <apex:selectList styleClass="form-control" value="{!cp.Refund_Reason__c}" size="1" style="font-size: 11px;">
+                              <apex:selectOption itemLabel="Requested By User" itemValue="REQUESTED_BY_USER"/>
+                           <!--   <apex:selectOption itemLabel="Technical Error" itemValue="Technical Error"/> -->
+                              <apex:actionSupport event="onchange" reRender="btnPanel,refAmntPanel"/>
+                         </apex:selectList>
+                       </td>
+                  </tr>
+                  <apex:outputPanel id="refAmntPanel">
+                       <apex:outputPanel rendered="{!AND(NOT(cp.NC_API_Ping__c),cp.Refund_Reason__c=='Technical Error')}" style="margin-top:2px;" >
+                          <tr>
+                              <td width="30%" class="FontSize"><b>Refund Amount</b></td>
+                              <td width="80%" class="FontSize">
+                                <apex:inputText ></apex:inputText>   
+                              </td>
+                          </tr>
+                      </apex:outputPanel>
+                 </apex:outputPanel>
+              </table>
+            </div>
+            <apex:outputPanel id="btnPanel">
+              <apex:outputLabel rendered="{!AND(NOT(cp.NC_API_Ping__c),cp.Refund_Reason__c=='Technical Error')}" styleClass="FontSize" style="width: 17.5%;margin-left: 272px;">Refund Amount</apex:outputLabel>
+              
+               <apex:inputText value="{!cp.FC_Refund_Amount__c}" rendered="{!AND(NOT(cp.NC_API_Ping__c),cp.Refund_Reason__c=='Technical Error')}" style="width: 40.6%;font-size: 16px;border: 1px solid #ccc;border-radius: 4px;margin-top: 10px;" required="true"/>
+           
+              <apex:outputLabel rendered="{!AND(NOT(cp.NC_API_Ping__c),cp.Refund_Reason__c=='Technical Error')}" styleClass="FontSize" style="width: 17.5%;margin-left: 272px;">Refund Description</apex:outputLabel><apex:inputText value="{!refundDescription}" rendered="{!AND(NOT(cp.NC_API_Ping__c),cp.Refund_Reason__c=='Technical Error')}" style="width: 40.6%;font-size: 16px;border: 1px solid #ccc;border-radius: 4px;margin-top: 10px;"></apex:inputText>
+              
+              <apex:commandButton style="font-size: 11px;margin-left:50%" styleClass="btn btn-lg btn-primary nextBtn pull-center greenWhiteBtn" status="status1" value="Cancel Ticket" action="{!normalCancelAPI}" rendered="{!AND(NOT(cp.NC_API_Ping__c),OR(ISBLANK(cp.Refund_Reason__c),cp.Refund_Reason__c=='REQUESTED_BY_USER'))}" reRender="formId"/>
+              <apex:commandButton style="font-size: 11px;margin-left:50%" styleClass="btn btn-lg btn-primary nextBtn pull-center greenWhiteBtn" status="status1" value="Submit For Approval" action="{!submitForApproval}" rendered="{!AND(NOT(cp.NC_API_Ping__c),cp.Refund_Reason__c=='Technical Error')}" reRender="formId"/>
+            
+            </apex:outputPanel>
+          
+        </apex:outputPanel>
+          
+             <apex:outputPanel rendered="{!cp.NC_API_Ping__c  && normalAPICalled}">
+              <div class="table-responsive">
+                  <table  align="center" style="width:80% !important">
+                      <tr>    
+                          <td class="FontSize"><b>Message</b></td>
+                          <td class="FontSize">{!cp.NC_Response_Message__c}</td>
+                      </tr>
+                      <tr>    
+                          <td class="FontSize"><b>Refunded Amount</b></td>
+                          <td class="FontSize"><apex:outputField value="{!cp.NC_Refund_Amount__c}"/> </td>
+                      </tr>
+                      <apex:panelGroup rendered="{!cp.Full_Cancellation_Type__c=='Partial Cancellation'}">
+                      <tr>    
+                          <td class="FontSize"><b>New TIN</b></td>
+                          <td class="FontSize"><apex:outputField value="{!cp.NC_New_Tin__c}"/> </td>
+                      </tr>
+                      </apex:panelGroup>
+                   <!--   <tr>    
+                          <td><b>Cancellation Charges</b></td>
+                          <td><apex:outputField value="{!cp.NC_Cancellation_Charges__c}"/> </td>
+                      </tr> -->
+                  </table>
+              </div>
+          </apex:outputPanel>
+           <!-- Normal Cancellation End-->
+        <!-- Normal Cancellations and Exceptional Refundd Processing Section End -->
+      </apex:outputPanel>
+      
+           
+      <apex:outputPanel rendered="{!AND(canOrdItem.size<=0,OR((existCPS.size>0 && !IsBlank(orIt.Order_Item_Reference_No__c) && orIt.Transaction_Status__c!='Booked'),contains(orIt.Transaction_Status__c,'Ticket Cancelled')))}">
+          <div class="slds-text-heading_large slds-text-align_center slds-text-color_success"><b><i>Ticket is Already Cancelled</i></b></div>
+      </apex:outputPanel>
+      
+      <apex:outputPanel rendered="{!AND(canOrdItem.size<=0,OR((existCPS.size>0 && IsBlank(orIt.Order_Item_Reference_No__c) && orIt.Transaction_Status__c!='Booked'),contains(orIt.Transaction_Status__c,'Coupon Cancelled')))}">
+          <div class="slds-text-heading_large slds-text-align_center slds-text-color_success"><b><i>Coupon is Already Cancelled</i></b></div>
+      </apex:outputPanel>
+      
+      <apex:outputPanel rendered="{!AND(canOrdItem.size<=0,OR((existCPS.size>0 && IsBlank(orIt.Order_Item_Reference_No__c) && orIt.Transaction_Status__c!='Booked'),contains(orIt.Transaction_Status__c,'Coupon Redeemed')))}">
+          <div class="slds-text-heading_large slds-text-align_center slds-text-color_success"><b><i>Coupon is Already Redeemed.Hence, You cant Cancel the Coupon</i></b></div>
+      </apex:outputPanel>
+      
+      <apex:outputPanel rendered="{!AND(canOrdItem.size<=0,OR((existCPS.size>0 && !IsBlank(orIt.Order_Item_Reference_No__c) && orIt.Transaction_Status__c=='Booked'),AND(contains(orIt.Transaction_Status__c,'Booked'),orIt.Refund_Order_Items__r.size>0)))}">
+          <div class="slds-text-heading_large slds-text-align_center slds-text-color_success"><b><i>Exceptional Refund Is Processed For This Ticket As {!exceptionalRefundReason} </i></b></div>
+      </apex:outputPanel>
+      
+      <apex:outputPanel rendered="{!AND(refundCaseExists,existCPS.size<=0,canOrdItem.size<=0,orIt.Refund_Order_Items__r.size<=0,orIt.Transaction_Status__c=='Booked',!IsBlank(orIt.Order_Item_Reference_No__c))}">
+          <div class="slds-text-heading_large slds-text-align_center slds-text-color_success"><b><i>Exceptional Refund Case Has Already Submitted For Approval.</i></b></div>
+      </apex:outputPanel>
+      
+      <apex:outputPanel rendered="{!AND(IsBlank(orIt.Order_Item_Reference_No__c),orIt.Item_Type__c=='BUS')}">
+          <div class="slds-text-heading_large slds-text-align_center slds-text-color_success"><b><i>This Ticket is Not Booked.. Hence, You cant Cancel the Ticket..!!!</i></b></div>
+      </apex:outputPanel>
+      
+      <apex:outputPanel rendered="{!AND(contains(orIt.Transaction_Status__c,'FT'),orIt.Item_Type__c=='COUPON')}">
+          <div class="slds-text-heading_large slds-text-align_center slds-text-color_success"><b><i>This Coupon is Not Booked.. Hence, You cant Cancel this Coupon..!!!</i></b></div>
+      </apex:outputPanel>
+      
+    <!---- Force Cancellation Update Start---------->
+    <apex:outputPanel id="mainPanel" layout="block">
+         <script>
+      if (typeof overridePageMessages == 'function') {
+          overridePageMessages(); 
+   }      
+   </script>
+          <apex:pageMessages id="errMsg"></apex:pageMessages>
+          <Script type="text/javascript">
+          if('{!cpsLog.FCU_Is_Success__c}' === 'false')
+           {
+                $('.buttonStyleCls').hide();
+           
+           }
+          </Script>
+           <apex:outputLabel styleClass="slds-text-heading_large slds-align_absolute-center" rendered="{!AND(NOT($User.Force_Cancellation_User__c),canOrdItem.size>0,operCancellationStatus=='OPERATOR_CANCELLATION_INITIATED')}"><b><i style="background: yellow;">This is Force Cancelled Ticket!!!</i></b></apex:outputLabel>
+          
+          <apex:pageBlock id="pb" rendered="{!AND($User.Force_Cancellation_User__c,canOrdItem.size>0,operCancellationStatus=='OPERATOR_CANCELLATION_INITIATED')}"> 
+                <div class="slds-text-heading_large slds-align_absolute-center slds-m-bottom_small"><b><i style="background: yellow;">This is Force Cancelled Ticket!!!</i></b></div>
+                <apex:commandButton value="Update Force Cancellation" styleClass="buttonStyleCls btn btn-lg btn-primary nextBtn pull-center greenWhiteBtn slds-align_absolute-center" onclick="enableFCrefund();return false;" />
+       
+                <apex:outputPanel id="op1" styleClass="fcpanel slds-align_absolute-center" layout="block" style="font-size: medium !important">
+                    <apex:inputHidden value="{!selStatus}" id="selStatusHidden"/>
+       
+                    <apex:pageBlockSection id="pb1" columns="1">         
+                  
+                        <apex:pageBlockSectionItem >
+                           <apex:outputLabel for="selId">Operator Status</apex:outputLabel>
+                           <select onchange="showRefundAmnt('{!$Component.pb.selStatusHidden}');return false;" id="selId"  class="selOpt"> 
+                               <option>--None--</option>
+                               <option value="OPERATOR_CANCELLATION_FAILED">Operator Denied</option>
+                               <option value="OPERATOR_CANCELLATION_SUCCESS">Operator Accepted</option>
+                               <option value="Try Later">Try Later</option>
+                           </select>
+                        </apex:pageBlockSectionItem>
+                               
+                        <apex:pageBlockSectionItem >                  
+                            <apex:outputLabel styleClass="refundAmnt" >Opeator Cancellation Charges</apex:outputLabel>
+                            <apex:inputtext value="{!forceCancelRefundAmnt}" styleClass="refundAmnt" onkeypress="return isNumber(event);" required="{!selStatus=='OPERATOR_CANCELLATION_SUCCESS'}"/>
+                        </apex:pageBlockSectionItem>
+                        
+                         <apex:pageBlockSectionItem >                  
+                            <apex:outputLabel styleClass="fcDeniedReasonCls" >Opeator Denied Reason</apex:outputLabel>
+                            <apex:selectList size="1" styleClass="fcDeniedReasonCls" required="{!selStatus=='OPERATOR_CANCELLATION_FAILED'}" value="{!fcuDeniedReason}">
+                               <apex:selectOption itemLabel="--None--" itemValue=""/>
+                               <apex:selectOption itemLabel="BO Policy Expired" itemValue="BO Policy Expired"/>
+                               <apex:selectOption itemLabel="Special Service" itemValue="Special Service"/>
+                               <apex:selectOption itemLabel="Cancellation Policy Mis-Match" itemValue="Cancellation Policy Mis-Match"/>
+                               <apex:selectOption itemLabel="Preponed/Postponed" itemValue="Preponed/Postponed"/>
+                               <apex:selectOption itemLabel="Cancellation Link (not available)" itemValue="Cancellation Link (not available)"/>
+                               <apex:selectOption itemLabel="Cancellation Link Error" itemValue="Cancellation Link Error"/>
+                               <apex:selectOption itemLabel="Free Cancellation (rB offer)" itemValue="Free Cancellation (rB offer)"/>
+                               <apex:selectOption itemLabel="RTC Errors" itemValue="RTC Errors"/>
+                               <apex:selectOption itemLabel="RB Down Time Reason" itemValue="RB Down Time Reason"/>
+                            </apex:selectList>
+                           <!-- <apex:inputtext value="{!forceCancelRefundAmnt}" styleClass="refundAmnt" onkeypress="return isNumber(event);" required="{!selStatus=='OPERATOR_CANCELLATION_SUCCESS'}"/>-->
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                         <apex:outputLabel >Case Comment</apex:outputLabel>
+                         <apex:inputtextarea value="{!refundDescription}"/>
+                        </apex:pageBlockSectionItem>
+                  
+                      <apex:commandButton value="Update" styleClass="btn btn-lg btn-primary nextBtn pull-center greenWhiteBtn slds-align_absolute-center slds-m-top_small" action="{!updateOperCancellationStatus}" reRender="errMsg,mainPanel" status="status1"/>
+                      
+                    </apex:pageBlockSection>
+                
+                </apex:outputPanel>
+           
+          </apex:pageBlock>
+    </apex:outputPanel>
+    <!---- Force Cancellation Update end---------->
+    
+    <apex:outputPanel id="PhsCnclmainPanel" layout="block">
+         <script>
+          if (typeof overridePageMessages == 'function') {
+            overridePageMessages(); 
+         }      
+      </script>
+      <apex:pageMessages id="errMsgg"></apex:pageMessages>
+      <Script type="text/javascript">
+      if('{!cpsLog.FCU_Is_Success__c}' === 'false')
+         {
+           $('.PhysCnlbuttonStyleCls').hide();
+           
+         }
+          </Script>
+      <apex:outputLabel styleClass="slds-text-heading_large slds-align_absolute-center" rendered="{!(PhysCancellationStatus=='TR_CANCELLATION_INITIATED_PO_COMPLETED')}"><b><i style="background: yellow;">This is Physical Cancellation Ticket!!!</i></b></apex:outputLabel>
+       <apex:pageBlock id="pcb" rendered="{!PhysCancellationStatus=='TR_CANCELLATION_INITIATED_PO_COMPLETED'}">
+       
+       <apex:commandButton value="Update Physical Cancellation Staus" styleClass="PhysCnlbuttonStyleCls btn btn-lg btn-primary nextBtn pull-center greenWhiteBtn slds-align_absolute-center" rendered="{!!isPhysCanclErrorMsg}" onclick="enablePhyCancl();return false;" />
+       
+       <apex:outputPanel id="op1" rendered="{!!isPhysCanclErrorMsg}" styleClass="pcpanel slds-align_absolute-center" layout="block" style="font-size: medium !important">
+            <apex:inputHidden value="{!selOptrStatus}" id="selOprtrStatusHidden"/>
+              
+              <apex:pageBlockSection id="pb1" columns="1">         
+                
+               <apex:pageBlockSectionItem >
+                   <apex:outputLabel for="selId">Operator Status</apex:outputLabel>
+                   <select onchange="showPhysCanclDenySec('{!$Component.pcb.selOprtrStatusHidden}');return false;" id="selId"  class="selOpt"> 
+                       <option>--None--</option>
+                       <option value="OPERATOR_CANCELLATION_FAILED">Operator Denied</option>
+                       <option value="OPERATOR_CANCELLATION_SUCCESS">Operator Accepted</option>
+                   </select>
+                </apex:pageBlockSectionItem>
+                
+              <apex:pageBlockSectionItem >                  
+                  <apex:outputLabel styleClass="optrCnRNo" >CNR no:</apex:outputLabel>
+                  <apex:inputtext value="{!cnrVale}" styleClass="optrCnRNo"  required="{!selOptrStatus=='OPERATOR_CANCELLATION_SUCCESS'}"/>
+             </apex:pageBlockSectionItem>
+             
+             <apex:pageBlockSectionItem >                  
+                <apex:outputLabel styleClass="PhycDeniedReasonCls" >Opeator Denied Reason</apex:outputLabel>
+                <apex:selectList size="1" styleClass="PhycDeniedReasonCls" required="{!selOptrStatus=='OPERATOR_CANCELLATION_FAILED'}" value="{!physCanclDeniedReason}">
+                   <apex:selectOption itemLabel="--None--" itemValue=""/>
+                   <apex:selectOption itemLabel="BO Policy Expired" itemValue="BO Policy Expired"/>
+                   <apex:selectOption itemLabel="Cancellation Link (not available)" itemValue="Cancellation Link (not available)"/>
+                   <apex:selectOption itemLabel="Cancellation Link Error" itemValue="Cancellation Link Error"/>
+                   <apex:selectOption itemLabel="Cancellation Policy Mis-Match" itemValue="Cancellation Policy Mis-Match"/>
+                   <apex:selectOption itemLabel="RB Down Time Reason" itemValue="RB Down Time Reason"/>
+                </apex:selectList>
+             </apex:pageBlockSectionItem>
+                        
+              <apex:commandButton value="Update" styleClass="btn btn-lg btn-primary nextBtn pull-center greenWhiteBtn slds-align_absolute-center slds-m-top_small" action="{!updateOpertPhysCancellationStatus}" reRender="errMsgg,PhsCnclmainPanel" status="status1"/>
+
+              </apex:pageBlockSection>
+
+          </apex:outputPanel>
+
+      </apex:pageBlock>
+    </apex:outputPanel>
+  </apex:form>
+  
+<style>
+    .FontSize
+    {
+        font-size: 11px;
+    }
+
+    .message.errorM3,.message.confirmM3 
+    {
+        background-color: #ffc;
+        border-style: solid;
+        border-width: 1px;
+        color: #000;
+    }
+
+    .msgIcon {
+        display: none!important
+    }
+    .customMessage * {
+        color: #fff!important
+    }
+    .customMessage {
+        margin: 5px 0!important;
+        max-width: 1280px;
+        opacity: 1!important;
+        width: 100%;
+        font-size: 12px;
+        border: 0px;
+        padding-left: 10px;
+    }
+    .message {
+        opacity: .1
+    }
+    .greenWhiteBtn
+    {
+        background:#7af399 ;color:white;font-size: 13px !important;
+    }
+</style>
+
+<script>
+    $(document).ready(function(){
+        overridePageMessages();    
+    });
+    
+    function checkAll(cb)
+    {
+        var inputElem = document.getElementsByTagName("input");
+        for(var i=0; i<inputElem.length; i++)
+        {
+            if(inputElem[i].id.indexOf("checkedone")!=-1)
+            inputElem[i].checked = cb.checked;
+        }
+
+    }
+    
+    function enableFCrefund()
+    {
+      $('.fcpanel').toggle();
+      $('.buttonStyleCls').toggle();
+    }
+    
+    function enablePhyCancl()
+    {
+       $('.pcpanel').toggle();
+       $('.PhysCnlbuttonStyleCls').toggle();
+    }
+    
+    function isNumber(evt) 
+    {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && charCode != 46 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+        
+    }
+    
+    function showPhysCanclDenySec(hiddenId)
+    {
+      
+      var m= $('.selOpt :selected').text();
+       document.getElementById(hiddenId).value =$('.selOpt :selected').val();
+        if(m === 'Operator Accepted')
+        {
+            $('.PhycDeniedReasonCls').hide();
+            $('.optrCnRNo').show();
+            
+        }
+        else if(m === 'Operator Denied')
+        {
+           
+            $('.optrCnRNo').hide();
+            $('.PhycDeniedReasonCls').show();
+            
+        }
+    }
+    
+    function showRefundAmnt(hiddenId)
+    {
+        var m= $('.selOpt :selected').text();
+        document.getElementById(hiddenId).value =$('.selOpt :selected').val();
+        if(m === 'Operator Accepted')
+        {
+            $('.refundAmnt').show();
+            $('.fcDeniedReasonCls').hide();
+        }
+        else if(m === 'Operator Denied')
+        {
+            $('.refundAmnt').hide();
+            $('.fcDeniedReasonCls').show();
+            
+        }
+        
+        else if(m === 'Try Later')
+        {
+            $('.refundAmnt').hide();
+            $('.fcDeniedReasonCls').hide();
+            
+        }
+        
+        
+    }
+  
+    $('.refundAmnt').hide();
+    $('.fcpanel').hide();
+    $('.fcDeniedReasonCls').hide();
+    
+    $('.optrCnRNo').hide();
+    $('.pcpanel').hide();
+    $('.PhycDeniedReasonCls').hide();
+   
+    function overridePageMessages(){    
+        var textureEffect = '';
+        //Uncomment below line for texture effect on page messages
+        //textureEffect = 'slds-theme--alert-texture';
+
+        $('.warningM3').addClass('slds-notify slds-notify--toast slds-theme--warning customMessage '+textureEffect);          
+        $('.confirmM3').addClass('slds-notify slds-notify--alert slds-theme--success  customMessage '+textureEffect);    
+        $('.errorM3').addClass('slds-notify slds-notify--alert slds-theme--error customMessage '+textureEffect);                  
+        $('.infoM3').addClass('slds-notify slds-notify--toast customMessage '+textureEffect);    
+
+        $('.errorM3').removeClass('errorM3'); 
+        $('.confirmM3').removeClass('confirmM3'); 
+        $('.infoM3').removeClass('infoM3');   
+        $('.warningM3').removeClass('warningM3');  
+    }
+</script>
+  <apex:stylesheet value="{!$Resource.LoadingStatus}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.bootstrap_3_3_0, 'bootstrap-3.3.0/dist/css/bootstrap.min.css')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.bootstrap_3_3_0, 'bootstrap-3.3.0/dist/js/bootstrap.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.bootstrap_3_3_0, 'bootstrap-3.3.0/dist/js/bootstrap.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.bootstrap_3_3_0, 'bootstrap-3.3.0/dist/js/npm.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.bootstrap_3_3_0, 'bootstrap-3.3.0/js/tab.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.bootstrap_3_3_0, 'bootstrap-3.3.0/js/button.js')}"/>
+  <apex:includeScript value="//code.jquery.com/jquery-1.11.1.min.js"/>
+</apex:page>

@@ -1,0 +1,49 @@
+<template>
+<div class="slds-box">
+<lightning-card  icon-name="custom:custom19">
+<b slot="title" >Cases</b>
+<lightning-accordion onsectiontoggle={handleSectionToggle}  active-section-name={activeSection}>
+    <template if:true={showparent}>
+
+    <lightning-accordion-section name='Parent Case' label= 'Parent Case' >
+            <table>
+            <th>Case Number</th>
+            <th>Status</th> 
+            <tr><td><lightning-button key={parentCase.Id} value={parentCase.Id} variant="base" label={parentCase.CaseNumber} onclick={handleparentCase} ></lightning-button></td>
+            <td>{parentCase.Status}</td></tr>           
+            </table>
+    </lightning-accordion-section>
+</template>            
+<template if:true={showChildCases}> 
+    <lightning-accordion-section name='Child Cases' label= 'Child Cases' >      
+            <table>
+                <tr>
+                <th>Case Number</th>
+                <th>Status</th> 
+            </tr>
+                <template for:each={childCases} for:item="c">
+                    <tr key={c.Id} ><td ><lightning-button key={c.Id} value={c.Id} variant="base" label={c.CaseNumber} onclick={handlepChildCase} ></lightning-button></td>
+                        <td>{c.Status}</td></tr>                   
+                </template>
+             </table>
+    </lightning-accordion-section>
+</template>                
+
+<template if:true={showCases}> 
+    <lightning-accordion-section name='Related Cases' label= 'Related Cases' >      
+            <table>
+                <tr>
+                <th>Case Number</th>
+                <th>Status</th> 
+            </tr>
+                <template for:each={caseList} for:item="c">
+                    <tr key={c.Id} ><td ><lightning-button key={c.Id} value={c.Id} variant="base" label={c.CaseNumber} onclick={handlepChildCase} ></lightning-button></td>
+                        <td>{c.Status}</td></tr>                   
+                </template>
+             </table>
+    </lightning-accordion-section>
+</template>                
+</lightning-accordion>                            
+</lightning-card>
+</div>
+</template>

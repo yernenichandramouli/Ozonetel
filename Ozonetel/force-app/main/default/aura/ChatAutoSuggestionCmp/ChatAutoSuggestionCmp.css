@@ -1,0 +1,26 @@
+.THIS .service-replies {
+    padding: 10px;
+    border: 1px solid #d8dde6;
+    border-radius: 5px;
+    width: 300px;
+}
+
+.THIS .context {
+    display: flex;
+    align-items: center;
+}
+
+.THIS .not-helpful-btn {
+    margin-left: auto; /* Pushes the button to the right */
+    font-size: 12px;   /* Reduces button font size */
+    padding: 4px 8px;  /* Adjusts button size */
+    height: 35px;
+}
+
+.THIS .small-button {
+    font-size: 0.75rem; /* Adjust font size */
+    padding: 0.25rem 0.5rem; /* Adjust padding */
+    height: 35px; /* Allow the button to shrink */
+    width: 60px;
+    line-height: 1; /* Align text properly */
+}

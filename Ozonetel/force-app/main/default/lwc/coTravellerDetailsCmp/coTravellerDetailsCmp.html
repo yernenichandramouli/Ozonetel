@@ -1,0 +1,25 @@
+<template>
+    <div class="spinner">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" variant="brand" size="large">
+            </lightning-spinner>
+        </template>
+    </div>
+
+    <lightning-card>
+        <template if:true={error}>
+            <h1 class="slds-text-heading_medium slds-align_absolute-center" style="color: red; height:5rem;">{errorMessage}</h1>
+        </template>
+        <template if:true={showTableData}>
+            <div class="slds-m-bottom_x-small">
+                <lightning-layout multiple-rows>
+                    <lightning-input type="search" class="slds-form-element__legend slds-form-element__label" label="Search boarding point" placeholder="Enter Boarding Point" onchange={searchBoardingPoint}> </lightning-input>
+                    <lightning-input type="search" class="slds-form-element__legend slds-form-element__label" label="Search dropping point" placeholder="Enter dropping Point" onchange={searchDroppingPoint}> </lightning-input>
+                </lightning-layout>
+            </div>
+            <div class="slds-m-around_medium">
+                <lightning-datatable data={data} columns={coloumns} sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting} hide-checkbox-column="true" key-field="Id"></lightning-datatable>    
+            </div>
+        </template>
+    </lightning-card>
+</template>

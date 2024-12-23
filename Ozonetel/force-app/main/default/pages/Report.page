@@ -1,0 +1,7 @@
+<apex:page showHeader="false" > 
+ <apex:panelGrid >
+  <!-- <analytics:reportChart reportId="00Op0000000Hi9t" />-->
+  <!-- <analytics:reportChart reportId="00O0I000009kl4W" />-->
+   <apex:iframe src="/01Z0I0000019eR7" width="1000%" height="1000%"/>
+</apex:panelGrid>
+</apex:page>

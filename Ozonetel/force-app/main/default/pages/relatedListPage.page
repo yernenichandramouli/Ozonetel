@@ -1,0 +1,64 @@
+<apex:page standardController="Account" extensions="Related_cls" lightningStylesheets="true" standardStylesheets="false">
+ <apex:slds />
+    
+ <apex:form >
+ <apex:pageBlock >
+     <apex:pageBlockTable value="{!Traslst}" var="c">
+         <apex:column headerValue="Trip ID" value="{!c.Order_Id__c}"/>
+         <apex:column headerValue="Transactions ID">
+           <!--  <apex:outputLink value="/{!c.Id}">
+                 <apex:outputText value="{!c.Name}">
+                </apex:outputText>
+             </apex:outputLink> -->
+             
+              <a HREF="#" onclick="javascript:isLightningExperience('{!c.id}','{!c.Name}');return false">
+                        <apex:outputLabel value="{!c.Name}" styleClass="slds-text-link"/>
+                    </a> 
+         </apex:column>
+         <!--<apex:column headerValue="Status" value="{!c.status__c}"/>-->
+         <apex:column headerValue="TIN Number" value="{!c.Order_Item_Reference_No__c}" headerClass="slds-text-title--caps"/>
+         <apex:column headerValue="Transaction Status" value="{!c.Transaction_Status__c }"/>
+         <apex:column headerValue="Date of Journey" value="{!c.Corrected_Date_of_Journey__c}"/>
+         <apex:column headerValue="Source" value="{!c.Source__c}"/>
+         <apex:column headerValue="Destination" value="{!c.Destination__c}"/>
+         <apex:column headerValue="Bus Operator Name" value="{!c.Service_Provider_Name__c}"/>
+         <apex:column headerValue="Total Fare" value="{!c.Total_Fare__c}"/>
+         <apex:column headerValue="Boarding Point" value="{!c.Boarding_Point__c}"/>
+         <apex:column headerValue="Dropping Point" value="{!c.Dropping_Point__c}"/>
+         <apex:column headerValue="Date Of Issue" value="{!c.Corrected_Date_of_Issue__c}"/>
+         <apex:column headerValue="SignedIn Transaction">
+     
+         <apex:image id="theImage" value="{!$Resource.checkbox}" width="20" height="20" rendered="{!c.Customer_Name__c==acc.Id}"/>
+         </apex:column>
+         
+
+    </apex:pageBlockTable>
+ </apex:pageBlock>
+ </apex:form>
+    <script type="text/javascript">
+        
+        function isLightningExperience(recId,trName)
+        {
+           if(sforce.console.isInConsole())
+            {
+                sforce.console.getEnclosingPrimaryTabId(function(result)
+                {
+                 sforce.console.openSubtab(result.id,'/'+recId,true,trName,null);
+                           
+                });
+            }
+            
+            else
+            {
+            
+                if (UITheme.getUITheme() === 'Theme4d' || UITheme.getUITheme() === 'Theme4u')                  
+                     sforce.one.navigateToSObject(recId,'detail');
+                else 
+                    window.open('/' + recId);
+            }
+        }
+    </script>
+     <script src="/soap/ajax/46.0/connection.js"/>
+     <script src="/support/console/46.0/integration.js"/>
+   
+</apex:page>

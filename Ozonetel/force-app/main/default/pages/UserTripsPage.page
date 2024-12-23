@@ -1,0 +1,118 @@
+<!--
+ * (c) 2016 RedBus
+ *
+ * Name           : UserTripsPage
+ * Created Date   : 30 Jan 2017
+ * Created By     : Sreenivas M
+ * Purpose        : VF page to display recent user trips from account page.
+ *
+ ** -->
+<apex:page standardController="account" extensions="UserTripsCntrl" action="{!fetchUserTrips}" showHeader="false" showChat="false" sidebar="false" lightningStylesheets="true" >
+
+<head>
+<apex:includeScript value="/soap/ajax/45.0/connection.js"/>
+<apex:includeScript value="/support/console/45.0/integration.js"/>
+<apex:slds />
+</head>
+<script>
+       function callSearchOrder(ordId) {
+          jsSerachOrder(ordId);
+      }
+      
+     
+       function customPrimaryTab(url) 
+       {
+                            
+           if('{!console}' || sforce.console.isInConsole())
+           {
+            sforce.console.getEnclosingPrimaryTabId(function(result)
+                {
+                  sforce.console.openSubtab(result.id,url +'&isdtp=vw',true,'{!ordId}',sforce.console.getFocusedSubtabId());
+
+                });
+          }
+           else 
+           {
+             if (UITheme.getUITheme() === 'Theme4d' || UITheme.getUITheme() === 'Theme4u')                  
+                sforce.one.navigateToURL(url,true);
+             else 
+                window.open(url);
+          }
+    
+     }
+ 
+ </script>
+<div class="slds-scope">    
+<apex:form >
+<apex:actionStatus id="statusSaveTrip">
+<apex:facet name="start">
+    <div class="demo-only" style="height:6rem">
+        <div class="slds-spinner_container" style="position:fixed">
+            <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </div>
+</apex:facet> 
+</apex:actionStatus>
+    
+<apex:actionFunction name="jsSerachOrder" action="{!searchOrder}" status="statusSaveTrip" reRender="panelId,msg,msg2">
+    <apex:param name="ordId2" assignTo="{!ordId}" value=""/>
+</apex:actionFunction>
+
+<apex:outputPanel id="panelId">
+    <script>
+        if('{!redirectUrl}')
+        {
+        //  alert('red url..'+ '{!redirectUrl}'+'..'+sforce.console.isInConsole());
+          window.setTimeout(customPrimaryTab,0000,'{!redirectUrl}');
+          
+         }
+    </script>
+</apex:outputPanel>
+
+<apex:outputPanel rendered="{!cuntryCode}">
+
+<apex:pageBlock title="User Trips Details">
+
+     <apex:pagemessages id="msg"/>
+     <apex:pageBlockTable value="{!tripsResponse}" var="res" id="tabId">
+            <apex:column headerValue="Trip Id" >
+               <a HREF="#" onClick="callSearchOrder('{!res.cartId}');return false;">
+                   <apex:outputlabel value="{!res.cartId}"/>
+               </a>
+             </apex:column>
+            <apex:column headerValue="Transaction Id" value="{!res.transactionNo}"/>
+            <apex:column headerValue="Tin Number" value="{!res.tin}" />                        
+            <apex:column headerValue="Transaction Status">
+              <apex:outputText value="{!IF(ISBLANK(res.tin),"WFT/GFT","Confirmed")}"/>
+            </apex:column>
+            <apex:column headerValue="Date of Journey" value="{!res.dateOfJourney}" />
+            <apex:column headerValue="Source" value="{!res.source}" />
+            <apex:column headerValue="Destination" value="{!res.destination}" />
+            <apex:column headerValue="Bus Operator Name" value="{!res.travels}" />
+             <apex:column headerValue="Date of Issue" value="{!res.creationDate}" />
+            <apex:column headerValue="PNR" value="{!res.pnr}" rendered="false"/>
+            <apex:column headerValue="Seats" value="{!res.seats}" />
+            <apex:column headerValue="User Id" value="{!res.userId}" />  
+            <apex:column headerValue="Email Id" value="{!res.emailId}" />
+            <apex:column headerValue="Phone" value="{!res.phone}" />
+           
+          
+     </apex:pageBlockTable>
+    <apex:pagemessages id="msg2"/> 
+    
+</apex:pageBlock>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!!cuntryCode}">
+<center>
+   <br/>
+   <br/>
+   <p> This feature is not available for International Accounts </p>
+ </center>
+</apex:outputPanel>
+</apex:form></div>
+
+</apex:page>

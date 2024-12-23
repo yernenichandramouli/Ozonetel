@@ -1,0 +1,62 @@
+<template>
+<div class="slds-box">
+<lightning-card  icon-name="custom:custom19">
+   <b slot="title" >Case Comments({caseCount})</b>
+<lightning-button label="New" value={recordId} slot="actions" onclick={handleClickNew}></lightning-button>  
+<div class="slds-border_top"></div>
+<template if:true={createMode}>
+<c-suggestion-template recordid={recordId} onprogressvaluechange={hanldeProgressValueChange}></c-suggestion-template>
+</template>
+<template for:each={comments} for:item='CC'>
+<div class="slds-float_right" key={CC.Id}>
+<lightning-button-icon id={CC.Id} value={CC.Id} icon-name="utility:edit" variant="bare" click={handleClickEdit} onclick={handleClickEdit}  key={CC.Id}>
+</lightning-button-icon>
+</div>
+<br key={CC.Id}>
+<p key={CC.Id}>Created By:<b>{CC.CreatedBy.Name} </b></p>    
+<p key={CC.Id}>Created Date:<b><lightning-formatted-date-time value={CC.CreatedDate} year="numeric" day="2-digit" month="long" hour="2-digit" minute="2-digit"> </lightning-formatted-date-time></b> </p>    
+<p key={CC.Id}>{CC.CommentBody}</p>
+
+<div class="slds-border_top" key={CC.Id}></div> 
+
+</template>
+<template if:true={showViewAll}>
+<div class="slds-border_top" ></div> 
+<lightning-layout horizontal-align='center'>
+    <lightning-layout-item>
+        <lightning-button variant="base" label="View All" onclick={handleViewAll}></lightning-button>
+    </lightning-layout-item>
+</lightning-layout>
+</template>
+<template  if:true={editMode}>
+<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+<div class="slds-modal__container">
+<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+
+<lightning-card  >
+<h3 slot="title"><center>
+    Edit Case Comment
+</center>
+</h3>
+<lightning-textarea name="input" label="Comment" value={selCmnt} onchange={handleBody}></lightning-textarea>
+<lightning-layout  horizontal-align="left">
+<lightning-layout-item padding="around-small"> 
+</br>
+<lightning-button  label="Cancel" title="Cancel" onclick={handleCancel} ></lightning-button>
+</lightning-layout-item>
+<lightning-layout-item padding="around-small">
+</br>
+    <lightning-button variant="brand" label="Save" title="Save" onclick={handleSave} ></lightning-button>
+</lightning-layout-item>
+
+</lightning-layout>
+</lightning-card>
+</div>
+</div>
+</section>
+
+</template>
+
+</lightning-card>
+</div>
+</template>

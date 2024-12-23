@@ -1,0 +1,20 @@
+<apex:page showHeader="false" sidebar="false">
+
+ <center>
+      <h2><font size="4" color="red">Safety Image Moderation</font></h2>  
+ </center>
+
+    <apex:includeLightning />    
+    <div id="LightningComponentid" />    
+    <script>
+    $Lightning.use("c:SafetyImageModeration", function() {
+        $Lightning.createComponent("c:safetyImageApproval",
+          { 
+          },
+          "LightningComponentid",
+          function(cmp) {
+             console.log('LWC Componenet added in VF page');
+          });
+    });
+    </script>
+</apex:page>

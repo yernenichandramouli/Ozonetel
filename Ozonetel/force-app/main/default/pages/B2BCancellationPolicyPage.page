@@ -1,0 +1,58 @@
+<apex:page standardController="Order_Items__c" extensions="B2BCancellationPolicyCntr" showChat="false" showHeader="false"
+  sidebar="false">
+  <apex:slds />
+
+  <apex:form id="formid">
+    <apex:pageBlock >
+      <apex:pageBlockSection title="Cancellation Policy" columns="1">
+        <apex:pageblockTable value="{!wrapperList}" var="wo">
+          <apex:column value="{!wo.cancellationTime}" headerValue="Cancellation Time" />
+          <apex:column value="{!wo.percentofCancl}" headerValue="Percent Cancellation" />
+        </apex:pageblockTable>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+
+    <apex:pageBlock rendered="{!if(orItemId.Item_Type__c!='RAILS',true,false)}">
+      <apex:pageBlockSection title="Travel Info" columns="1">
+        <apex:pageblockTable value="{!inventWrapper}" var="inv">
+          <apex:column value="{!inv.Passenger.name}" headerValue="Name" />
+          <apex:column value="{!inv.seatName}" headerValue="Seat Name" />
+          <apex:column value="{!inv.Fare}" headerValue="Fare" />
+          <apex:column value="{!inv.status}" headerValue="Status" />
+          <apex:column value="{!inv.Passenger.gender}" headerValue="Gender" />
+          <!-- <apex:column value="{!inv.refundAmount}" headerValue="Refund Amount"/> -->
+          <apex:column value="{!inv.operatorServiceCharge}" headerValue="Operator serice Charges" />
+          <apex:column value="{!inv.serviceTax}" headerValue="Service Tax" />
+          <apex:column value="{!inv.Passenger.Age}" headerValue="Age" />
+          <!--<apex:column value="{!inv.Passenger.email}" headerValue="Email"/>
+          <apex:column value="{!inv.Passenger.idType}" headerValue="IdType"/>
+          <apex:column value="{!inv.Passenger.mobile}" headerValue="Mobile"/>
+          <apex:column value="{!inv.Passenger.primary}" headerValue="Primary"/>
+          <apex:column value="{!inv.ladiesSeat}" headerValue="Ladies seat"/>
+          <apex:column value="{!inv.malesSeat}" headerValue="Males seat"/>
+          <apex:column value="{!inv.Passenger.singleLadies}" headerValue="SingleLadies"/>
+          <apex:column value="{!inv.Passenger.title}" headerValue="Title"/>-->
+        </apex:pageblockTable>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+
+    <apex:pageBlock rendered="{!if(orItemId.Item_Type__c='RAILS',true,false)}">
+      <apex:pageBlockSection title="Travel Info" columns="1">
+        <apex:pageblockTable value="{!railDetailsWrapper}" var="rail">
+          <apex:column value="{!rail.travellerDetails.name}" headerValue="Name" />
+          <apex:column value="{!rail.travellerDetails.gender}" headerValue="Gender" />
+          <apex:column value="{!rail.travellerDetails.nationality}" headerValue="Nationality" />
+          <apex:column value="{!rail.travellerDetails.age}" headerValue="Age" />
+          <apex:column value="{!rail.passengerNetFare}" headerValue="Fare" />
+          <apex:column value="{!rail.bookingSeatDetails.bookingCoachId}" headerValue="Coach ID" />
+          <apex:column value="{!rail.bookingSeatDetails.bookingBerthNo}" headerValue="Berth No" />
+          <apex:column value="{!rail.bookingSeatDetails.bookingBerthCode}" headerValue="Berth Code" />
+          <apex:column value="{!rail.bookingSeatDetails.bookingBerthChoice}" headerValue="Berth Choice" />
+          <apex:column value="{!rail.bookingSeatDetails.bookingStatus}" headerValue="Booking Status" />
+          <apex:column value="{!rail.currentSeatDetails.currentStatus}" headerValue="Current Status" />
+        </apex:pageblockTable>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+
+  </apex:form>
+</apex:page>

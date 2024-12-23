@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>application/zip</contentType>
+    <description>System-generated SNA sf_default_cdn ESW_Cambodia_MIAW_Embedded_17175904917451</description>
+</StaticResource>

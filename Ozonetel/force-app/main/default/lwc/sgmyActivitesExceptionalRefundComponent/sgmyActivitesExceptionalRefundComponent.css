@@ -1,0 +1,10 @@
+.required-field::after {
+    content: "*";
+    color: red;
+    }
+.required-inputbox{
+    border: 1px solid #ff0404 !important;
+}
+.page-break{
+    display: block; page-break-before: always;
+}

@@ -1,0 +1,230 @@
+<apex:page controller="BDevQueueController" action="{!BDCases}" showheader="false" docType="html-5.0">
+<apex:form id="formId">
+         <apex:slds />
+           <!-- <apex:includeScript value="//code.jquery.com/jquery-1.11.1.min.js"/>
+            <apex:includeScript value="/soap/ajax/26.0/connection.js"/>
+            <apex:includeScript value="/support/console/26.0/integration.js"/>
+            <apex:stylesheet value="{!$Resource.LoadingStatus}" />
+            <apex:includeScript value="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"/>
+            <apex:stylesheet value="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>-->
+         <!--     <apex:includeScript value="{!$Resource.pbtJs1}"/>
+            <apex:includeScript value="{!$Resource.pbtJs2}"/>
+            <apex:stylesheet value="{!URLFOR($Resource.pbtCss, 'pbtCss.css')}"/>
+            <script>
+            $(document).ready(function(){
+                $('.pbstyle').DataTable();
+            });
+            </script>-->  
+            
+<apex:pageMessages id="erromsg" />
+
+<apex:pageBlock title="{!If(sobj.Type__c =='Agent','BD Queue','BD Management Queue') }" >
+      <apex:commandButton value="Logout"  action="{!Userlogout}" styleClass="btn Regbtnstyle btn-default" style="background-image: linear-gradient(#26A69A, #26A69A 50%, #26A69A);background-repeat: no-repeat;color:#ffffff; padding: 3px 12px; font-size:16px;border: 1px solid #26A69A;border-radius: 5px; margin-right:15px;float:right;"/>
+
+
+Hi {!sobj.name}, {!sobj.Location__c}. <br/><br/>
+  Queue Name &nbsp;&nbsp; <apex:selectList value="{!queueName}" size="1">
+                     <apex:selectOption itemLabel="--None--" itemValue="None"></apex:selectOption> 
+                     <apex:selectOption itemLabel="Social Media / Escalated Care" itemValue="Social Media / Escalated Care"></apex:selectOption>
+                     <apex:selectOption itemLabel="SIT/ HF Team" itemValue="SIT/ HF Team"></apex:selectOption>
+                     <apex:selectOption itemLabel="SPOC" itemValue="SPOC"></apex:selectOption> 
+                     <apex:selectOption itemLabel="Others" itemValue="Others"></apex:selectOption> 
+                     <apex:selectOption itemLabel="Invalid BP number" itemValue="Invalid BP number"></apex:selectOption> 
+                     <apex:actionSupport event="onchange" reRender="pb,countDs,erromsg" action="{!getCases}" status="status"/>
+                                     
+               </apex:selectList>
+               <apex:actionStatus id="status">
+            <apex:facet name="start">
+            <img src="/img/loading.gif" />
+              <!--  <div>Loading Please wait........</div>-->
+            </apex:facet>
+        </apex:actionStatus>
+      
+               
+<apex:pageblocksection columns="1" >
+<apex:outputPanel id="countDs">
+Total Pending Cases:   {!agentBDCasesCount}
+</apex:outputPanel>
+
+<apex:pageblocktable value="{!cList}" id="pb"  var="c"  styleClass="pbstyle">
+ 
+<apex:column value="{!c.casenumber}"/>
+
+<!-- <apex:column headervalue="DOJ" value="{!IF(c.origin=='SS' ,{!c.SS_DOJ__c},{!c.Date_Of_Journey_New__c}) }"/>-->
+<!--<apex:column headerValue="DOJ">
+ <apex:outputtext value="{!c.SS_DOJ__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+ <apex:outputtext value="{!c.Date_Of_Journey_New__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+</apex:column>-->
+
+<apex:column headerValue="TIN">
+ <apex:outputtext value="{!c.TIN_No__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+ <apex:outputtext value="{!c.TIN__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+</apex:column>
+
+<apex:column headerValue="PNR">
+ <apex:outputtext value="{!c.PNR__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+ <apex:outputtext value="{!c.PNR_No__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+</apex:column>
+
+<apex:column headerValue="Ticket Amount">
+ <apex:outputtext value="{!c.AmountD__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+ <apex:outputtext value="{!c.Total_Ticket_Amount__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+</apex:column>
+
+<apex:column headerValue="BO Name & ID">
+ <apex:outputtext value="{!c.Operator_Id__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+ <apex:outputtext value="{!c.Service_Provider_Name__c} - {!c.Service_Provider_Id__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+</apex:column>
+
+
+<apex:column headerValue="Source/Destination">
+ <apex:outputtext value="{!c.SourceT__c} / {!c.DestinationT__c}" rendered="{!if(c.origin=='SS',true,false)}"></apex:outputtext>
+ <apex:outputtext value="{!c.Source__c} / {!c.Destination__c}" rendered="{!if(c.origin!='SS',true,false)}"></apex:outputtext>
+</apex:column>
+<!--
+<apex:column headervalue="TIN" value="{!c.TIN__c}"/>
+<apex:column headervalue="PNR" value="{!c.PNR_No__c}"/>
+<apex:column headervalue="Ticket Amount" value="{!c.Total_Ticket_Amount__c}"/>
+<apex:column headervalue="BO Name & ID" value="{!c.Service_Provider_Name__c} - {!c.Service_Provider_Id__c}"/>
+<apex:column headervalue="Source/Desination" value="{!c.Source__c} / {!c.Destination__c}"/>-->
+
+<apex:column headervalue="Boarding Point" value="{!c.Boarding_Point__c}"/>
+<apex:column headervalue="Assigned by" value="{!c.LastModifiedByid}"/>
+<apex:column value="{!c.description}"/>
+<apex:column headervalue="HFT" value="{!c.HFT__c}"/>    
+<apex:column value="{!c.Age__c}"/>
+<apex:column value="{!c.origin}"/>
+
+
+<apex:column id="col" >
+
+<apex:outputpanel id="pbe">
+<apex:commandButton value="Comments" style="width:100px" action="{!showComments}"  reRender="pbe">
+<apex:param name="removeProductCode22" assignTo="{!caseId}" value="{!c.id}"/> 
+</apex:commandButton>
+
+<apex:pageBlock rendered="{!showCC}">
+<apex:pageblocktable value="{!ccList}" var="cc">
+<apex:column headerValue="Comments" value="{!cc.commentBody}"/>
+<apex:column headerValue="Created Date" value="{!cc.createddate}"/>
+</apex:pageblocktable>
+</apex:pageBlock>
+
+<apex:pageBlock rendered="{!showPB}" title="Add New Comment">
+<apex:actionregion >
+<apex:pageblocksection columns="1">
+<apex:outputPanel id="bpPhone">
+            <div class="requiredInput">
+                <div class="requiredBlock"></div>                       
+<apex:inputTextarea value="{!description}" /></div>
+
+<br/>
+
+ <!--<label for="checkid">-->
+ <apex:outputPanel rendered="{!if(c.Issue_Sub_Category__c=='Issue with BO contact number',true,false)}" id="bpNo">
+BP numbers:-&nbsp;<apex:outputtext value="{!c.BP_Contact_Number__c}"/><br/><br/>
+Customer provided Bp no:-&nbsp;<apex:outputtext value="{!c.Phone_No_ct__c}"/><br/>
+<br/>isExisting BP no. Correct:&nbsp; <apex:inputCheckbox value="{!isExistingBPnumber}" >
+ <apex:actionSupport event="onchange"  action="{!hide}" rerender="bpPhone" />
+</apex:inputCheckbox><br/>
+<br />
+Enter Correct BPnumber :&nbsp;&nbsp; <apex:input type="text" id="inputText"   value="{!correctBPnumber}" disabled="{!!hidetext}"  onkeyup="return isNumber(event);" onkeypress="return isNumber(event);" styleClass="textcheck"/>
+</apex:outputpanel>
+</apex:outputpanel>
+</apex:pageblocksection>
+
+<apex:pageblocksection columns="2">
+ <!--  <div align="center" draggable="false" >-->
+  <!--  <apex:pageblocksectionItem >
+ <apex:outputpanel > -->
+              <apex:actionStatus id="loadStatus" >
+                        <apex:facet name="start" >
+                            <apex:commandButton value="Saving..."  disabled="true" status="loadStatus"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">                   
+                            <apex:commandButton value="Save" action="{!save}" style="width:75px" reRender="col,erromsg" status="loadStatus" rendered="{!if(c.Issue_Sub_Category__c!='Issue with BO contact number',true,false)}">
+                                <apex:param name="removeProductCode" assignTo="{!caseId}" value="{!c.id}"/> 
+                                <apex:param name="removeProductCode44" assignTo="{!assignedById}" value="{!c.Assigned_By__c}"/>
+                                <apex:param name="removeProductCode445" assignTo="{!sButton}" value="Save"/>  
+                            </apex:commandButton>
+                        </apex:facet>
+                    </apex:actionStatus>
+                    
+                    <apex:actionStatus id="loadStatus2" >
+                        <apex:facet name="start" >
+                            <apex:commandButton value="Save & Closing..."  disabled="true" status="loadStatus"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">                   
+                            <apex:commandButton value="Save & Close" action="{!save}" style="width:90px" reRender="col,erromsg" status="loadStatus2">
+                                <apex:param name="removeProductCode" assignTo="{!caseId}" value="{!c.id}"/> 
+                                <apex:param name="removeProductCode44" assignTo="{!assignedById}" value="{!c.Assigned_By__c}"/>
+                                <apex:param name="removeProductCode445" assignTo="{!sButton}" value="SaveAndClose"/>  
+                            </apex:commandButton>
+                        </apex:facet>
+                    </apex:actionStatus>
+    
+   <!-- <apex:commandButton value="Save" style="width:75px" action="{!save}" reRender="col,erromsg">
+       <apex:param name="removeProductCode" assignTo="{!caseId}" value="{!c.id}"/> 
+        <apex:param name="removeProductCode44" assignTo="{!assignedById}" value="{!c.Assigned_By__c}"/>
+        <apex:param name="removeProductCode445" assignTo="{!sButton}" value="Save"/>  
+    </apex:commandButton>
+    <apex:commandButton value="Save & Close" style="width:90px" action="{!save}" reRender="col,erromsg">
+       <apex:param name="removeProductCode" assignTo="{!caseId}" value="{!c.id}"/> 
+        <apex:param name="removeProductCode44" assignTo="{!assignedById}" value="{!c.Assigned_By__c}"/>
+        <apex:param name="removeProductCode445" assignTo="{!sButton}" value="SaveAndClose"/>  
+    </apex:commandButton> -->
+  
+   </apex:pageblocksection>
+    </apex:actionregion>
+   <!--</apex:outputpanel>
+   
+   
+    </apex:pageblocksectionItem>-->
+   <!-- </div>-->
+   <!--  <apex:commandButton value="Attach File" onclick="window.open('/apex/AttachFile?cId={!c.id}','_blank','height=500,width=1000');" reRender="pb"/>
+    -->
+  <apex:pageblockSection >
+  <apex:actionregion >
+     <apex:commandButton value="Attach File" style="width:75px" onclick="window.open('https://redbuslive.secure.force.com/BD/AttachFile?cId={!c.id}','_blank','height=500,width=1000');" reRender="pb"/>
+        </apex:actionregion>
+         <apex:commandButton value="Cancel" action="{!cancel}" style="width:75px" reRender="pb,pbe,erromsg"/>
+
+</apex:pageblocksection>
+
+</apex:pageBlock>
+
+</apex:outputpanel>
+
+</apex:column>
+
+
+</apex:pageblocktable>
+</apex:pageblocksection> 
+
+
+</apex:pageBlock>
+<script type="text/javascript">
+ function isNumber(evt) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      var element  = document.getElementsByClassName('textcheck')[0];
+      if(evt.type == "keyup")
+      {
+          var initialValue  = element.value;
+          var intival=initialValue.replace("/", "");
+          if(isNaN(intival) &&!intival.includes("/"))
+          {
+           
+            element.value=''; 
+          }
+      }
+
+      if (charCode > 31 && (charCode < 47 || charCode > 57)) {
+        return false;
+      }
+      return true;
+    }
+</script>
+
+</apex:form>
+</apex:page>

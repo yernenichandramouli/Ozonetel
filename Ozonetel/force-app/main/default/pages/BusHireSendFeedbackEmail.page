@@ -1,0 +1,16 @@
+<apex:page standardController="Lead" extensions="BusHireSendFeedbackEmail" showHeader="false" title="Send Feedback Email" >
+    <apex:includeLightning />    
+    <div id="LightningComponentid" style="height:460px !important;"/> 
+    <script>
+    $Lightning.use("c:BusHireSendFeedbackEmailApp", function() {
+        $Lightning.createComponent("c:BusHireSendFeedbackEmail",
+                                   { 
+                                       recordId:'{!LId}'
+                                   },
+                                   "LightningComponentid",
+                                   function(cmp) {
+                                       console.log('Send Email Componet Created Successfully!');
+                                   });
+    });    
+    </script>    
+</apex:page>

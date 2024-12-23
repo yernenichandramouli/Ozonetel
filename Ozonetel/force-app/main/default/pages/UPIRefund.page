@@ -1,0 +1,96 @@
+<apex:page controller="UPIController" showHeader="false" tabStyle="case">
+  <style>
+        input {
+        padding-top: 0;
+        width: 50%;
+        }
+        table.detailList {
+        width: 50% !important;
+        text-align: center;
+        margin: 0 auto;
+        }
+        
+    </style>
+    
+    <style type="text/css">
+        .bPageBlock .pbTitle {
+        width: 80%;    
+        text-align: center;
+        }
+    </style>
+ <apex:form >
+   <apex:pageblock >
+     
+   <apex:sectionHeader title="UPI Refund" subtitle="Process UPI Refunds"/>
+   <apex:pageMessages id="msg"/>
+   <apex:pageblocksection columns="1" title="Payment Status Check" id="ps" collapsible="false">
+      <apex:pageBlockSectionItem >
+      VPA  <apex:inputText value="{!vpa}" disabled="{!disInputs}"/>
+        </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+      Refund Amount  <apex:inputText value="{!refAmount}" disabled="{!disInputs}"/>
+        </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+      PG Transaction ID  <apex:inputText value="{!pgTransactionId}" disabled="{!disInputs}"/>
+        </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+      .   <apex:outputpanel >
+                 <apex:actionStatus id="loadStatus" >
+                        <apex:facet name="start" >
+                            <apex:commandButton value="Processing..." style="width:150px"  disabled="true" status="loadStatus"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:commandButton value="Check Payament Status" style="width:150px" action="{!RefundStatusCheck}"  disabled="{!disInputs}" reRender="msg,ps,pr" status="loadStatus">                                                  
+                            </apex:commandButton>
+                        </apex:facet>
+                    </apex:actionStatus>    
+                    </apex:outputpanel>
+       <!--<apex:commandButton  value="Check Payament Status" action="{!RefundStatusCheck}"  disabled="{!disInputs}" style="width:150px" reRender="msg,ps,pr"/>-->
+        </apex:pageBlockSectionItem>
+       </apex:pageblocksection>
+       <apex:outputpanel id="pr">
+      <apex:pageblocksection columns="1" title="Process Refund" rendered="{!enableRefund}">
+       <apex:pageBlockSectionItem >
+       VPA  <apex:outputtext value="{!vpa}"/> 
+         </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+        Refund Amount <apex:outputtext value="{!refAmount}"/> 
+         </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+       PG Transaction ID  <apex:outputtext value="{!pgTransactionId}"/> 
+         </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+       PG Order Id  <apex:inputText value="{!pgOrderId}"/>
+         </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+       Trex Order Item id  <apex:inputText value="{!trexOrderItmId}"/>
+         </apex:pageBlockSectionItem>
+         
+         <apex:pageBlockSectionItem >
+       Processing By <apex:outputtext value="{!uObj.email}"/>
+         </apex:pageBlockSectionItem>
+         <br/>
+             <apex:pageBlockSectionItem >
+            .  <apex:outputpanel >
+                 <apex:actionStatus id="loadStatus" >
+                        <apex:facet name="start" >
+                            <apex:commandButton value="Processing..." style="width:150px"  disabled="true" status="loadStatus"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:commandButton value="Refund" style="width:150px" action="{!RefundInitiate}"  disabled="{!refInitBt}" reRender="msg,ps,pr" status="loadStatus">                                                  
+                            </apex:commandButton>
+                        </apex:facet>
+                    </apex:actionStatus>    
+                    </apex:outputpanel>
+       <!--<apex:commandButton value="Refund" action="{!RefundInitiate}" style="width:150px" reRender="msg"/>-->
+        </apex:pageBlockSectionItem>
+       
+       </apex:pageblocksection>
+       </apex:outputpanel>
+   
+   </apex:pageblock>
+ 
+   
+  
+ </apex:form>
+</apex:page>

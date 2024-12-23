@@ -1,0 +1,16 @@
+<template>
+    <div class="spinner">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" variant="brand" size="large">
+            </lightning-spinner>
+        </template>
+    </div>
+    <lightning-card  variant="Narrow"  title="SelfHelp Chat History" icon-name="utility:chat">
+        <template if:true={error}>
+            <h1 class="slds-text-heading_medium slds-align_absolute-center" style="color: red; height:5rem;">{errorMessage}</h1>
+        </template>
+        <template if:true={showChatHistory}>
+            <p><lightning-formatted-text value={prevChatHistory}></lightning-formatted-text></p>
+        </template>
+    </lightning-card>
+</template>

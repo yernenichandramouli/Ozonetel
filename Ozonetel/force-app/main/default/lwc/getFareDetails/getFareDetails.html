@@ -1,0 +1,137 @@
+<template>
+<template if:true={showMessage}>
+    <lightning-layout>
+        <lightning-layout-item flexibility="auto" padding="around-small">            
+        <p style="color: red;">{message}</p>
+        </lightning-layout-item>
+    </lightning-layout>
+    </template>
+<template if:false={showMessage}>
+<template if:true={loaded}>
+<lightning-layout horizontal-align=" " >
+    <lightning-layout-item flexibility="auto" padding="around-small" >    
+        <b><p>Total Fare : {totalFare} {currency}</p></b>
+    </lightning-layout-item>
+</lightning-layout>
+<table>
+<tr>
+    <td>
+        <lightning-layout  >
+            <lightning-layout-item  padding="around-small" >            
+            <p>Basic Fare : {basicFare} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>
+        </td>
+        <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>Discount : {discount} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>
+</tr>
+
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>Bus Operator GST : {gst} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>
+    </td>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>Insurance Charges : {insurance} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>
+</tr>
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>Service Tax : {serviceTax} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>Reservation Fee : {resFee} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>
+</tr>
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>Service Fee : {serviceFee} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >
+            <p>Toll Fee : {tollFee} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>
+</tr>
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>Levies Charges : {leviesCharges} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>            
+
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>Other Charges : {otherCharges} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>            
+</tr>
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>Travel Protect Plan : {travelProtectPlan} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>
+</tr>
+
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>RedBus Assurance Program : {assuranceAddon} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>  
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>Insuance Addon : {insuranceeAddon} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>           
+</tr>
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item padding="around-small" >            
+            <p>Food : {foodAddon} {currency}</p>
+            </lightning-layout-item>
+        </lightning-layout>    
+    </td>     
+</tr>
+</table>
+</template>    
+</template>
+</template>

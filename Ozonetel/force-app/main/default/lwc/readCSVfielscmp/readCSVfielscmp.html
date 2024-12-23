@@ -1,0 +1,18 @@
+<template>
+    <lightning-card icon-name="custom:custom19" title='Read CSV File BP'>
+        <div style="margin-left: 3%">
+            <lightning-file-upload accept={acceptedFormats} 
+                                   label="Attach receipt" 
+                                   multiple="multiple" 
+                                   onuploadfinished={handleUploadFinished} 
+                                   record-id={recordId}></lightning-file-upload>
+        </div>
+
+
+        <div if:true={error}>
+            {error}
+        </div>
+
+
+    </lightning-card>
+</template>

@@ -1,0 +1,43 @@
+<template>
+  
+    <template if:true={showFullbrkUp}> 
+        <lightning-datatable
+                    key-field="name"
+                    hide-checkbox-column="true"
+                    data={strResp}
+                    columns={refundfields}>
+                </lightning-datatable>
+    </template>
+
+
+  <br/><br/>
+
+    <template if:true={passgnrWsebtnVisibility}>
+      <lightning-button variant="Success" label="Passenger Wise Refund" onclick={handleClick} class="slds-align_absolute-center slds-size_small">
+      </lightning-button>
+      <div if:true={fetchLoad} style="display:flex;flex-wrap: wrap;">
+          <lightning-spinner alternative-text="Updating..." variant="brand" size="small" class="slds-is-absolute">
+          </lightning-spinner>
+      </div>
+    </template>
+
+    <lightning-accordion if:true={showSection}>
+      <lightning-button variant="Success" label="Back to Refund BreakUp" onclick={returnToBreakupClick} class="slds-align_absolute-center slds-size_small">
+      </lightning-button>
+
+      <lightning-datatable
+                  key-field="name"
+                  hide-checkbox-column="true"
+                  data={pssgrLst}
+                  columns={passgrfields}>
+              </lightning-datatable>
+
+  </lightning-accordion>
+
+<template if:true={isError}>
+        <center>  <br/><p><b style="color: rgb(255, 0, 0);">ErrorMessage : {apierrorResponse}</b></p></center> 
+        <center>  <br/><p><b style="color: rgb(255, 0, 0);">ApiResponse : {message}</b></p></center> 
+        <center>  <br/><p><b style="color: rgb(255, 0, 0);">ErrorCode : {errorCod}</b></p></center> 
+</template>
+
+</template>

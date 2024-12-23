@@ -1,0 +1,70 @@
+<template>
+    <lightning-messages></lightning-messages>
+    <lightning-card title="Call Menu Details">
+        <template if:true={showCaseCreation}>
+            <lightning-button label="Create Case" onclick={openCaseCreationPage} variant="success" class="slds-align_absolute-center"></lightning-button>
+        </template>
+        <template if:true={recId}>
+            <lightning-record-form mode="readonly" columns="2" object-api-name="Call_Details__c" record-id={recId} fields={objFields}>
+            </lightning-record-form>
+
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size--1-of-2 slds-medium-size--1-of-2">
+                    <div class="slds-form-element slds-form-element_readonly slds-form-element_horizontal">
+                        <label class="slds-form-element__label" for="path">Coustmer IVRS Path</label>
+                        <div class="slds-form-element__control">
+                            <lightning-formatted-text value={callDet.menOpt} linkify></lightning-formatted-text>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-col slds-size--1-of-2 slds-medium-size--1-of-2 ">
+                    <div class="slds-form-element slds-form-element_readonly slds-form-element_horizontal slds-m-left_small">
+                        <label class="slds-form-element__label" for="hft"> Hero Feature</label>
+                        <div class="slds-form-element__control">
+                            <lightning-formatted-text value={callDet.heroFetName} linkify></lightning-formatted-text>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--
+            <div class="slds-form-element slds-form-element">
+            <label class="slds-form-element__label" for="hft"> Hero Feature</label>
+            <div class="slds-form-element__control">
+                <lightning-formatted-text value={callDet.heroFetName} linkify></lightning-formatted-text>
+            </div>
+        </div>
+
+        <div class="slds-form-element slds-form-element">
+            <label class="slds-form-element__label" for="path"> Coustmer IVRS Path</label>
+            <div class="slds-form-element__control">
+                <lightning-formatted-text value={callDet.menOpt} linkify></lightning-formatted-text>
+            </div>
+        </div>
+    -->
+        </template>
+
+    </lightning-card>
+    <template if:true={isBusTransaction}>
+        <lightning-card>
+            <c-call-pop-up-payment-details-cmp record-id={recordId}></c-call-pop-up-payment-details-cmp>
+        </lightning-card>
+    </template>
+    
+    <lightning-card title="Account Details">
+        <lightning-datatable data={accountData} columns={accntColumns} key-field="id" onrowselection={getSelectedRecords} hide-checkbox-column="true">
+        </lightning-datatable>
+    </lightning-card>
+
+    <lightning-card title="Case Details">
+        <lightning-datatable data={casesData} columns={caseColumns} key-field="id" onrowselection={getSelectedRecords} hide-checkbox-column="true">
+        </lightning-datatable>
+    </lightning-card>
+
+    <lightning-card title="Transaction Details">
+
+        <lightning-datatable data={oritemsData} columns={tranColums} key-field="id" onrowselection={getSelectedRecords} hide-checkbox-column="true" onrowaction={handleRowAction}>
+        </lightning-datatable>
+    </lightning-card>
+</template>

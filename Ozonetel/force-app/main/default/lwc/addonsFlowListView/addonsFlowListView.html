@@ -1,0 +1,103 @@
+<template>
+
+    <template if:true={showErrMsg} >
+        <c-generic-toast-messages notificationtype={notifType} notificationmessage={notifMsg}></c-generic-toast-messages>
+        <div class="slds-m-bottom_x-small"></div>
+    </template>
+
+    
+
+    <template if:true={showDefTable}> 
+
+        <lightning-datatable data={listAddonsData} columns={columns} key-field="id" onrowselection={getSelectedRecords} hide-checkbox-column="true"></lightning-datatable>
+    </template>
+
+
+    <template if:true={listAddonsIsCanData}>
+
+        <div>
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            <lightning-input type="checkbox" label="" onchange={selectDeselectAll} value={selAllChe}>
+                            </lightning-input>
+                        </th>
+                            <th>Cancellable?</th>
+                        <th>Activity Id</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>VoucherId</th>
+                        <th>Activity Uuid</th>
+                        <th>Ticket Amount</th>
+                        <th>Cancellaton Charges</th>
+                        <th>Refundable Amount</th>                        
+                    
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={listAddonsIsCanData} for:item="aItem">
+                        <tr key={aItem.addOn.Activity_uuid__c}>
+                            <td>
+                                <template if:true={aItem.isCancellable} class="slds-text-align--left">
+                                    <lightning-input type="checkbox" label="" value={aItem.isSelect} checked={aItem.isSelect} onchange={rowSelChangeEvent} data-order={aItem.addOn.Email_Copy__c} data-id={aItem.addOn.Activity_uuid__c}></lightning-input>
+                                    <span class="slds-checkbox--faux"></span>
+                                    <span class="slds-form-element__label text"></span>
+                                </template>
+                                <template if:false={aItem.isCancellable}>
+                                    <lightning-icon icon-name="utility:error" alternative-text="Non-Cancellable" variant="error" size="x-small" style="padding:0.1rem !important;"></lightning-icon></span>
+                                </template>
+
+                            </td>
+                            <td class="slds-text-align--center">
+                                <template if:true={aItem.isCancellable}>
+                                    <lightning-icon icon-name="action:approval" alternative-text="Cancellable" size="xx-small" style="padding:0.1rem !important;"></lightning-icon>
+                                </template>
+                                <template if:false={aItem.isCancellable}>
+                                    <lightning-icon icon-name="utility:error" alternative-text="Non-Cancellable" variant="error" size="small" style="padding:0.1rem !important;"></lightning-icon>
+                                </template>
+                            </td>
+                            <td class="slds-text-align--left">{aItem.addOn.Name}</td>
+                            <td class="slds-text-align--left">{aItem.addOn.Activity_Name__c}</td>
+                            <td class="slds-text-align--left">{aItem.addOn.Activity_Type__c}</td>
+                            <td class="slds-text-align--left">{aItem.addOn.Transaction_Status__c}</td>
+                            <td class="slds-text-align--left">{aItem.addOn.Voucher_Id__c}</td>
+                            <td class="slds-text-align--left">{aItem.addOn.Activity_uuid__c}</td>
+                            <td class="slds-text-align--left">Rs. {aItem.totalTktAmnt}</td>
+                            <td class="slds-text-align--left slds-text-color_error">Rs. {aItem.cancellationCharge}</td>
+                            <td class="slds-text-align--left">Rs. {aItem.refundableAmnt}</td>
+                           
+                            <td class="slds-text-align--left">{aItem.errMsg}</td>
+
+                        </tr>
+                    </template>
+
+                </tbody>
+
+            </table>
+        </div>
+    </template>
+    <template if:true={showIsCanTable} class="slds-is-relative">
+        <lightning-button label="Check is Cancellable?" title="Check Is Cancellation" variant="success" onclick={checkIsCancellable} class="slds-align_absolute-center slds-m-top_medium slds-size_small"></lightning-button>
+    
+        <div if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading..." variant="brand" size="large" class="slds-is-absolute"></lightning-spinner>
+        </div>
+    </template>
+    
+
+    <template if:true={showConfirmCancel} class="slds-is-relative">
+        <lightning-button label="Cancel Addons" title="Cancel Addons" variant="success" onclick={cancelseltAddons} class="slds-align_absolute-center slds-m-top_medium"></lightning-button>
+        <div if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading..." variant="brand" size="large" class="slds-is-absolute"></lightning-spinner>
+        </div>
+    </template>
+
+    <template if:true={showNoRecMsg}>
+       
+        <div class="slds-text-heading_medium slds-text-align_center slds-text-color_success"><b><i>No Addons Found For This Transaction.</i></b></div>
+
+    </template>
+</template>

@@ -1,0 +1,40 @@
+/* compactTable.css */
+:host {
+    display: block; /* Ensures that the component takes up its own space */
+}
+
+/* Custom styling for compact table */
+.slds-table_fixed-layout td, .slds-table_fixed-layout th {
+    padding: 0.25rem 0.5rem; /* Adjust padding as needed */
+
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: -110px;
+    }
+
+.align-left {
+    order: 3;
+    margin-left: 673px;
+}
+
+.datatable-container {
+    height: 50%;
+    width: 51%;
+    border: 2px solid #20ba39;
+    padding: 0px 0 5px 0;
+    margin-left: 264px;
+
+}
+
+.input-reson{
+     margin-left:48px;
+     width: 91%;
+}
+
+.highlight-column {
+    background-color: yellow; /* You can customize the background color */
+}

@@ -1,0 +1,30 @@
+<apex:page showHeader="false" standardController="DBLog_Summary__c" extensions="DBLogSummaryReprocess" action="{!DBLogButtonEnable}">
+  <apex:form id="formId">
+      <apex:actionStatus id="SaveButtonStatus">
+          <apex:facet name="stop">
+              <apex:outputPanel >
+                 <table > 
+                     <tr >
+                         <td style='padding-left: 6cm;'>
+                             <apex:commandButton rendered="{!ButtonShow}" value="DBLog ReProcess" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;" action="{!SessionIdPing}" status="SaveButtonStatus" reRender="formId" />  &nbsp;&nbsp;
+                                <apex:outputText >{!response}</apex:outputText>
+                         </td>
+                     </tr>
+                  
+                 </table> 
+              </apex:outputPanel>
+          </apex:facet>
+          <apex:facet name="start">
+              <apex:outputPanel >
+              <table > 
+                     <tr >
+                         <td style='padding-left: 6cm;'>
+                              <apex:commandButton value="Request Processing..." style="height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;" disabled="true" />
+                         </td>
+                     </tr>
+                 </table> 
+              </apex:outputPanel>
+          </apex:facet>
+      </apex:actionStatus>
+  </apex:form>
+</apex:page>

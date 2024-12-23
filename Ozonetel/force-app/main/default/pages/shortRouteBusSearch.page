@@ -1,0 +1,18 @@
+<apex:page standardController="Order_Items__c" extensions="ShortRouteBoardingPoints" showHeader="false" title="ShortRoutes">
+    <apex:includeLightning />    
+    <div id="LightningComponentid" style="height:460px !important;"/> 
+    <script>
+    $Lightning.use("c:ShortRouteBusSearchApp", function() {
+        $Lightning.createComponent("c:ShortRouteBusSearch",
+                                   { 
+                                       bp:'{!sourceId}',
+                                       dp:'{!destinationId}',
+                                       doj:'{!dateOfJourney}'
+                                   },
+                                   "LightningComponentid",
+                                   function(cmp) {
+                                       console.log('ShortRoutes Componet Created Successfully!');
+                                   });
+    });    
+    </script>    
+</apex:page>

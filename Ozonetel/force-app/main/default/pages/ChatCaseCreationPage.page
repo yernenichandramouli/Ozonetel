@@ -1,0 +1,45 @@
+<apex:page standardController="Case" extensions="CaseExtension" lightningStylesheets="true">
+<apex:slds />
+<div class="slds-scope">
+  <apex:form id="formId">
+      <apex:pagemessages id="errMsg"/>
+      <apex:sectionHeader title="Case Edit" subtitle="New Case"/>
+      <apex:pageBlock title="Case Information">
+          <apex:pageBlockSection title="Case Details" collapsible="false">
+              <apex:inputField value="{!cs.Country__c}" html-disabled="true"/>
+               <apex:inputField value="{!cs.Phone_No_ct__c}" required="true"/>
+              <apex:inputField value="{!cs.Business_Type__c}"/>
+               <apex:inputField value="{!cs.Email_Id_ct__c}"/>
+              <apex:inputField value="{!cs.Issue_Type__c}" required="true"/>
+              <apex:inputField value="{!cs.Status}"/>
+              <apex:inputField value="{!cs.Issue_Sub_Category__c}"/>      
+              <apex:inputField value="{!cs.Origin}" html-disabled="true"/>
+              <apex:inputField value="{!cs.AccountId}"/>
+              
+              <apex:inputField value="{!cs.TIN_No__c}"/>
+              <apex:inputField value="{!cs.Transaction_ID__c}"/>
+               <apex:inputField value="{!cs.Description}" required="true"/>
+              <apex:inputField value="{!cs.Trip_Id_ct__c}"/>
+              
+          </apex:pageBlockSection>
+           <apex:pageblockButtons >
+                   <apex:commandButton value="Save" action="{!saveDetails}" reRender="formId,errMsg" styleClass="slds-button slds-button_success" status="loaderStatus"/>
+               </apex:pageblockButtons>
+      </apex:pageBlock>
+      <apex:actionStatus id="loaderStatus">
+    <apex:facet name="start">
+        <div class="demo-only" style="height:6rem">
+            <div class="slds-spinner_container" style="position:fixed">
+                <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+    </apex:facet> 
+</apex:actionStatus>
+      
+  </apex:form>
+  </div>
+</apex:page>

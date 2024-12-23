@@ -1,0 +1,71 @@
+<template>
+    <div class="slds-align_absolute-center">
+        <lightning-button variant="Success" label="Bulk Close Cases" title="Bulk Close Cases" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+    </div>
+    <!-- <c-spinner is-loading={isLoading}></c-spinner> -->
+    <template if:true={showModalDialog}>
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium" aria-labelledby="modal-heading-01" aria-modal="true">
+            <div class="slds-modal__container">
+                <!-- <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse">
+                    <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                        <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+                    </svg>
+                    <span class="slds-assistive-text">Cancel and close</span>
+                </button> -->
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{modalHeader}</h1>
+                </div>
+                <!--###### MODAL BOX BODY Part Start######-->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <div class="c-container">
+                        <lightning-layout multiple-rows="true">
+                            <lightning-layout-item  size="12">
+                                <lightning-layout-item  size="3">
+                                    <div class="slds-align_absolute-center">
+                                        <b style="color:rgb(43, 192, 6);">Issue Type, Case Comment and selection of records are mandatory</b>        
+                                    </div>
+                                </lightning-layout-item>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                        <br/>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-combobox name="Issue Type" data-field-name="Issue_Type" read-only={disableButton} label="Issue Type" value={value} required options={picklistValues} onchange={handleIssueTypeChange}> </lightning-combobox> 
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input  label="Case Comment" read-only={disableButton} data-field-name="case_comment" required onchange={handleOnChange}></lightning-input>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="slds-align_absolute-center">
+                            <lightning-button   variant="success" label="Close Cases" title="Close Cases" onclick={getSelectedRec} disabled={disableButton} slot="actions"></lightning-button>
+                        </div>
+                        <br/>
+                        <div class="slds-m-around_xx-small community-recordlisting-table" style="padding-left: 3%;padding-right: 3%;">
+                            <div if:true={showTable}>
+                                <lightning-datatable    columns={columns} 
+                                                        data={data} 
+                                                        key-field="Id"
+                                                        sorted-by={sortedBy}
+                                                        sorted-direction={sortedDirection}
+                                                        onsort={handleColumnSorting}
+                                                        onrowaction={handleRowAction}
+                                                        selected-rows={selectedRows}>
+                                </lightning-datatable>
+                            </div>
+                            <div if:true={noRecords} class="slds-align_absolute-center">
+                                <b style="color:rgb(192, 6, 6);">No open cases to Display</b>        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={closePopup} aria-label="Cancel and close">Cancel</button>
+                </div>
+            </div>
+        </section>
+        <!--###### MODAL BOX Part END Here ######-->
+    </template>
+</template>

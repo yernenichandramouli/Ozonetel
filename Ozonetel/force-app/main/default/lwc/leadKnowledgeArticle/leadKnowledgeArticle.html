@@ -1,0 +1,35 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 03-03-2021
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+  Modifications Log 
+  Ver   Date         Author                               Modification
+  1.0   03-02-2021   ChangeMeIn@UserSettingsUnder.SFDoc   Initial Version
+-->
+<template>
+<div onkeyup={handleKeyUp}>
+    <lightning-input name="enter-search" label="Search articles here" type="search" value={seacrhText}></lightning-input>
+</div>
+<div class="slds-border_top" ></div> 
+
+<template for:each={mapdata} for:item="keyValue" for:index='count'>
+    <div class="slds-border_top" key={keyValue.key}></div> 
+    <lightning-button key={keyValue.key} variant="base" label={keyValue.key} onclick={handleClickUrl}></lightning-button>
+      <lightning-layout key={keyValue.key} horizontal-align="space">
+        <lightning-layout-item padding="around-small">
+          <div class="header-column">
+            <p class="field-title" title="Article Number">Article Number</p>
+            <p>{keyValue.value.ArticleNumber__c}</p>
+          </div>
+        </lightning-layout-item>
+        <lightning-layout-item padding="around-small">
+          <div class="header-column">
+            <p class="field-title" title="Publication Status">Publication Status</p>
+            <p>{keyValue.value.Publication_Status__c}</p>
+          </div>
+        </lightning-layout-item> 
+      </lightning-layout>    
+</template>    
+</template>

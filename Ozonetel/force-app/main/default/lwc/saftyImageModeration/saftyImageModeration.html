@@ -1,0 +1,105 @@
+<template>
+<lightning-card title='User Image Moderation'>
+<div class="slds-box">    
+
+<lightning-layout horizontal-align=" " >
+<lightning-layout-item flexibility="auto" padding="around-small">
+
+<lightning-combobox name="Region" label="Region" id="Region" options={RegionOptions} value={selRegion} onchange={handleRegionChange} >
+</lightning-combobox>
+</lightning-layout-item>
+<lightning-layout-item flexibility="auto" padding="around-small">
+<lightning-combobox name='Bus Operator Ids' label='Bus Operator Ids' options={busOpIds} onchange={handleBOIdChange} value={BoId}>
+
+</lightning-combobox>
+</lightning-layout-item>
+<lightning-layout-item flexibility="auto" padding="around-small">
+<lightning-combobox name='Bus Type Names' label='Bus Type Names' options={busTypes} onchange={handleBusTypeChange} value={busType}>
+</lightning-combobox>
+</lightning-layout-item>
+</lightning-layout>
+</div>
+<p>{rejectOpts}</p>
+<template if:true={showimages}>
+<div class="slds-box">    
+<lightning-accordion onsectiontoggle={handleSectionToggle}  active-section-name={activeSection}>
+
+<lightning-accordion-section name='New' label= 'New' >
+    <lightning-layout  multiple-rows="true">
+        <template for:each={NewImages} for:item='imgRec'>
+            <lightning-layout-item  padding="around-small" key={imgRec.ImageId} >
+                <lightning-card title={imgRec.ImageTag}>
+                    <img src={imgRec.ImageURL}  width="300" height="200"/></br> 
+                    <div>
+                    </br>
+                        <center><p>Status : {imgRec.Status}</p>
+                        <lightning-combobox id={imgRec.ImageId} data-item={imgRec.ImageId} options={newStsOpts} onchange={handleStatusChange} value={imgRec.selType}></lightning-combobox> </center></br>
+                        <template if:true={imgRec.isReject}> 
+                        <lightning-combobox id={imgRec.ImageId} label ='Rejected Reason' data-item={imgRec.ImageId} options={rejOpts} onchange={handleRejectOptChange} value={imgRec.reason} required></lightning-combobox>   
+                        </template>
+                        <template if:true={imgRec.isOthers}>
+                            <lightning-input id={imgRec.ImageId} data-item={imgRec.ImageId} value={rejReason} placeholder="Enter Reason here" onchange={handleRejOtherReason} required></lightning-input>
+                        </template>
+                    </div>
+                </lightning-card> 
+            </lightning-layout-item>
+        </template>
+    </lightning-layout>        
+</lightning-accordion-section>    
+<lightning-accordion-section name='Approved' label= 'Approved' >         
+    <lightning-layout  multiple-rows="true">
+        <template for:each={ApprovedImages} for:item='imgRec'>
+            <lightning-layout-item  padding="around-small" key={imgRec.ImageId} >
+                <lightning-card title={imgRec.ImageTag}>
+                    <img src={imgRec.ImageURL}  width="300" height="200"/></br> 
+                </br> 
+                <div>
+                </br>
+                    <center><p>Status : {imgRec.Status}</p> 
+                    <lightning-combobox id={imgRec.ImageId} data-item={imgRec.ImageId} options={AppStsOpts} onchange={handleStatusChange} value={imgRec.selType}></lightning-combobox> </center></br>
+                    <template if:true={imgRec.isReject}> 
+                        <lightning-combobox id={imgRec.ImageId}  label ='Rejected Reason' data-item={imgRec.ImageId} options={rejOpts} onchange={handleRejectOptChange} value={imgRec.reason} required></lightning-combobox>   
+                    </template>
+                    <template if:true={imgRec.isOthers}>
+                        <lightning-input id={imgRec.ImageId} data-item={imgRec.ImageId} value={rejReason} placeholder="Enter Reason here" onchange={handleRejOtherReason} required></lightning-input>
+                    </template>
+                </div>   
+                </lightning-card> 
+            </lightning-layout-item>
+        </template>
+    </lightning-layout> 
+</lightning-accordion-section>
+<lightning-accordion-section name='Rejected' label= 'Rejected' >         
+    <lightning-layout  multiple-rows="true">
+        <template for:each={RejectedImages} for:item='imgRec'>
+            <lightning-layout-item  padding="around-small" key={imgRec.ImageId} >
+                <lightning-card title={imgRec.ImageTag}>
+                    <img src={imgRec.ImageURL}  width="300" height="200"/></br> 
+                    <div>
+                    </br>
+                        <center><p>Status : {imgRec.Status}</p> 
+                        <lightning-combobox id={imgRec.ImageId} data-item={imgRec.ImageId} options={RejStsOpts} onchange={handleStatusChange} value={imgRec.selType}></lightning-combobox> </center></br>
+                        <center><p>Rejected Reason: {imgRec.reason}</p></center>
+                    </div>
+                </lightning-card> 
+            </lightning-layout-item>
+        </template>
+    </lightning-layout> 
+</lightning-accordion-section>
+</lightning-accordion> 
+<lightning-layout-item  padding="around-small"  >
+<div class="slds-clearfix">
+<div class="slds-align_absolute-center">
+<lightning-button label='Update' variant="success" name='update'  onclick={handleUpdate}  ></lightning-button>
+</div>
+</div>
+</lightning-layout-item>       
+
+<div if:true={showSpinner}>
+<lightning-spinner alternative-text="Loading..." variant="brand" size="small" class="slds-is-absolute">
+</lightning-spinner>
+</div>
+</div>
+</template>
+</lightning-card>
+</template>

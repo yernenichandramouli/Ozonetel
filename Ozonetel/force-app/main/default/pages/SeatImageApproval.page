@@ -1,0 +1,179 @@
+<apex:page controller="SeatImageApprovalController" showHeader="false" id="pageB" lightningStylesheets="true">
+ <!--  <apex:slds /> -->
+ 
+<style type="text/css">
+.myClass{
+color:white !important;
+background:#00CC00 !important;
+}
+</style>
+
+    <apex:form id="fmId">
+        <apex:pageBlock title="Bus Image Moderation" id="pbl">
+            <apex:pageMessages escape="false" id="msg"/>  
+            <apex:pageBlockSection columns="1">
+                <apex:pageblocksectionItem >
+                    Region  <apex:outputPanel > <apex:selectList value="{!region}" size="1"  style="width:100px" >
+                    <apex:selectOption itemValue="--None--" itemLabel="--None--"/>
+                   <!-- <apex:selectOption itemValue="IND" itemLabel="India" />
+                    <apex:selectOption itemValue="SGP" itemLabel="Singapore"/>
+                    <apex:selectOption itemValue="MYS" itemLabel="Malysia"/>-->
+                    <apex:selectOption itemValue="PER" itemLabel="Peru"/>
+                    <apex:selectOption itemValue="COL" itemLabel="Columbia" />
+                    <apex:selectOption itemValue="IDN" itemLabel="Indonesia"/>
+                    
+                    <apex:actionSupport event="onchange" action="{!AllBusOperatorIds2}" reRender="opIds,msg" status="status"/> 
+                    </apex:selectList>
+                    <apex:actionStatus id="status">
+                        <apex:facet name="start">
+                            <img src="/img/loading.gif" />
+                            <!--  <div>Loading Please wait........</div>-->
+                        </apex:facet>
+                    </apex:actionStatus>
+                    </apex:outputPanel>
+                </apex:pageblocksectionItem>
+                <apex:pageblocksectionItem >  
+                    Bus Operator Ids    <apex:outputPanel id="opIds">
+                    <apex:selectList value="{!selectedBusOperatorId}" size="1" style="width:250px" disabled="{!opPickEnable}" id="selPick">
+                        <apex:selectOptions value="{!BusOperatorIds}"/>
+                        <apex:actionSupport event="onchange" action="{!GetImages}" reRender="ref,fmId,enb,msg" status="status2"/>              
+                    </apex:selectList>  
+                    [OR] &nbsp; <apex:inputtext value="{!typedBusOperatorId}" disabled="{!opTxtEnable}" id="enb">
+                    <apex:actionSupport event="onchange" action="{!GetImages}" reRender="ref,fmId,selPick" status="status2"/>  
+                    </apex:inputtext>                    
+                    <apex:actionStatus id="status2">
+                        <apex:facet name="start">
+                            <img src="/img/loading.gif" />
+                            <!--  <div>Please wait........</div>-->
+                        </apex:facet>  
+                    </apex:actionStatus>                    
+                    </apex:outputPanel>
+                </apex:pageblocksectionItem>
+                <apex:pageblocksectionItem >
+                    Bus Type Names   <apex:outputpanel id="ref">
+                    <apex:selectList value="{!selectedBusType}" size="1" disabled="{!opBusTypeNames}" style="width:250px">
+                    
+                    <!-- {!BusTypeNames}-----------{!newItems} html-style="color:{!IF(CONTAINS(newItems, BusTypeNames), 'green', 'red')}"-->
+                        <apex:selectOptions value="{!BusTypeNames}" />
+                        <apex:actionSupport event="onchange" action="{!GetFilterImages}" reRender="imgBlock" status="status3"/>     
+                    </apex:selectList>
+                    <apex:actionStatus id="status3">
+                        <apex:facet name="start">
+                            <img src="/img/loading.gif" />
+                            <!--  <div>Loading Please wait........</div>-->
+                        </apex:facet>
+                    </apex:actionStatus>
+                    </apex:outputpanel>
+                </apex:pageblocksectionItem>
+            </apex:pageBlockSection>   
+        </apex:pageBlock> 
+        <apex:pageBlock id="imgBlock" >
+            <apex:pageblockSection id="section1" columns="1"  rendered="{!imageBlock}">            
+                <apex:repeat value="{!allStatuses}" var="as">
+                    <apex:pageblocksection title="{!as} - {!statusCount[as]}"  id="section2" columns="3" collapsible="true" >
+                        <apex:outputPanel rendered="{!IF(as=='NEW',false,true)}">
+                            <script>twistSection(document.getElementById('img_{!$Component.section2}'));</script>
+                            </apex:outputPanel>
+                            <apex:repeat value="{!imWrapList}" var="res">
+                                <apex:pageblocksection rendered="{!IF(as=res.status,true,false)}">
+                                    <table>
+                                    <tr>                                        
+                                    <td>   <apex:image url="{!res.ImageURL}" width="300" height="200" id="MyImage" onmouseover="ImageOver(this)" onmouseout="ImageNormal(this)"   />   
+                                        </td>
+                                    </tr>
+                                    </table>
+                                    <table>
+                                    <tr>
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputpanel id="Reason" >
+                                            <apex:OutputText value="Rejected Reason :{!res.RejectedReason}" rendered="{!IF(res.Status='REJECTED',true,false)}"/>  
+                                            </apex:outputpanel>
+                                    </apex:pageBlockSectionItem>
+                                    </tr>
+
+                                        <tr> 
+                                        <apex:pageBlockSectionItem >
+                                            <apex:outputpanel >
+                                                <apex:outputText value="Status: {!res.Status}" />  &nbsp;&nbsp;  
+                        <apex:actionSupport event="onchange" reRender="RejectedReason"  >
+                            <apex:selectList value="{!res.selType}" size="1" rendered="{!IF(as=='NEW',true,false)}">
+                               
+                                    <apex:selectOption itemValue="--None--" itemLabel="--None--"/>
+                                        <apex:selectOption itemValue="Approve" itemLabel="Approve"/>
+                                            <apex:selectOption itemValue="Reject" itemLabel="Reject"/>
+                                               
+                                                </apex:selectList>  
+                           <apex:selectList value="{!res.selType}" size="1" rendered="{!IF(as=='REJECTED',true,false)}">
+                               
+                                    <apex:selectOption itemValue="--None--" itemLabel="--None--"/>
+                                        <apex:selectOption itemValue="Approve" itemLabel="Approve"/>                                              
+                                                </apex:selectList>  
+                            <apex:selectList value="{!res.selType}" size="1"  rendered="{!IF(as=='APPROVED',true,false)}">
+                               
+                                    <apex:selectOption itemValue="--None--" itemLabel="--None--"/>
+                                            <apex:selectOption itemValue="Reject" itemLabel="Reject"/>
+                                               
+                                                </apex:selectList>  
+                                             </apex:actionSupport>
+
+                                            <!--   <apex:inputcheckbox value="{!res.imCheck}"/> --> &nbsp;&nbsp;
+                            <apex:outputText value="Tag: {!res.ImageTag}"/> &nbsp;&nbsp;
+                            
+                           
+                                            
+                            </apex:outputpanel>
+                            </apex:pageBlockSectionItem>
+                            </tr>
+                             <tr>
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputpanel id="RejectedReason" >
+                                            <apex:outputText value="Rejected Reason: {!res.RejectedReason}" rendered="{!IF(res.selType='Reject',true,false)}"/>  
+                                            <apex:actionSupport event="onchange" reRender="OtherReason">
+                                                <apex:selectList value="{!res.RejectedReason}" size="1" rendered="{!IF(res.selType='Reject',true,false)}">
+                                                <apex:selectOption itemValue="Duplicate" itemLabel="Duplicate"/>
+                                                <apex:selectOption itemValue="Similar" itemLabel="Similar"/>
+                                                <apex:selectOption itemValue="Does not match with the tag" itemLabel="Does not match with the tag"/>
+                                                <apex:selectOption itemValue="Others" itemLabel="Others"/>
+                                            </apex:selectList>   
+                                                </apex:actionSupport>    
+                                            </apex:outputpanel>
+                                    </apex:pageBlockSectionItem>
+                                </tr>
+                                <tr>
+                                    <apex:pageBlockSectionItem >
+                                        <apex:outputpanel id="OtherReason" >
+                                            <apex:InputText value="{!res.OReason}" html-placeholder="Enter other Reason" rendered="{!IF(res.RejectedReason='Others',true,false)}"/>  
+                                            </apex:outputpanel>
+                                    </apex:pageBlockSectionItem>
+                                </tr>
+                                
+                                 
+                            </table>
+                            </apex:pageblocksection>    
+                            </apex:repeat>                  
+                            
+                            </apex:pageblocksection>
+                            </apex:repeat>
+                            </apex:pageblockSection>
+                            
+                           <!-- Update Status &nbsp;&nbsp;    <apex:selectList value="{!status}" size="1">
+                                <apex:selectOption itemValue="--None--" itemLabel="--None--"/>
+                                    <apex:selectOption itemValue="Approve" itemLabel="Approve"/>
+                                        <apex:selectOption itemValue="Reject" itemLabel="Reject"/>
+                                            
+                                            </apex:selectList>-->
+                                        
+                                        <apex:actionStatus id="loadStatus2" >
+                                            <apex:facet name="start" >
+                                                <apex:commandButton value="Updating..." style="width:100px" disabled="true" status="loadStatus"/>                                       
+                                                    </apex:facet>
+                                                <apex:facet name="stop">
+                                                    <apex:commandButton value="Update" style="width:100px" action="{!UpdateStatus}" reRender="fmId,opIds,ref,pbl" status="loadStatus2">  
+                                                        
+                                                        </apex:commandButton>
+                                                    </apex:facet>
+                                                    </apex:actionStatus>    
+                                                    </apex:pageBlock>
+                                                    
+                                                    </apex:form>
+                                                    </apex:page>

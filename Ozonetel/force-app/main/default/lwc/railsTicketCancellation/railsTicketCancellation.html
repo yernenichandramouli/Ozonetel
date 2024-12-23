@@ -1,0 +1,149 @@
+<template>
+  <lightning-card>
+    <div class="slds-is-relative" style="min-height:3rem;transform: translate(0, 0);" if:true={isLoading}>
+      <lightning-spinner alternative-text="Loading..." variant="brand" size="medium"></lightning-spinner>
+    </div>
+    <template if:true={success}>
+      <div class="slds-box slds-theme_default">
+        <center>
+          <p>
+            <b style="color: #0066ff;">{cancelReviewError}</b>
+          </p>
+        </center>
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+          <thead>
+            <tr>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="passenger">Passengers</div>
+              </th>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Fare">Fare</div>
+              </th>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="cancellation Charges">Cancellation Charges</div>
+              </th>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Refund">Refund</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <template for:each={apiRespBody.passengerWiseRefundables} for:item="resp">
+              <tr key={resp}>
+                <td>{resp.name}</td>
+                <td>{resp.fare}</td>
+                <td>{resp.cancellationCharge}</td>
+                <td>{resp.refund}</td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+      <b>
+        <span style="color: rgb(4, 107, 21);">Total Amount Paid : {totalAmountPaid} Rs (incl.GST & Srv.Charges {gstFee})</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: rgb(7, 9, 143);">Total Refund : {refundableAmount} Rs</span>
+      </b>
+      <!-- <p ><b style="color: rgb(119, 233, 138);">Total Amount Paid : {totalAmountPaid} (incl. GST {gstFee}) Total Refund : {refundableAmount}</b></p> -->
+      <p>
+        <span style="color: #ff2900fc;">Fare BreakUp View:- </span>
+        <a href="javascript:void(0);" onclick={handleLinkClickFareBrkUp}>Open</a> - <a href="javascript:void(0);" onclick={closeFareBrkUp}>Close</a>
+      </p>
+      <template if:true={isRefundBrkupView}>
+        <div class="viewContainer">
+          <table class="vertical-table">
+            <thead>
+              <tr>
+                <th>Component Name</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={fareBrkupViewjsonData} for:item="breakDown">
+                 <tr key={breakDown.componentName} class="row-header" data-index={breakDownIndex}>
+                    <td style="font-weight: bold; color: red;">{breakDown.componentName}</td>
+                    <td style="font-weight: bold; color: red;">{breakDown.amount}</td>
+                </tr>
+                <template for:each={breakDown.detailedBreakDown} for:item="detailed">
+                  <tr key={detailed.componentName} class="detail-row" data-index={breakDownIndex}>
+                        <td>{detailed.componentName}</td>
+                        <td>{detailed.amount}</td>
+                    </tr>
+                </template>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </template>
+      <div class="slds-grid slds-gutters">
+        <div class="slds-form-element slds-col slds-size_1-of-2">
+          <label class="slds-form-element__label" for="group-id-1" id="combobox-label-id-42">Select Cancellation:</label>
+          <div class="slds-form-element__control">
+            <div class="slds-select_container">
+              <select name="group" id="group" class="form-control fm-textbox-xtra-large" onchange={hadleCancellationChange}>
+                <option value="">--None--</option>
+                <option value="Full Cancl">Full Cancellation</option>
+                <template if:true={hidePartialCancellationValue}>
+                  <option id="#partialCancellation" value="Partilal Cancl">Partial Cancellation</option>
+                </template>
+              </select>
+            </div>
+          </div>
+        </div>
+        <template if:true={showPartialCancellation}>
+          <div class="slds-form-element slds-col slds-size_1-of-2">
+            <label class="slds-form-element__label" for="passengerList">Passenger List:</label>
+            <div class="slds-form-element__control">
+              <div class="slds-select_container">
+                <select name="passengerList" id="passengerList" class="form-control fm-textbox-xtra-large" multiple>
+                  <option value="">--None--</option>
+                  <template for:each={passengerList} for:item="opt">
+                    <option key={opt}>{opt}</option>
+                  </template>
+                </select>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div class="slds-align_absolute-center" style="height:5rem">
+        <lightning-button variant="success" label="Cancel Ticket" disabled={showCancelTicketButton} onclick={handleCancelButton} class="slds-m-left_x-small"></lightning-button>
+      </div>
+    </template>
+    <!-- <template if:false={success}>isError -->
+    <template if:true={isError}>
+      <center>
+        <br />
+        <br />
+        <br />
+        <br />
+        <p>
+          <b style="color: rgb(255, 0, 0);">ErrorMessage : {message}</b>
+        </p>
+      </center>
+      <center>
+        <br />
+        <p>
+          <b style="color: rgb(255, 0, 0);">ApiResponse : {apierrorResponse}</b>
+        </p>
+      </center>
+      <center>
+        <br />
+        <p>
+          <b style="color: rgb(255, 0, 0);">ErrorCode : {errorCod}</b>
+        </p>
+      </center>
+    </template>
+  </lightning-card>
+  <!---Final Respons page-->
+  <template if:true={isFinalSuccess}>
+    <center>
+      <br />
+      <br />
+      <br />
+      <br />
+      <p>
+        <b style="color: #0066ff;">{showMsg}</b>
+      </p>
+    </center>
+  </template>
+  
+</template>

@@ -1,0 +1,182 @@
+<apex:page controller="Chat_Transcript_Case_Create" sidebar="false" showHeader="false" id="pag" lightningStylesheets="true">
+
+    <apex:slds />
+    <div class="slds-scope"> 
+         <apex:outputPanel id="CaseCreate"  rendered="{!displayCreateCase}">
+
+        <apex:form id="formId">
+            
+            <apex:pageBlock >
+                <apex:pageMessages id="errorMsg"></apex:pageMessages>
+                <apex:pageBlockSection title="New Case Information" columns="2" collapsible="false">
+<!--                    <apex:outputField value="{!cs.Transaction_ID__c}"/> 
+                    <apex:outputText value="{!tripId}" label="Trip ID"></apex:outputText> -->
+                    <apex:inputField value="{!cs.Country__c}" html-disabled="true"/>
+                    <apex:inputField value="{!cs.Business_Type__c}" html-disabled="true"/>
+                    <apex:inputField value="{!cs.Issue_Type__c}" required="true"/>
+                    <apex:inputField value="{!cs.status}" required="true"/>
+                    <apex:inputField value="{!cs.Issue_Sub_Category__c}" required="true"/>          
+                    <apex:inputField value="{!cs.Origin}" required="true"/>
+     
+                    <apex:inputField value="{!cs.Channel_ct__c}"/>
+                    <apex:inputField value="{!cs.Whatsapp_user_origin__c}" required="{!isWhatsappChat}" />                    
+                    <apex:inputField value="{!cs.Chat_Ending_Status__c }"/> 
+                    <apex:inputField value="{!cs.Lead__c}"/> 
+                    <apex:inputField value="{!cs.Lead_TCode__c}"/> 
+                    <apex:inputField value="{!cs.Priority}"/> 
+                    
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Does Customer Require CallBack?" for="stId"/>
+                        <apex:actionRegion >
+                            <apex:inputField value="{!cs.Does_Customer_Require_CallBack__c}" id="stId">
+                                <apex:actionSupport event="onchange" reRender="cbr,cbres" />
+                            </apex:inputField>
+                        </apex:actionRegion> 
+                    </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!cs.Description}"/>
+                    
+                </apex:pageBlockSection>
+                
+                <apex:pageblockSection id="cbr" columns="1" >
+                    
+                    <apex:inputfield id="cbtime" value="{!cs.Call_Back_Time__c}"  rendered="{!If(cs.Does_Customer_Require_CallBack__c,true,false)}" html-placeholder="In Hours"/>
+                    
+                </apex:pageblockSection>
+                
+                <apex:pageblockSection id="cbres" columns="1" >
+                    
+                    <apex:inputfield id="cbtime" value="{!cs.Call_Back_Reason__c}"  required="true" rendered="{!If(cs.Does_Customer_Require_CallBack__c,true,false)}"/>
+                    
+                </apex:pageblockSection>
+                
+               <apex:pageblockSection id="chatSum" columns="1" > 
+                <img alt="New" style="height: 22px;margin-left:10px" src="https://thedigiworldeducation.com/wp-content/uploads/2018/09/new.gif"/> 
+               <div class="help-text" id="helpTextId">You use this as case comment,if you want you can make any changes you can make here only and the same will be stored in case comments.</div>
+                <p>Case  Comment Suggestion:</p>
+                 <apex:pageBlockSectionItem >
+                  <apex:inputTextarea style="width:500px; height:100px;margin-left:140px;" id="textareaId" value="{!chatSummerization}"/>  
+                    </apex:pageBlockSectionItem>
+                </apex:pageblockSection>
+                
+                <apex:pageBlockButtons >
+                    
+                    <apex:actionStatus id="status" >
+                        <apex:facet name="start" >
+                            <apex:commandButton value="Saving..." style="height:30px;width:130px;font-size:15px;background:#04844b;color:white;font-family:Arial;"
+                                                disabled="true" status="status"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:commandButton value="Save" styleClass="slds-button slds-button_success" action="{!showPopup}" reRender="errorMsg,popup,formId" status="status">                   
+                            </apex:commandButton>
+                        </apex:facet>
+                    </apex:actionStatus>   
+                    
+                    <apex:commandButton value="Cancel" styleClass="slds-button slds-button_success slds-m-left-small" action="{!Cancel}"/>
+                </apex:pageBlockButtons>
+            </apex:pageBlock>
+            
+            
+            
+            
+            <apex:pageBlock >
+                <apex:outputPanel id="popup">
+                    <apex:outputPanel id="popInnerOutputPnl" styleClass="customPopup" layout="block" rendered="{!displayPopup}">
+                        <apex:commandButton value="X" title="Close the popup" action="{!closePopup}" styleClass="closeButton" rerender="popup,formId" immediate="true">
+                        </apex:commandButton>
+                        <apex:pageblockSection columns="1">
+                            <apex:pageblockSectionItem >
+                                <apex:outputLabel value="Open case is already exist for this transaction, Please write description here for why you want to create one more case." style="background-color:#ffb75d;color:#080707;"></apex:outputLabel>
+                            </apex:pageblockSectionItem>
+                            <apex:pageblockSectionItem >
+                                <apex:outputLabel value="Description" for="address" ></apex:outputLabel>
+                                <apex:inputfield value="{!cs.Description_P__c}" required="true"/>
+                            </apex:pageblockSectionItem>
+                        </apex:pageblockSection>
+                        
+                        <apex:actionStatus id="status" >
+                            <apex:facet name="start" >
+                                <apex:commandButton value="Saving..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;" disabled="true" status="status"/>                                       
+                            </apex:facet>
+                            <apex:facet name="stop">
+                                <apex:commandButton value="Proceed" action="{!saveMethod}" styleClass="slds-button slds-button_success"
+                                                    rerender="errorMsg,popup,formId" status="status">                   
+                                </apex:commandButton>
+                            </apex:facet>
+                        </apex:actionStatus>   
+                        
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                
+            </apex:pageBlock>  
+            
+            
+            <style type="text/css">
+                .customPopup {
+                background-color: white;
+                border-style: solid;
+                border-width: 2px;
+                left: 20%;
+                padding: 10px;
+                position: absolute;
+                z-index: 9999;
+                width: 500px;
+                top: 20%;
+                }
+                .closeButton {
+                float: right;
+                }
+                
+                 .help-text {
+                color: #dc5017f2;
+                font-size: 12px;
+                margin-top: 5px;
+                }
+                
+                
+            </style>
+         </apex:form>
+         
+          <script>
+        // Show/hide help text based on focus
+        var textarea = document.getElementById('{!$Component.textareaId}');
+        var helpText = document.getElementById('{!$Component.helpTextId}');
+
+        textarea.addEventListener('focus', function() {
+            helpText.style.display = 'block';
+        });
+
+        textarea.addEventListener('blur', function() {
+            helpText.style.display = 'none';
+        });
+    </script>
+    
+        </apex:outputPanel>
+    </div>
+
+    <html>
+    <head>
+        <script>
+            function refreshTab() {
+                if (typeof sforce !== 'undefined' && sforce.one) {
+                  window.location.reload();
+                } else {
+                  window.location.reload();
+    
+                }
+            }
+        </script>
+    </head>
+    
+  <apex:outputPanel rendered="{!!displayCreateCase}">
+    <div style="text-align: center;">
+    <body>
+        <P style="color: red;"><b>The case creation is allowed only after ending the ongoing chat.If you have already ended the chat but still if you can not see case ceration page please click on Refresh Button Below</b></p><br/>
+        <button onclick="refreshTab()" style="background-color: green; width: 100px; height: 40px; color: black;">Refresh Tab</button>
+    </body>
+    </div>
+  </apex:outputPanel>
+
+    </html>
+    
+</apex:page>

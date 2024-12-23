@@ -1,0 +1,74 @@
+<template>
+    <template if:true={isLoading} style="height: 200px; position:relative">
+        <lightning-spinner variant="base" size="medium"></lightning-spinner>
+    </template>
+
+    <!-- <template if:false={isError}> -->
+    <lightning-tabset variant="scoped" class="tab-active">
+        <lightning-tab label="DOJ" value="Tab1" onactive={handleActive}>
+            <lightning-datatable key-field="id" data={dojData} columns={columns} hide-checkbox-column="true">
+            </lightning-datatable>
+            <template if:true={isError}>
+                <b><span style="color: #a30808;">{errorMessage}</span></b>
+            </template>
+        </lightning-tab>
+        <lightning-tab label="Fare Details" value="Tab2" onactive={handleActive}>
+            <lightning-datatable key-field="id" data={fareDetailsData} columns={columns} hide-checkbox-column="true">
+            </lightning-datatable>
+            <template if:true={isError}>
+                <b><span style="color: #a30808;">{errorMessage}</span></b>
+            </template>
+        </lightning-tab>
+        <lightning-tab label="BP Timings" value="Tab3" onactive={handleActive}>
+            <lightning-datatable key-field="id" data={bpTimingsData} columns={columns} hide-checkbox-column="true">
+            </lightning-datatable>
+            <template if:true={isError}>
+                <b><span style="color: #a30808;">{errorMessage}</span></b>
+            </template>
+        </lightning-tab>
+
+        <lightning-tab label="Whatsapp Status" value="Tab4" onactive={handleActive}  id="watsTabId">
+            <template if:true={isWatsapBtn}>
+                <div style="margin-left: 254px;">
+                    <lightning-button label="Get Status" onclick={handleClickGetWhatsapStatus} variant="success"></lightning-button>
+                </div>
+            </template>
+
+            <template if:true={isWatsUpSuccess}>
+                <lightning-datatable key-field="sentAt" data={watsUpData} columns={watcolumns} hide-checkbox-column="true">
+                </lightning-datatable>
+            </template>
+
+            <template if:true={isWatsUpError}>
+                <b><span style="color: #a30808;">{whatsApperrorMessage}</span></b>
+                <div style="margin-left: 254px;">
+                                    <lightning-button label="Get Details" onclick={handleClickGetWhatsapStatus} variant="success"></lightning-button>
+
+                </div>
+            </template>
+        </lightning-tab>
+
+
+        <lightning-tab label="Ticket Cancellation Validation" value="Tab5" onactive={handleActive}>
+            <div style="margin-left: 264px;">
+                <lightning-button label="Get Details" onclick={handleClickGetTicketCancellation} variant="success"></lightning-button>
+            </div>
+
+          <lightning-tabset >
+        <template for:each={eventTabs} for:item="tab">
+            <lightning-tab key={tab.label} label={tab.label} onactive={handleTCtabs}>
+                <lightning-datatable key-field="Id" data={tab.data} columns={tabColumns} hide-checkbox-column="true">
+                </lightning-datatable>
+            </lightning-tab>
+        </template>
+    </lightning-tabset>
+
+
+            <template if:true={isTcValError}>
+                <b><span style="color: #a30808;">{errorMessage}</span></b>
+            </template>
+
+        </lightning-tab>
+
+    </lightning-tabset>
+</template>

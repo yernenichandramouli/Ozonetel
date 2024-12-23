@@ -1,0 +1,157 @@
+<template>
+    <lightning-card>
+        <div class="slds-align_absolute-center">
+            <lightning-button variant="success" class="slds-align_absolute-center" onclick={showDetails}
+                label="Show Additional Details">
+            </lightning-button>
+            <div if:true={showSpinner} style="display:flex;flex-wrap: wrap;">
+                <lightning-spinner alternative-text="Updating..." variant="brand" size="small" class="slds-is-absolute">
+                </lightning-spinner>
+            </div>&nbsp;&nbsp;
+        </div>
+
+        <lightning-accordion if:true={showBlock} allow-multiple-sections-open active-section-name={activeSections}>
+
+            <!--    <lightning-accordion-section name="A" label="Traveller Details">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered"
+                    aria-labelledby="element-with-table-label other-element-with-table-label">
+
+                    <tr>
+                        <td rowspan="2" style="border:1px solid black;">Name</td>
+                        <td rowspan="2" style="border:1px solid black;">Age</td>
+                        <td rowspan="2" style="border:1px solid black;">Gender</td>
+                        <td rowspan="2" style="border:1px solid black;">Senior Citizen</td>
+                        <td rowspan="2" style="border:1px solid black;">Berth Preference</td>
+                        <td colspan="3" style="border:1px solid black;">Current Status</td>
+                        <td colspan="3" style="border:1px solid black;">Booking Status</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid black;">Status</td>
+                        <td style="border:1px solid black;">Coach</td>
+                        <td style="border:1px solid black;">Berth</td>
+                        <td style="border:1px solid black;">Status</td>
+                        <td style="border:1px solid black;">Coach</td>
+                        <td style="border:1px solid black;">Berth</td>
+                    </tr>
+                    <br /><template for:each={travellerList} for:item="td">
+                        <tr key={td}>
+                            <td style="border:1px solid black;">{td.travellerDetails.name}</td>
+                            <td style="border:1px solid black;">{td.travellerDetails.age}</td>
+                            <td style="border:1px solid black;">{td.travellerDetails.gender}</td>
+                            <td style="border:1px solid black;">{td.travellerDetails.seniorCitizenApplicable}</td>
+                            <td style="border:1px solid black;">{td.travellerDetails.berthPreference}</td>
+                            <template if:true={tranStatus}>
+                                <td style="border:1px solid black;">{td.currentSeatDetails.currentStatus}</td>
+                                <td style="border:1px solid black;">{td.currentSeatDetails.currentCoachId}</td>
+                                <td style="border:1px solid black;">{td.currentSeatDetails.currentBerthNo}</td>
+                                <td style="border:1px solid black;">{td.bookingSeatDetails.bookingStatus}</td>
+                                <td style="border:1px solid black;">{td.bookingSeatDetails.bookingCoachId}</td>
+                                <td style="border:1px solid black;">{td.bookingSeatDetails.bookingBerthNo}</td>
+                            </template>
+                            <template if:false={tranStatus}>
+                                <td style="border:1px solid black;"></td>
+                                <td style="border:1px solid black;"></td>
+                                <td style="border:1px solid black;"></td>
+                                <td style="border:1px solid black;"></td>
+                                <td style="border:1px solid black;"></td>
+                                <td style="border:1px solid black;"></td>
+                            </template>
+                        </tr>
+                    </template>
+                </table>
+            </lightning-accordion-section>
+-->
+            <lightning-accordion-section name="A" label="Traveller Details">
+
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered"
+                    aria-labelledby="element-with-table-label other-element-with-table-label">
+
+                    <tr>
+                        <td rowspan="2" style="border:1px solid black;">Name</td>
+                        <td rowspan="2" style="border:1px solid black;">Age</td>
+                        <td rowspan="2" style="border:1px solid black;">Senior Citizen</td>
+                        <td colspan="3" style="border:1px solid black;">Current Status</td>
+                        <td colspan="3" style="border:1px solid black;">Booking Status</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid black;">Status</td>
+                        <td style="border:1px solid black;">Coach</td>
+                        <td style="border:1px solid black;">Berth</td>
+                        <td style="border:1px solid black;">Status</td>
+                        <td style="border:1px solid black;">Coach</td>
+                        <td style="border:1px solid black;">Berth</td>
+                    </tr>
+                    <template for:each={passDetails} for:item="psd">
+
+                        <tr key={psd}>
+                            <td style="border:1px solid black;">{psd.passengerName}</td>
+                            <td style="border:1px solid black;">{psd.passengerAge}</td>
+                            <td style="border:1px solid black;">{psd.seniorCitizenApplicable}</td>
+                            <template if:true={tranStatus}>
+                                <td style="border:1px solid black;">{psd.currentStatus}</td>
+                                <td style="border:1px solid black;">{psd.currentCoachId}</td>
+                                <td style="border:1px solid black;">{psd.currentBerthNo}</td>
+                                <td style="border:1px solid black;">{psd.bookingStatus}</td>
+                                <td style="border:1px solid black;">{psd.bookingCoachId}</td>
+                                <td style="border:1px solid black;">{psd.bookingBerthNo}</td>
+                            </template>
+                            <!-- <template if:false={tranStatus}>
+                                <td style="border:1px solid black;"></td>
+                                <td style="border:1px solid black;"></td>
+                                <td style="border:1px solid black;"></td>
+                                <td style="border:1px solid black;"></td>
+                                <td style="border:1px solid black;"></td>
+                                <td style="border:1px solid black;"></td>
+                            </template>-->
+                        </tr>
+                    </template>
+                </table>
+            </lightning-accordion-section>
+
+            <lightning-accordion-section name="B" label="Train Details">
+                <div class="slds-form-element  slds-form-element_horizontal slds-form-element_readonly">
+                    <span class="slds-form-element__label">Train Name</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static">{trainDetails.trainName}</div>
+                    </div>
+                    <span class="slds-form-element__label">Train No</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static">{trainDetails.trainNo}</div>
+                    </div>
+                    <span class="slds-form-element__label">Type</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-form-element__static">{trainDetails.type}</div>
+                    </div>
+                </div>
+                <!-- <lightning-record-view-form mode="view">
+                    <p> Name: {trainDetails.trainName}</p>
+                    <p> Train No: {trainDetails.trainNo}</p>
+                    <p> Type: {trainDetails.type}</p>
+                </lightning-record-view-form>-->
+            </lightning-accordion-section>
+            <lightning-accordion-section name="C" label="Customer Price Breakup">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered"
+                    aria-labelledby="element-with-table-label other-element-with-table-label">
+                    <tr>
+                        <td style="border:1px solid black;">Name</td>
+                        <td style="border:1px solid black;">Amount</td>
+                        <td style="border:1px solid black;">Refund Amount</td>
+                        <td style="border:1px solid black;">Collected By</td>
+                        <td style="border:1px solid black;">Cancellation Applicable</td>
+                    </tr>
+                    <template for:each={customerPriceBreakup} for:item="cp">
+                        <tr key={cp}>
+                            <td style="border:1px solid black;">{cp.componentName}</td>
+                            <td style="border:1px solid black;">{cp.value}</td>
+                            <td style="border:1px solid black;">{cp.refundableValue}</td>
+                            <td style="border:1px solid black;">{cp.collectedBy}</td>
+                            <td style="border:1px solid black;">{cp.isCancellationPolicyApplicable}</td>
+                        </tr>
+                    </template>
+
+                </table>
+            </lightning-accordion-section>
+        </lightning-accordion>
+
+    </lightning-card>
+</template>

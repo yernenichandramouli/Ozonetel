@@ -1,0 +1,26 @@
+<apex:component access="global" controller="sgmyDailyCaseReport">
+    <apex:attribute name="displaySGMYReport" description="To Display Ageing Refund Breakup" type="Boolean" assignTo="{!showSgmyCaseReport}"/>
+    <apex:outputPanel rendered="{!showSgmyCaseReport}">
+        <br></br>
+            <table border="1" cellpadding="4" cellspacing="0" allign="center">
+                <thead bgcolor="mediumspringgreen">    
+                    <tr>
+                        <th>Case Owner</th> 
+                        <th>Record Count</th>
+                    </tr>
+                </thead>        
+                <tbody  style="font-family: Arial; font-size: 9pt;">
+                    <apex:repeat value="{!StatusWiseClosedCases}" var="cs">
+                        <tr>
+                            <td>{!cs['csOwner']}</td>
+                            <td>{!cs['recCount']}</td>
+                        </tr>       
+                    </apex:repeat>
+                    <tr>
+                        <th bgcolor="mediumspringgreen">Total Cases</th>
+                        <td><B>{!totalRecCount}</B></td>
+                    </tr>
+                </tbody>
+            </table>
+        </apex:outputPanel>
+</apex:component>

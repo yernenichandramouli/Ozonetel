@@ -1,0 +1,28 @@
+<!-- calendar.html -->
+<template>
+    <lightning-card title="Monthly Calendar">
+        <template if:true={showCalendar}>
+            <div class="calendar">
+                <lightning-input type="date" label="Select Date" onchange={handleDateChange} min={minDate}></lightning-input>
+            </div>
+        </template>
+        <template if:true={showDayView}>
+            <div class="day-view">
+                <h2>{selectedDate}</h2>
+                <div class="slots">
+                    <template for:each={timeSlots} for:item="slot">
+                        <div key={slot.id} class={slot.class} data-id={slot.id} onclick={showAlert}>
+                            {slot.time} 
+                           <template if:true={slot.bookings}>
+                            - Bookings: {slot.bookings}/{maxBookingsPerSlot}
+                            </template>
+                        </div>
+                    </template>
+                </div>
+                <lightning-button label="Back to Calendar" onclick={handleBackToCalendar}></lightning-button>
+            </div>
+        </template>
+        <c-custom-alert-supervisor-callback show-modal={showModal} onconfirm={handleConfirm}></c-custom-alert-supervisor-callback >
+
+    </lightning-card>
+</template>

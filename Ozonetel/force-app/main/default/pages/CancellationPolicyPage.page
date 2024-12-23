@@ -1,0 +1,49 @@
+<!--
+ * (c) 2016 RedBus
+ *
+ * Name           : CancellationPolicyPage
+ * Created Date   : 06 Dec 2016
+ * Created By     : Sreenivas M
+ * Purpose        : VF page to display cancellation charges on transaction page.
+ *
+ ** -->
+<apex:page extensions="CancellationPolicyCntrl" action="{!fetchCanclPolicyDetails}" standardController="Order_Items__c" showHeader="false" showChat="false" sidebar="false" lightningStylesheets="true">
+<apex:form >
+<apex:slds />
+<div class="slds-scope">
+<apex:outputPanel rendered="{!respStatus=='OK'}">
+<apex:pageBlock title="Cancellation Policy Details">
+<apex:pagemessages ></apex:pagemessages>
+   
+     
+      <center>
+           <apex:outputText rendered="{!(cancelResponse.zcafePolicy!='null')}"><font style="color:red"><b>{!cancelResponse.zcafePolicy}</b></font></apex:outputText><br/>
+           <apex:outputText rendered="{!cancelResponse.isPartialCancellationAllowed}"><font style="color:red"><b> Partial cancellation is allowed for this transaction</b></font></apex:outputText><br/>
+           <apex:outputText rendered="{!cancelResponse.BookedViaTcp}"><font style="color:red"><b>TCP is opted for this transaction</b></font></apex:outputText>
+
+       </center>
+      
+        <apex:pageBlockTable value="{!cancelResponse.Cancelpolicylist}" var="res" styleClass="slds-table slds-table--bordered">
+            <apex:column headerValue="Time of Cancellation" value="{!res.duration}" />
+            <apex:column headerValue="Cancellation Percentage" value="{!res.percentage}"/>
+            <apex:column headerValue="Refundable Amount" value="{!res.RefundableAmount}"/>
+             <apex:column headerValue="Current Slot">
+                <apex:inputcheckbox value="{!res.currentSlot}"/>
+            </apex:column>
+         <!--   <apex:column headerValue="Cancellation Amount" value="{!res.chargeAssociated}" />
+            <apex:column headerValue="Refundable Amount" value="{!res.RefundAmount}"/>  -->          
+          
+        </apex:pageBlockTable>
+
+ </apex:pageBlock>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!respStatus!='OK'}">
+<center>
+   <br/>
+   <br/>
+   <p> Bad Request for International Transactions </p>
+ </center>
+</apex:outputPanel>
+</div>
+</apex:form>
+</apex:page>

@@ -1,0 +1,53 @@
+<template>
+<lightning-card>
+<lightning-layout horizontal-align=" " >
+    <lightning-layout-item flexibility="auto" padding="around-small">
+    <table>
+        <tr>
+            <td>Total Ticket Amount</td>
+            <td>Refund Amount</td>
+            <td>Refund Status</td>
+            </tr>
+        <tr>
+            <th><b>{amount}</b></th>
+            <th><b>{refundAmount}</b></th>
+            <th><b>{status}</b></th>
+        </tr>
+    </table>
+</lightning-layout-item>
+<template if:true={requireCallback}>
+<lightning-layout-item flexibility="auto" padding="around-small">
+    <button disabled style="background: antiquewhite;
+    border-color: #e69494;
+    font-weight: bold;
+    border-radius: 6px;
+    border-style: solid;">Call back Required at <lightning-formatted-date-time value={time} year="numeric" day="2-digit" month="long" hour="2-digit" minute="2-digit"> </lightning-formatted-date-time> </button>
+</lightning-layout-item>
+
+</template>
+<template if:true={showHft}>
+    <lightning-layout-item flexibility="auto" padding="around-small">
+        <button disabled style="background: rgb(89, 226, 178);
+        border-color: #398006;
+        font-weight: bold;
+        border-radius: 6px;
+        border-style: solid;">{hft} </button>
+    </lightning-layout-item>
+    
+    </template>
+    
+    <template if:true={showInstantBolt}>
+        <lightning-layout-item flexibility="auto" padding="around-small">
+            <button disabled style="background: rgb(89, 226, 178);
+            border-color: #398006;
+            font-weight: bold;
+            border-radius: 6px;
+            border-style: solid;">{instantBolt} </button>
+        </lightning-layout-item>
+        
+        </template>
+
+</lightning-layout>
+
+</lightning-card>
+</template>

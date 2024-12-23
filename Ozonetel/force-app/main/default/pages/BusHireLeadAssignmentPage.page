@@ -1,0 +1,219 @@
+<apex:page standardController="lead" extensions="BusHireLeadAssignment" tabStyle="account">
+    <apex:form >
+    <apex:pageMessages escape="false" id="err"/>  
+        <apex:pageBlock Title="Assignment Order" >
+            <apex:pageBlockSection >
+                <apex:inputfield value="{!ldObj.ownerid}"/>
+                
+               <!-- <apex:commandButton value="Fetch Leads" action="{!ShowLeads}" reRender="pb,err"/> -->
+                 <apex:actionStatus id="loadStatus" >
+                        <apex:facet name="start" >
+                            <apex:commandButton value="Fetching..."  disabled="true" status="loadStatus"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">                   
+                            <apex:commandButton value="Fetch Leads" action="{!ShowLeads}" style="width:100px" reRender="pb,err" status="loadStatus">                               
+                            </apex:commandButton>
+                        </apex:facet>
+                    </apex:actionStatus>
+                
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock id="pb">
+           <apex:outputPanel rendered="{!showBlk}">
+            <apex:pageBlockSection title="Hot Leads - {!hotList.size}" >
+           
+             <apex:outputlabel rendered="{!IF(hotList.size<=0,true,false)}">No Hot Leads</apex:outputlabel>
+                <apex:pageblocktable value="{!hotList}" var="h" rendered="{!IF(hotList.size>0,true,false)}" >
+                <apex:column headerValue="Customer Name">
+                    <apex:outputlink value="#" onclick="window.open('/{!h.Id}','_blank');">{!h.lastname}</apex:outputlink>
+                  </apex:column>
+                   
+                    <apex:column value="{!h.Call_back_request_time__c}"/>
+                     <apex:column value="{!h.SrcCityName__c}"/>
+                      <apex:column value="{!h.DestCityName__c}"/>
+                      <apex:column value="{!h.Previous_Owner__c}"/>
+                </apex:pageblocktable>
+            </apex:pageBlockSection>
+            
+            
+            <apex:pageBlockSection title="Call back Leads - {!cbList.size} " >
+             <apex:outputlabel rendered="{!IF(cbList.size<=0,true,false)}">No Call back Leads</apex:outputlabel>
+                <apex:pageblocktable value="{!cbList}" var="c" rendered="{!IF(cbList.size>0,true,false)}">
+                 <apex:column headerValue="Customer Name">
+                    <apex:outputlink value="#" onclick="window.open('/{!c.Id}','_blank');">{!c.lastname}</apex:outputlink>
+                  </apex:column>
+                   <!-- <apex:column value="{!c.lastname}"/>-->
+                    <apex:column value="{!c.Call_back_request_time__c}"/>
+                     <apex:column value="{!c.SrcCityName__c}"/>
+                      <apex:column value="{!c.DestCityName__c}"/>
+                      <apex:column value="{!c.Previous_Owner__c}"/>
+                </apex:pageblocktable>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="New Leads">
+               <apex:outputlabel rendered="{!IF(newList.size<=0,true,false)}">No New P1 Leads</apex:outputlabel>
+                <apex:pageblocktable value="{!newList}" var="n" rendered="{!IF(newList.size>0,true,false)}">
+                    <apex:column value="{!n.lastname}"/>
+                    <apex:column value="{!n.Priority__c}"/>
+                    <apex:column value="{!n.DOJStart__c}"/>
+                    <apex:column value="{!n.createddate}"/>
+                     <apex:column value="{!n.SrcCityName__c}"/>
+                      <apex:column value="{!n.DestCityName__c}"/>
+                </apex:pageblocktable>
+                 
+                <apex:outputlabel rendered="{!IF(newList2.size<=0,true,false)}">No New P2 Leads</apex:outputlabel> 
+                <apex:pageblocktable value="{!newList2}" var="n2" rendered="{!IF(newList2.size>0,true,false)}"  >            
+                    <apex:column value="{!n2.lastname}"/>
+                    <apex:column value="{!n2.Priority__c}"/>
+                    <apex:column value="{!n2.DOJStart__c}"/>
+                    <apex:column value="{!n2.createddate}"/>
+                     <apex:column value="{!n2.SrcCityName__c}"/>
+                      <apex:column value="{!n2.DestCityName__c}"/>
+                      
+                </apex:pageblocktable>
+                
+                <apex:outputlabel rendered="{!IF(newList3.size<=0,true,false)}">No New P3 Leads</apex:outputlabel> 
+                 <apex:pageblocktable value="{!newList3}" var="n3" rendered="{!IF(newList3.size>0,true,false)}">                   
+                     <apex:column value="{!n3.lastname}"/>
+                    <apex:column value="{!n3.Priority__c}"/>
+                    <apex:column value="{!n3.DOJStart__c}"/>
+                    <apex:column value="{!n3.createddate}"/>
+                     <apex:column value="{!n3.SrcCityName__c}"/>
+                      <apex:column value="{!n3.DestCityName__c}"/>
+                </apex:pageblocktable>
+                
+               <apex:outputlabel rendered="{!IF(newList4.size<=0,true,false)}">No New P4 Leads</apex:outputlabel> 
+                <apex:pageblocktable value="{!newList4}" var="n4" rendered="{!IF(newList4.size>0,true,false)}" >                   
+                    <apex:column value="{!n4.lastname}"/>
+                    <apex:column value="{!n4.Priority__c}"/>
+                    <apex:column value="{!n4.DOJStart__c}"/>
+                    <apex:column value="{!n4.createddate}"/>
+                    <apex:column value="{!n4.SrcCityName__c}"/>
+                    <apex:column value="{!n4.DestCityName__c}"/>
+                </apex:pageblocktable>
+                
+                 <apex:outputlabel rendered="{!IF(newList5.size<=0,true,false)}">No New P5 Leads</apex:outputlabel> 
+                <apex:pageblocktable value="{!newList5}" var="n5" rendered="{!IF(newList5.size>0,true,false)}">                   
+                    <apex:column value="{!n5.lastname}"/>
+                    <apex:column value="{!n5.Priority__c}"/>
+                    <apex:column value="{!n5.DOJStart__c}"/>
+                    <apex:column value="{!n5.createddate}"/>
+                    <apex:column value="{!n5.SrcCityName__c}"/>
+                    <apex:column value="{!n5.DestCityName__c}"/>
+                </apex:pageblocktable>
+                
+                 <apex:outputlabel rendered="{!IF(newList6.size<=0,true,false)}">No New P6 Leads</apex:outputlabel> 
+                 <apex:pageblocktable value="{!newList6}" var="n6" rendered="{!IF(newList6.size>0,true,false)}">                   
+                    <apex:column value="{!n6.lastname}"/>
+                    <apex:column value="{!n6.Priority__c}"/>
+                    <apex:column value="{!n6.DOJStart__c}"/>
+                    <apex:column value="{!n6.createddate}"/>
+                    <apex:column value="{!n6.SrcCityName__c}"/>
+                    <apex:column value="{!n6.DestCityName__c}"/>
+                </apex:pageblocktable>
+                
+                <apex:outputlabel rendered="{!IF(newList7.size<=0,true,false)}">No New P7 Leads</apex:outputlabel> 
+                <apex:pageblocktable value="{!newList7}" var="n7" rendered="{!IF(newList7.size>0,true,false)}" >                   
+                    <apex:column value="{!n7.lastname}"/>
+                    <apex:column value="{!n7.Priority__c}"/>
+                    <apex:column value="{!n7.DOJStart__c}"/>
+                    <apex:column value="{!n7.createddate}"/>
+                    <apex:column value="{!n7.SrcCityName__c}"/>
+                    <apex:column value="{!n7.DestCityName__c}"/>
+                </apex:pageblocktable>
+                
+                 <apex:outputlabel rendered="{!IF(newList8.size<=0,true,false)}">No New P8 Leads</apex:outputlabel> 
+                <apex:pageblocktable value="{!newList8}" var="n8" rendered="{!IF(newList8.size>0,true,false)}">                   
+                    <apex:column value="{!n8.lastname}"/>
+                    <apex:column value="{!n8.Priority__c}"/>
+                    <apex:column value="{!n8.DOJStart__c}"/>
+                    <apex:column value="{!n8.createddate}"/>
+                    <apex:column value="{!n8.SrcCityName__c}"/>
+                    <apex:column value="{!n8.DestCityName__c}"/>
+                </apex:pageblocktable>
+                
+                <apex:outputlabel rendered="{!IF(newList9.size<=0,true,false)}">No New P9 Leads</apex:outputlabel>
+                <apex:pageblocktable value="{!newList9}" var="n9" rendered="{!IF(newList9.size>0,true,false)}">                   
+                    <apex:column value="{!n9.lastname}"/>
+                    <apex:column value="{!n9.Priority__c}"/>
+                    <apex:column value="{!n9.DOJStart__c}"/>
+                    <apex:column value="{!n9.createddate}"/>
+                    <apex:column value="{!n9.SrcCityName__c}"/>
+                    <apex:column value="{!n9.DestCityName__c}"/>
+                </apex:pageblocktable>
+                
+                <apex:outputlabel rendered="{!IF(newList10.size<=0,true,false)}">No New P10 Leads</apex:outputlabel>
+                <apex:pageblocktable value="{!newList10}" var="n10" rendered="{!IF(newList10.size>0,true,false)}">                   
+                    <apex:column value="{!n10.lastname}"/>
+                    <apex:column value="{!n10.Priority__c}"/>
+                    <apex:column value="{!n10.DOJStart__c}"/>
+                    <apex:column value="{!n10.createddate}"/>
+                    <apex:column value="{!n10.SrcCityName__c}"/>
+                    <apex:column value="{!n10.DestCityName__c}"/>
+                </apex:pageblocktable>
+               
+               <apex:outputlabel rendered="{!IF(newList11.size<=0,true,false)}">No New P11 Leads</apex:outputlabel> 
+                <apex:pageblocktable value="{!newList11}" var="n11"  rendered="{!IF(newList11.size>0,true,false)}">                   
+                    <apex:column value="{!n11.lastname}"/>
+                    <apex:column value="{!n11.Priority__c}"/>
+                    <apex:column value="{!n11.DOJStart__c}"/>
+                    <apex:column value="{!n11.createddate}"/>
+                    <apex:column value="{!n11.SrcCityName__c}"/>
+                    <apex:column value="{!n11.DestCityName__c}"/>
+                </apex:pageblocktable>
+            </apex:pageBlocksection>
+            
+            <apex:pageBlocksection title="New RnR Leads - {!newRnRList.size}">
+               <apex:outputlabel rendered="{!IF(newRnRList.size<=0,true,false)}">No New-RnR Leads</apex:outputlabel>
+                <apex:pageblocktable value="{!newRnRList}" var="pnr" rendered="{!IF(newRnRList.size>0,true,false)}">
+                    <apex:column value="{!pnr.lastname}"/>
+                    <apex:column value="{!pnr.Call_back_request_time__c}"/>
+                     <apex:column value="{!pnr.SrcCityName__c}"/>
+                      <apex:column value="{!pnr.DestCityName__c}"/>
+                </apex:pageblocktable>
+            </apex:pageBlocksection>
+            
+            <apex:pageBlocksection title="Re Open Leads - {!reOpenList.size}">
+              <apex:outputlabel rendered="{!IF(reOpenList.size<=0,true,false)}">No Re-Open Leads</apex:outputlabel>
+                <apex:pageblocktable value="{!reOpenList}" var="r" rendered="{!IF(reOpenList.size>0,true,false)}">
+                    <apex:column value="{!r.lastname}"/>
+                    <apex:column value="{!r.Call_back_request_time__c}"/>
+                     <apex:column value="{!r.SrcCityName__c}"/>
+                      <apex:column value="{!r.DestCityName__c}"/>
+                </apex:pageblocktable>
+            </apex:pageBlocksection>
+            
+            <apex:pageBlocksection title="FollowUp Leads - {!folwList.size}">
+               <apex:outputlabel rendered="{!IF(folwList.size<=0,true,false)}">No Follwoup Leads</apex:outputlabel>
+                <apex:pageblocktable value="{!folwList}" var="f" rendered="{!IF(folwList.size>0,true,false)}">
+                    <apex:column value="{!f.lastname}"/>
+                    <apex:column value="{!f.Call_back_request_time__c}"/>
+                     <apex:column value="{!f.SrcCityName__c}"/>
+                      <apex:column value="{!f.DestCityName__c}"/>
+                </apex:pageblocktable>
+            </apex:pageblocksection>
+            
+            <apex:pageBlocksection title="RnR - {!rnrList.size}">
+               <apex:outputlabel rendered="{!IF(rnrList.size<=0,true,false)}">No RnR Leads</apex:outputlabel>
+                <apex:pageblocktable value="{!rnrList}" var="rr" rendered="{!IF(rnrList.size>0,true,false)}">
+                    <apex:column value="{!rr.lastname}"/>
+                    <apex:column value="{!rr.RnR_Call_Time__c}"/>
+                     <apex:column value="{!rr.SrcCityName__c}"/>
+                      <apex:column value="{!rr.DestCityName__c}"/>
+                </apex:pageblocktable>
+            </apex:pageblocksection>
+            
+            <apex:pageBlocksection title="In Progress Leads - {!inProgressList.size}">
+               <apex:outputlabel rendered="{!IF(inProgressList.size<=0,true,false)}">No In Progress Leads</apex:outputlabel>
+                <apex:pageblocktable value="{!inProgressList}" var="ip" rendered="{!IF(inProgressList.size>0,true,false)}">
+                    <apex:column value="{!ip.lastname}"/>
+                    <apex:column value="{!ip.RnR_Call_Time__c}"/>
+                     <apex:column value="{!ip.SrcCityName__c}"/>
+                      <apex:column value="{!ip.DestCityName__c}"/>
+                </apex:pageblocktable>
+            </apex:pageblocksection>
+            
+            </apex:outputPanel> 
+        </apex:pageBlock>
+    </apex:form>    
+</apex:page>

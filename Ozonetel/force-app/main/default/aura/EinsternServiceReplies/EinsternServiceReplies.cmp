@@ -1,0 +1,30 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global" description="Conversation toolkit api sample">
+    <!-- Attributes for dynamic content -->
+    <aura:attribute name="recommendationText" type="String" default="I'm sorry to hear that you're having trouble accessing your account. I'll do my best to assist you. Can you please provide me with your username or email address?" />
+    <aura:attribute name="timestamp" type="String" default="11:15:19" />
+
+    <lightning:card title="Service Replies" iconName="standard:service_request">
+        <div class="slds-text-title_bold slds-m-bottom_x-small">Einstein Recommendations</div>
+        <div class="slds-m-bottom_x-small">Last Updated: {! v.timestamp } - 1 item</div>
+
+        <!-- Recommendation Text -->
+        <div class="slds-box slds-theme_default slds-m-bottom_small">
+            <div class="slds-text-title">Context</div>
+            <div class="slds-m-top_x-small">
+                <lightning:formattedText value="{! v.recommendationText }" />
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="slds-grid slds-gutters slds-m-top_small">
+            <lightning:button label="Post" variant="brand" class="slds-col" onclick="{! c.handlePost }" />
+            <lightning:button label="Edit" variant="neutral" class="slds-col" onclick="{! c.handleEdit }" />
+            <lightning:button label="Not Helpful" variant="destructive" class="slds-col" onclick="{! c.handleNotHelpful }" />
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="slds-m-top_small slds-text-color_weak slds-text-body_small">
+            This tool uses generative AI. Check the output for accuracy and safety before using.
+        </div>
+    </lightning:card>
+</aura:component>

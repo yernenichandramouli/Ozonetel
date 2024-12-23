@@ -1,0 +1,13 @@
+<template>
+    <template if:true={showError}>
+    <p><b>TravelProtect details are not available for this transaction.</b></p>    
+    </template>    
+    <template if:true={showTable}>
+        <lightning-datatable
+                key-field="name"
+                data={data}
+                columns={columns}
+                hide-checkbox-column=true>
+        </lightning-datatable>
+    </template>
+    </template>

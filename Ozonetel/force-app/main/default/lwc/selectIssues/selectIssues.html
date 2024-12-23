@@ -1,0 +1,132 @@
+<template>
+    <lightning-card>
+        <template if:true={showUpdMsg}>
+            <c-generic-toast-messages notificationtype={notifType} notificationmessage={notifMsg}>
+            </c-generic-toast-messages>
+            <div class="slds-m-bottom_x-small"></div>
+        </template>
+
+        <lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
+            <lightning-accordion-section name="A" label="Selected Issues">
+                <table>
+                    <template if:true={issuesAvailable}>
+
+                        <template for:each={issuesData} for:item="is">
+
+                            <div class="slds-size_2-of-8" key={is.index}>
+                                <lightning-input key={is.issueNo} value={is.index} label={is.issueName}
+                                    checked={is.isChecked} type="checkbox" onchange={handleChange}>
+                                </lightning-input>
+                            </div>
+
+                        </template>
+
+                    </template>
+                </table>
+
+                <!-- disabled="true" <template if:true={issuesAvailable}>
+            <lightning-checkbox-group name="Checkbox Group" label="Checkbox Group" options={isValList} value={value}
+                onchange={handleChange}></lightning-checkbox-group>
+        </template>--><br />
+
+                <div class="slds-align_absolute-center">
+                    <lightning-button variant="success" label="Save" title="Save" onclick={handleSave} aria-setsize="4"
+                        style="margin-top: 20px;">
+                    </lightning-button>
+                    <div if:true={saveSpinner} style="display:flex;flex-wrap: wrap;">
+                        <lightning-spinner alternative-text="Updating..." variant="brand" size="small"
+                            class="slds-is-absolute">
+                        </lightning-spinner>
+                    </div>&nbsp;&nbsp;
+                    <!--   <lightning-button variant="success" label="Instant Close" title="Save" onclick={handleClose}
+                        aria-setsize="4" style="margin-top: 20px;">
+                    </lightning-button>-->
+                </div>
+            </lightning-accordion-section>
+
+
+            <lightning-accordion-section name="B" label="Transaction History">
+                <template if:true={pastTransData}>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <div class="slds-grid slds-gutters slds-wrap">
+                        <div class="slds-size_1-of-4">
+                            <b> First Transaction Date:</b>
+                        </div>
+                        <div class="slds-size_1-of-4">
+                            {pastTransData.ftd}
+                        </div>
+                        <div class="slds-size_1-of-4">
+                            <b> Lat Transaction Date:</b>
+                        </div>
+                        <div class="slds-size_1-of-4">
+                            {pastTransData.ltd}
+                        </div>
+                        <div class="slds-size_1-of-4"></div>
+                        <div class="slds-size_1-of-4"></div>
+                        <div class="slds-size_1-of-4"></div>
+                        <div class="slds-size_1-of-4"></div>
+
+                        <div class="slds-size_1-of-4">
+                            <b> Total Transactions:</b>
+                        </div>
+                        <div class="slds-size_1-of-4">
+                            {pastTransData.totalNoOfTrxns}
+                        </div>
+                        <div class="slds-size_1-of-4">
+                            <b> Active Days:</b>
+                        </div>
+                        <div class="slds-size_1-of-4">
+                            {pastTransData.active_days}
+                        </div>
+                        <div class="slds-size_1-of-4"></div>
+                        <div class="slds-size_1-of-4"></div>
+                        <div class="slds-size_1-of-4"></div>
+                        <div class="slds-size_1-of-4"></div>
+                        <div class="slds-size_1-of-4">
+                            <b> Last Route Travelled:</b>
+                        </div>
+                        <div class="slds-size_1-of-4">
+                            {pastTransData.last_route_travelled}
+                        </div>
+                        <!--  <div class="slds-size_1-of-4">
+                            <b> User Type:</b>
+                        </div>
+                        <div class="slds-size_1-of-4">
+                            {userType}
+                        </div>-->
+                    </div>
+                </template>
+
+            </lightning-accordion-section>
+
+            <lightning-accordion-section name="C" label="Customer Past Trips">
+
+                <div if:true={userTripsLoad}>
+                    <lightning-spinner alternative-text="Fetching..." variant="brand" size="small">
+                    </lightning-spinner>
+                </div>
+                <template if:true={userTripsData}>
+                    <lightning-datatable key-field="tin" data={userTripsData} columns={ustfields}></lightning-datatable>
+                </template>
+                <div class="slds-align_absolute-center">
+                    <lightning-button variant="success" label="Fetch More Trips" title="Fetch More Trips"
+                        onclick={handleFetchMoreTrips} aria-setsize="4" style="margin-top: 20px;">
+                    </lightning-button>
+
+                    <div if:true={fetchMoreLoad} style="display:flex;flex-wrap: wrap;">
+                        <lightning-spinner alternative-text="Loading..." variant="brand" size="small"
+                            class="slds-is-absolute">
+                        </lightning-spinner>
+                    </div>
+                </div>
+            </lightning-accordion-section>
+
+            <lightning-accordion-section name="C" label="Past Cases">
+                Total Cases: {caseCount}    {errorMsgPastCases}
+                <template if:true={pastCaseData}>
+                    <lightning-datatable key-field="Id" data={pastCaseData} columns={csfields}></lightning-datatable>
+                </template>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </lightning-card>
+</template>

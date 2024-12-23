@@ -1,0 +1,103 @@
+<template>
+<lightning-card>
+<lightning-layout horizontal-align=" " >
+
+<lightning-layout-item flexibility="auto" padding="around-small">           
+<table>
+<tr>
+<td>Total Ticket Amount</td>
+<td>Date of Cancellation </td>
+<td>Refund Amount</td>
+<td>Refund Status</td>
+</tr>
+<tr>
+<th><b>{amount}</b></th>
+<th><b><lightning-formatted-date-time value={cancelDate} year="numeric" day="2-digit" month="long" hour="2-digit" minute="2-digit"> </lightning-formatted-date-time></b></th>
+<th><b>{currency} {refundAmount}</b></th>
+<th><b>{status}</b></th>
+</tr>
+</table>
+</lightning-layout-item>
+<template if:true={showHft}>
+<lightning-layout-item flexibility="auto" padding="around-small">
+    <button disabled style="background: rgb(89, 226, 178);
+    border-color: #398006;
+    font-weight: bold;
+    border-radius: 6px;
+    border-style: solid;">{hft} </button>
+</lightning-layout-item>
+</template>
+<template if:true={isBolt}>
+<lightning-layout-item flexibility="auto" padding="around-small">
+    <button disabled style="background: rgb(89, 226, 178);
+    border-color: #398006;
+    font-weight: bold;
+    border-radius: 6px;
+    border-style: solid;">Bolt</button>
+</lightning-layout-item>
+</template>
+
+<template if:true={showZqp}>
+    <lightning-layout-item flexibility="auto" padding="around-small">
+        <button disabled style="background: rgb(89, 226, 178);
+        border-color: #398006;
+        font-weight: bold;
+        border-radius: 6px;
+        border-style: solid;">ZQP</button>
+    </lightning-layout-item>
+    </template>
+
+    <template if:true={busPassrltdTrans}>
+        <lightning-layout-item flexibility="auto" padding="around-small">
+            <button disabled style="background: rgb(89, 226, 178);
+            border-color: #398006;
+            font-weight: bold;
+            border-radius: 6px;
+            border-style: solid;">BusPass</button>
+        </lightning-layout-item>
+    </template>
+
+    <template if:true={isStreakIdCheck}>
+        <lightning-layout-item flexibility="auto" padding="around-small">
+            <button disabled style="background: rgb(89, 226, 178);
+            border-color: #398006;
+            font-weight: bold;
+            border-radius: 6px;
+            border-style: solid;">TripReward</button>
+        </lightning-layout-item>
+    </template>
+
+  <template if:true={isOfflineCancellation}>
+        <lightning-layout-item flexibility="auto" padding="around-small">
+            <button disabled style="background: rgb(89, 226, 178);
+            border-color: #398006;
+            font-weight: bold;
+            border-radius: 6px;
+            border-style: solid;">Offline Cancellation</button>
+        </lightning-layout-item>
+    </template>
+
+ <template if:true={isRedRailStripGuarantee}>
+        <lightning-layout-item flexibility="auto" padding="around-small">
+            <button disabled style="background: rgb(89, 226, 178);
+            border-color: #398006;
+            font-weight: bold;
+            border-radius: 6px;
+            border-style: solid;">RedRail SeatGuarantee</button>
+        </lightning-layout-item>
+    </template>
+
+    <template if:true={isConnectedService}>
+            <lightning-layout-item flexibility="auto" padding="around-small">
+                <button data-id={connectedTransactionData.Id} style="background: rgb(89, 226, 178);
+                border-color: #398006;
+                font-weight: bold;
+                border-radius: 6px;
+                border-style: solid;" onclick={navigateToRecord}>Connected Service</button>
+                <!-- <button class="button-85" data-id={connectedTransactionData.Id} onclick={navigateToRecord}>Connected Service</button> -->
+            </lightning-layout-item>
+    </template>
+
+</lightning-layout>
+</lightning-card>
+</template>

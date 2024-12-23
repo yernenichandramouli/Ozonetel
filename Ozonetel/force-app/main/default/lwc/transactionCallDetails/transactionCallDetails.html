@@ -1,0 +1,17 @@
+<template>
+  <div if:true={isLoading} style="display:flex;flex-wrap: wrap;">
+    <lightning-spinner alternative-text="Fetching..." variant="brand" size="small" class="slds-is-absolute"></lightning-spinner>
+</div>
+
+  <lightning-card title="">
+        <template if:true={showTableData}>
+            <div class="myTable">
+              <lightning-datatable data={data} columns={coloumns} sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting} hide-checkbox-column="true" key-field="Id"></lightning-datatable>
+            </div>
+        </template>
+
+        <template if:false={showTableData}>
+          <b><span class="slds-align_absolute-center" style="color: #cc0909ea; padding-right:15px; padding-left:6px; font-size: small;">No Data to display</span></b>
+      </template>
+  </lightning-card>
+</template>

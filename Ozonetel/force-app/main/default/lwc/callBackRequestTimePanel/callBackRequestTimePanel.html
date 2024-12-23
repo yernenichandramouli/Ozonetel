@@ -1,0 +1,130 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 09-13-2023
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+   
+    <lightning-tabset aura:id="utilitybar" class='slds-tabs_default' active-tab-value={activetabContent}>
+       
+        <lightning-tab label="All" value="All" onactive={tabChangeHandler}>
+            <div>
+                <ul>
+                    <template for:each={caseList} for:item="caseItem">
+                        <div key={caseItem.Id} class="caseCardTest" id={caseList.Id}>
+                          
+                        <article class="slds-card">
+                            
+                            <a class="slds-card__body slds-card__body_inner" data-id={caseItem.Id} href={url} onclick={goToCase} >{caseItem.CaseNumber}
+                                
+                            <template if:true={caseItem.isExpired}>
+                                <lightning-badge class="slds-card__body-badge" label={caseItem.timeDifference} data-id={caseItem.Id} href={url} onclick={goToCase} style="background-color:coral;">
+                                    <span slot="badge"></span>
+                                </lightning-badge>
+                            </template>
+                            <template if:false={caseItem.isExpired}>
+                                <lightning-badge class="slds-card__body-badge" label={caseItem.timeDifference} data-id={caseItem.Id} href={url} onclick={goToCase} style="background-color:rgb(93, 172, 116);">
+                                    <span slot="badge"></span>
+                                </lightning-badge>
+                            </template>
+                        
+                            </a>
+                            <p class="item">{caseItem.accountName}</p>
+                            <p class="item">{caseItem.Issue_Type__c}</p>
+                            <p class="item">{caseItem.Issue_Sub_Category__c}</p>
+                            
+                        </article>
+                    </br>
+                    </div>
+                    </template>
+                </ul>
+            </div>
+             
+        </lightning-tab>
+
+        <lightning-tab label="Due Today" value="todayTab" default onactive={tabChangeHandler}>
+            <div>
+            <ul>
+                <template for:each={caseList} for:item="caseItem">
+                    <div key={caseItem.Id} class="caseCardTest">
+                    <article class="slds-card" >
+                        <a class="slds-card__body slds-card__body_inner" href={url} data-id={caseItem.Id} onclick={goToCase}>{caseItem.CaseNumber}
+                            <template if:true={caseItem.isExpired}>
+                                <lightning-badge class="slds-card__body-badge" label={caseItem.timeDifference} data-id={caseItem.Id} href={url} onclick={goToCase} style="background-color:coral;">
+                                    <span slot="badge"></span>
+                                </lightning-badge>
+                            </template>
+                            <template if:false={caseItem.isExpired}>
+                                <lightning-badge class="slds-card__body-badge" label={caseItem.timeDifference} data-id={caseItem.Id} href={url} onclick={goToCase} style="background-color:rgb(93, 172, 116);">
+                                    <span slot="badge"></span>
+                                </lightning-badge>
+                            </template>
+                        
+                        </a>
+                        <p class="item">{caseItem.accountName}</p>
+                        <p class="item">{caseItem.Issue_Type__c}</p>
+                        <p class="item">{caseItem.Issue_Sub_Category__c}</p>
+                        
+                    </article>
+                </br>
+                </div>
+                </template>
+                
+            </ul>
+        </div>
+            
+        </lightning-tab>
+        <lightning-tab label="Expired" value="expiredTab" onactive={tabChangeHandler}>
+            <div>
+                <ul>
+                    <template for:each={caseList} for:item="caseItem">
+                        <div key={caseItem.Id} class="caseCardTest">
+                        <article class="slds-card" >
+                            <a class="slds-card__body slds-card__body_inner" href={url} data-id={caseItem.Id} onclick={goToCase}>{caseItem.CaseNumber}
+                              
+                            <lightning-badge class="slds-card__body-badge" label={caseItem.timeDifference} data-id={caseItem.Id} href={url} onclick={goToCase} style="background-color:coral;">
+                                <span slot="badge"></span>
+                            </lightning-badge>
+                            
+                            </a>
+                            <p class="item">{caseItem.accountName}</p>
+                            <p class="item">{caseItem.Issue_Type__c}</p>
+                            <p class="item">{caseItem.Issue_Sub_Category__c}</p>
+                            
+                        </article>
+                    </br>
+                    </div>
+                    </template>
+                </ul>
+            </div>
+            
+        </lightning-tab>
+        <lightning-tab label="Future Follow Up" value="futureTab" onactive={tabChangeHandler}>
+            <div>
+                <ul>
+                    <template for:each={caseList} for:item="caseItem">
+                        <div key={caseItem.Id} class="caseCardTest">
+                        <article class="slds-card" >
+                            <a class="slds-card__body slds-card__body_inner" href={url} data-id={caseItem.Id} onclick={goToCase}>{caseItem.CaseNumber} 
+                            
+                            <lightning-badge class="slds-card__body-badge" label={caseItem.timeDifference} data-id={caseItem.Id} href={url} onclick={goToCase} style="background-color:rgb(93, 172, 116);">
+                                <span slot="badge"></span>
+                            </lightning-badge>
+                            
+                            </a>
+                            <p class="item">{caseItem.accountName}</p>
+                            <p class="item">{caseItem.Issue_Type__c}</p>
+                            <p class="item">{caseItem.Issue_Sub_Category__c}</p>
+                            
+                        </article>
+                    </br>
+                    </div>
+                    </template>
+                </ul>
+            </div>
+        </lightning-tab>
+    </lightning-tabset>
+
+</template>

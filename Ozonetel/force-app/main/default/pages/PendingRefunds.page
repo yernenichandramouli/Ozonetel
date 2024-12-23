@@ -1,0 +1,322 @@
+<!--
+ * (c) 2018 RedBus
+ *
+ * Name           : PendingRefundsPage
+ * Created Date   : 25 May 2018
+ * Created By     : Sreenivas M
+ * Purpose        : User interface to update the Refund Reference Number in Paas DB
+ *
+ -->
+<apex:page controller="PendingRefundsCntrl" docType="html-5.0" showheader="false" id="pg" lightningStylesheets="true">
+<apex:includeScript value="/soap/ajax/28.0/connection.js"/>
+<apex:includeScript value="/support/console/28.0/integration.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"/> 
+<apex:stylesheet value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css"/>
+<apex:stylesheet value="{!$Resource.LoadingStatus}" />
+<script language="JavaScript1.2" src="/js/functions.js"></script>
+
+
+<script id="clientEventHandlersJS" language="javascript"/>
+
+<style>
+.floatleftwidth16
+{
+    float:left;
+    width:25%;
+}
+</style>
+
+<script>
+
+var lastRow;
+function highlight(elem){
+    if(lastRow != undefined)
+        lastRow.style.backgroundColor = 'white';
+
+    elem.style.backgroundColor = 'yellow';
+    lastRow = elem;
+}
+  
+function openPopup(status,pos)  
+    {
+         var x = $(pos).position();
+         $('.exRefdPopupPanel').show();
+         if(x.top>222)
+            $('.analysiSetPopupEmail').css({"top":x.top-100,"width":"450px","left":"51%"});
+         else
+           $('.analysiSetPopupEmail').css({"top":"100px","width":"450px","left":"51%"});
+      //  $('.selId').val(status);
+        $('[id$=seId]').val(status);
+
+   
+    }
+    
+    function closePopup()
+    {
+        $('.exRefdPopupPanel').hide();
+         //  $('.exRefdPopupPanel').css("display", "none");
+        // $('.selId').val('');
+          $('[id$=seId]').val('');
+           $('.refCls').val('');
+           $('.commCls').val('');
+            $('.staCls').val('');
+    }
+    
+    function transactionId(tId,rbId,pId,cntry)
+    {
+       sforce.connection.sessionId = '{!$Api.Session_ID}';
+       console.log('tid-->'+tId);
+       var records="";
+       var tripId='';
+      
+      if(tId===undefined)
+         tripId = '';
+      else
+        tripId = tId;
+      
+       if(tripId!='' && tripId!=null)
+       {
+        var qr = sforce.connection.query("select id,Guid__c,Order_Uuid__c,OrderUuid__c from Order_Items__c where OrderUuid__c='"+tripId+"' limit 1");
+        records = qr.getArray("records");
+       }
+       
+       else if(pId!='' && pId!=null)
+       {
+         var qr = sforce.connection.query("select id,Order_ID__c from Payment_Items__c where Order_ID__c!=null AND Name='"+pId+"' limit 1");
+         
+         if(qr.getArray("records")=="")
+         {
+            alert('Trip Details Are Not Available With Given Payment Details.So we can\'t show the ticket details');
+            return false;
+         }
+         
+         else
+           {
+             tripId = qr.getArray("records")[0].get("Order_ID__c");
+             var orders = sforce.connection.query("select id,Guid__c,Order_Uuid__c,OrderUuid__c from Order_Items__c where OrderUuid__c='"+tripId+"' OR Order_Id__c='"+tripId+"' limit 1");
+             records = qr.getArray("orders");
+           }
+       
+       }
+       
+       else
+        alert('Trip Details and Payment Details Are Missing So we can\'t show the ticket details');
+       
+        var redUrl='';
+        
+        if(records=="" && tripId!='')
+        {
+            var regn;
+            if(cntry==='IND' || cntry==='PER' || cntry==='COL') 
+              regn = 'IND';
+            else
+              regn = 'INTL';
+         
+            redUrl = '/apex/UserTripsPage?sercOrd=true&reg='+regn+'&ordId2='+tripId+'&isdtp=vw';
+        }
+
+        else if(records!="")
+        {
+            redUrl = '/'+records[0].get("Id");
+        }
+        
+        if(redUrl!='')
+        {
+            if(sforce.console.isInConsole())
+                sforce.console.openPrimaryTab(undefined,redUrl, true,rbId);
+            else 
+                window.open(redUrl);
+        }
+    
+    }
+ 
+ </script>
+
+ 
+<apex:form id="form">
+    <apex:pageBlock id="pb" >
+    
+        <apex:pageMessages id="msg"></apex:pageMessages>
+           <apex:pageBlockSection columns="1" id="pbs">
+               <apex:actionRegion >
+                <apex:outputpanel layout="block" style="width:100%">
+                        <div class="floatleftwidth16">
+                            <label><B>Start Date &nbsp;</B></label>
+                            <apex:input value="{!startDt}" type="date" required="true"/>
+                        </div>
+                                               
+                        <div class="floatleftwidth16">
+                            <label><B>End Date &nbsp;</B></label>
+                            <apex:input value="{!endDt}" type="date" required="true"/>
+                        </div> 
+                      
+                      <!--  
+                        <div class="floatleftwidth16">
+                            <label><B>Status &nbsp;</B></label>
+                                <apex:selectList value="{!status}" multiselect="false" size="1" required="true" id="setRequired" label="Status">
+                                <apex:selectOption itemLabel="-None-" itemValue=""></apex:selectOption>
+                                <apex:selectOption itemValue="PENDING" itemLabel="Pending"/>
+                                <apex:selectOption itemValue="FAILED" itemLabel="Failed"/>
+                                <apex:selectOption itemValue="REFUND_FAILED" itemLabel="Refund Failed"/>
+                            </apex:selectList>
+                       
+                        </div> 
+                        -->
+                        <div class="floatleftwidth16">
+                            <label><B>Country&nbsp;</B></label>                             
+                            <apex:selectList value="{!country}" size="1" required="true" label="Country" multiselect="false">
+                                <!-- <apex:selectOption itemLabel="-None-" itemValue=""></apex:selectOption> -->
+                                 <apex:selectOption itemLabel="India" itemValue="IND" rendered="{!IF(OR($Profile.Name=='System Administrator',country=='IND'),true,false)}"></apex:selectOption>
+                                 <apex:selectOption itemLabel="Singapore" itemValue="SGP" rendered="{!IF(OR($Profile.Name=='System Administrator',country=='SGP',country=='MYS'),true,false)}"></apex:selectOption>
+                                 <apex:selectOption itemLabel="Malaysia" itemValue="MYS" rendered="{!IF(OR($Profile.Name=='System Administrator',country=='MYS',country=='SGP'),true,false)}"></apex:selectOption>
+                                 <apex:selectOption itemLabel="Indonesia" itemValue="IDN" rendered="{!IF(OR($Profile.Name=='System Administrator',country=='IDN'),true,false)}"></apex:selectOption>
+                                 <apex:selectOption itemLabel="Peru" itemValue="PER" rendered="{!IF(OR($Profile.Name=='System Administrator',country=='PER',country=='COL'),true,false)}"></apex:selectOption>
+                                 <apex:selectOption itemLabel="Columbia" itemValue="COL" rendered="{!IF(OR($Profile.Name=='System Administrator',country=='COL',country=='PER'),true,false)}"></apex:selectOption>
+                            </apex:selectList>
+                        </div>
+                        
+                        
+                        <div class="floatwidth16">                         
+                            <apex:actionStatus id="status" >                              
+                                <apex:facet name="start" >
+                                    <apex:commandButton value="Searching..." style="width:100px" disabled="true" status="status"/>                                       
+                                </apex:facet>
+                                <apex:facet name="stop">                                    
+                                        <apex:commandButton value="Search" style="width:100px"  status="status" action="{!Search}" reRender="pb,msg,refundTable"/>     <!-- reRender="pb,msg,refundTable" -->               
+                                </apex:facet>                                 
+                            </apex:actionStatus> 
+                     
+                        </div>
+                 </apex:outputpanel>
+                </apex:actionRegion>
+              </apex:pageblocksection>
+            
+              <c:PageBlockTableEnhancerADV enableExport="false" targetPbTableIds="refundTable" paginate="true" id="advTable" defaultPageSize="20"/>
+               <apex:repeat value="{!respDisplayWraper}" var="block">
+                       
+                <apex:pageBlockTable value="{!block.refundData}" var="wrap" id="refundTable" styleClass="tableCls" onRowClick="highlight(this);">
+                  
+                     <apex:column headerValue="Select">
+                         <input type="radio" name="<strong>selectRadio</strong>" id= "radio" onclick="openPopup('{!wrap.requestId}',this);return true;">
+                            <br/>
+                            <apex:actionSupport event="onclick" status="buttonStatus"  reRender="cntblock">
+                                <apex:param name="accid" value="{!wrap.requestId}"/>
+                            </apex:actionSupport>
+                         </input>
+                     </apex:column>
+                <!--   <apex:column headerValue="Transaction UUID" value="{!wrap.trexOrderUuid}"/> 
+                   
+                   <apex:column headerValue="Payment UUID" value="{!wrap.orderId}"/> -->
+                      
+                 
+                     <apex:column headerValue="RB PG ReferenceID">
+                     <a HREF="#" onClick="transactionId('{!wrap.trexOrderUuid}','{!wrap.transactionId}','{!wrap.orderId}','{!country}');">
+                            <apex:outputLabel value="{!wrap.transactionId}" />
+                        </a>
+                     </apex:column>
+                     
+                     <apex:column headerValue="Mobile" value="{!wrap.mobile}"/>
+                      <apex:column headerValue="Email" value="{!wrap.emailId}"/>
+                     <apex:column headerValue="Amount" value="{!wrap.currencyCode} {!wrap.amount}"/>
+                     <apex:column headerValue="Gateway Name" value="{!wrap.gatewayName}"/>                    
+                     <apex:column headerValue="Refund Type" value="{!wrap.refundType}"/>
+                     <apex:column headerValue="Refund Status" value="{!wrap.refundStatus}"/>
+                     <apex:column headerValue="Refund Creation Time" value="{!wrap.creationTime}"/>
+                     <apex:column headerValue="Payment UUID" value="{!wrap.orderId}"/>
+
+                   <!--  
+                     <apex:column headerValue="Refund Processed Time" value="{!wrap.processedTime}"/>
+                     <apex:column headerValue="Payment UUID" value="{!wrap.orderId}"/>
+                     <apex:column headerValue="RequestId" value="{!wrap.requestId}"/> 
+                      <apex:column headerValue="RequestId" value="{!wrap.requestId}"/>                     
+                     <apex:column headerValue="PG TransactionId" value="{!wrap.pgTransactionId}"/>
+                    -->
+                   
+                </apex:pageBlockTable>
+               </apex:repeat>
+                 
+                <apex:outputPanel id="popup" styleClass="exRefdPopupPanel" style="display:none;" >                    
+                    <apex:inputHidden value="{!selRecId}" id="seId"/>        
+                    <apex:outputPanel styleClass="popupBackground" layout="block" />                    
+                    <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block">
+                    <apex:pageMessages id="errMsg"></apex:pageMessages>                        
+                    <apex:pageBlockSection title="Please Fill Refund Details" collapsible="false" columns="1" id="innerPBS">                       
+                       
+                       <apex:outputPanel > 
+                            <apex:outputLabel for="reSta" value="">Refund Status</apex:outputLabel> 
+                            <apex:actionRegion >
+                            <apex:selectList size="1" value="{!refStatus}" id="reSta" styleClass="staCls">
+                               <apex:actionSupport event="onchange" reRender="innerPBS,refNumId,lab1" />
+                               <apex:selectOption itemlabel="-None-" itemValue=""/>  
+                               <apex:selectOption itemlabel="Success" itemValue="Success"/>
+                               <apex:selectOption itemlabel="Failed" itemValue="Failed"/>
+                            </apex:selectList>
+                           </apex:actionRegion>
+                     </apex:outputPanel> 
+                       
+                        <!-- <apex:outputPanel >
+                           <apex:outputLabel rendered="{!refStatus=='SUCCESS'}" for="refNumId">Refund Reference Number</apex:outputLabel> -->
+                        
+                           <apex:inputtext value="{!pgRefNum}" id="refNumId" styleClass="refCls" rendered="{!refStatus=='Success'}" label="Refund Reference Number"/>
+                       <!--    <apex:outputLabel rendered="{!refStatus=='SF_CSE_REF_FAILED'}" for="refCommId">Reason</apex:outputLabel> -->
+                           <apex:inputtextArea value="{!comments}" id="refCommId" label="Reason" rendered="{!refStatus=='Failed'}" styleClass="commCls"/>
+                   
+                     <!--  </apex:outputPanel>
+                       </apex:actionRegion> 
+                      <!--  <apex:outputLabel rendered="{!refStatus=='SUCCESS'}" for="refNumId" id="lab1">Refund Reference Number</apex:outputLabel> -->
+                      <!--  <apex:inputtext value="{!pgRefNum}" id="refNumId" styleClass="refCls" rendered="{!refStatus=='SUCCESS'}" label="Refund Reference Number"/>
+                        <apex:inputtextArea value="{!comments}" id="refCommId" rendered="{!refStatus=='SF_CSE_REF_FAILED'}" label="Failure Reason"/>  -->
+                         
+                        <apex:outputPanel id="detailsSec">
+                             <!-- <apex:outputLabel rendered="{!refStatus=='SUCCESS'}" for="refNumId">Refund Reference Number</apex:outputLabel>
+                             <apex:inputtext value="{!pgRefNum}" id="refNumId" styleClass="refCls" rendered="{!refStatus=='SUCCESS'}" label="Refund Reference Number"/>
+                              <apex:outputLabel rendered="{!refStatus=='SF_CSE_REF_FAILED'}" for="refCommId">Failure Reason</apex:outputLabel>
+                              <apex:inputtextArea value="{!comments}" id="refCommId" label="Refund Reference Number" rendered="{!refStatus=='SF_CSE_REF_FAILED'}"/>
+                            <!--<apex:pageBlockSectionItem rendered="{!refStatus=='SUCCESS'}">
+                                  Refund Reference Number<apex:inputtext value="{!pgRefNum}" id="refNumId" styleClass="refCls" rendered="{!refStatus=='SUCCESS'}" label="Refund Reference Number"/>
+                            </apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem rendered="{!refStatus=='SF_CSE_REF_FAILED'}">
+                                  Failure Reason<apex:inputtextArea value="{!comments}" id="refCommId" label="Refund Reference Number"/>
+                            </apex:pageBlockSectionItem>
+                           
+                            <apex:inputtextArea value="{!comments}" id="refCommId" rendered="{!refStatus=='SF_CSE_REF_FAILED'}" label="Failure Reason"/> 
+                           <B>PG Refund Reference Number<span style="color: red;">?</span></B> <apex:inputtext value="{!pgRefNum}" id="refNumIds" styleClass="refCls" rendered="{!refStatus=='SUCCESS'}"/>
+                            <B>Failure Reason <span style="color: red;">?</span></B> <apex:inputText value="{!comments}" id="refDateIds" styleClass="refDateCls" rendered="{!refStatus=='SF_CSE_REF_FAILED'}"/>
+                            <B>Case Comments<span style="color: red;">?</span></B><apex:inputtextarea value="{!comments}" id="comIds" styleClass="msgCls" style="margin: 0px; width: 170px; height: 27px;"/> -->
+                       </apex:outputPanel>
+                    </apex:pageBlockSection>
+                    <center>
+                     <apex:outputPanel >
+                            <apex:actionStatus id="butnStatus2" >
+                                <apex:facet name="stop" >
+                                <apex:commandButton value="Update" styleClass="updateBtn" style="background:#04B431;color:white;font-family:Arial;" reRender="errMsg,msg,slide" status="butnStatus2" action="{!updateInPaas}"/>
+                                </apex:facet>
+    
+                                <apex:facet name="start">
+                                <apex:commandButton value="Please Wait.." status="butnStatus2" style="background:#04B431;color:white;font-family:Arial;" disabled="true"/>
+                                </apex:facet>
+                            </apex:actionStatus>
+                            <apex:commandButton value="Cancel" onclick="closePopup();return false;" style="margin-left:1em"/>
+                       </apex:outputPanel>
+                      </center>
+                    </apex:outputpanel>
+                </apex:outputpanel>
+            <apex:outputPanel id="slide">
+               <script>                
+                    if('{!isUpdateSuccess}' == 'true')
+                    {
+                       $('.exRefdPopupPanel').hide();
+                    //  $('.exRefdPopupPanel').css("display", "none");
+                       // $('.selId').val('');
+                         $('[id$=seId]').val('');
+                          $('.refCls').val('');
+                          $('.commCls').val(''); 
+                          $('.staCls').val('');
+                        
+                    }
+               </script>
+            </apex:outputPanel>
+         </apex:pageBlock>
+  </apex:form>
+</apex:page>

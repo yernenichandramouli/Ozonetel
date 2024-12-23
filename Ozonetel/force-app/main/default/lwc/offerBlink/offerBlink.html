@@ -1,0 +1,102 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 10-21-2024
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card>
+        <div class="slds-p-around_medium">
+            <h3>Enter Below Details</h3>
+            <lightning-combobox 
+                label="Country"
+                value={selectedCountry}
+                placeholder="Select Country"
+                options={countryOptions}
+                onchange={handleCountryChange}>
+            </lightning-combobox>
+            
+            <lightning-input 
+                label="Phone"
+                type="tel"
+                value={phone}
+                maxlength="10" 
+                onkeydown={handlePhoneKeydown}
+                onchange={handlePhoneChange}>
+            </lightning-input>
+
+            <template if:true={phoneError}>
+                <p class="slds-text-color_error">{phoneError}</p>
+            </template>
+            
+            <lightning-input 
+            label="Email" 
+            type="email" 
+            value={email} 
+            onchange={handleEmailChange}>
+        </lightning-input>
+        <template if:true={emailError}>
+            <p class="error-message">{emailError}</p>
+        </template>
+
+            <template if:false={isSubmitDisabled}>
+                <lightning-button 
+                    label="Submit"
+                    onclick={handleSubmit}
+                    class="slds-m-top_medium">
+                </lightning-button>
+            </template>
+
+            <template if:true={isLoading}>
+                <div class="loading-container">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+        </div>
+<center>
+        <template if:true={errorMessage}>
+            <h><div class="error-message">{errorMessage}</div></h>
+        </template>
+    </center>
+            <template if:true={responseData.length}>
+                <div class="response-table-container">
+                <h3>Offer Details</h3>
+                <table class="response-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>RBUserId</th>
+                            <th>Channel</th>
+                            <th>UserType</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>OfferCode</th>
+                            <th>OfferType</th>
+                            <th>OfferResponse</th>
+                            <th>OfferMessage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={responseData} for:item="row">
+                            <tr key={row.OfferCode}>
+                                <td style="width: 200px;">{row.Time}</td>
+                                <td>{row.RBUserId}</td>
+                                <td>{row.OS}</td>
+                                <td>{row.UserType}</td>
+                                <td>{row.Phone}</td>
+                                <td>{row.Email}</td>
+                                <td>{row.OfferCode}</td>
+                                <td>{row.OfferType}</td>
+                                <td>{row.OfferResp}</td>
+                                <td>{row.OfferMsg}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            </template>
+     
+    </lightning-card>
+</template>

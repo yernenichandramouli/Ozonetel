@@ -1,0 +1,46 @@
+<template>
+    <lightning-card >
+        <template if:true={showUpdMsg}>
+            <c-generic-toast-messages notificationtype={notifType} notificationmessage={notifMsg}>
+            </c-generic-toast-messages>
+            <div class="slds-m-bottom_x-small"></div>
+        </template>
+
+       <lightning-accordion title="Co-Passenger Cases" allow-multiple-sections-open >
+            <lightning-accordion-section label="Co-Passenger Cases">
+        <lightning-button variant="Success" label="Fetch Co Passenger Cases" onclick={handleClick} class="slds-align_absolute-center">
+        </lightning-button>
+        <div if:true={fetchLoad} style="display:flex;flex-wrap: wrap;">
+            <lightning-spinner alternative-text="Updating..." variant="brand" size="small" class="slds-is-absolute">
+            </lightning-spinner>
+        </div>
+
+        <lightning-accordion if:true={showSection}>
+            <!--   <lightning-datatable key-field="Id" data={coPassDetails} columns={fields}></lightning-datatable>-->
+
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered" border="1" cellspacing="0" cellpadding="0" bordercolor="#ccc" style="border-collapse:collapse;">
+                <thead>
+                    <tr>
+                        <th>Case Number</th>
+                        <th>Issue Type</th>
+                        <th>Status</th>
+                        <th>Createddate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={coPassDetails} for:item="conItem">
+                        <tr key={conItem.CaseNumber}>
+                            <td>{conItem.CaseNumber}</td>
+                            <td>{conItem.Issue_Type__c}</td>
+                            <td>{conItem.Status}</td>
+                            <td>{conItem.CreatedDate}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </lightning-accordion>
+         </lightning-accordion-section>
+</lightning-accordion>
+    </lightning-card>
+
+</template>

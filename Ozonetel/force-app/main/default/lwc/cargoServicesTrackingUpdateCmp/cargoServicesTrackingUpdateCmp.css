@@ -1,0 +1,55 @@
+.btn_class {
+margin-left: 160px;
+     
+}
+
+.slds-layout_vertical .slds-layout-item {
+    height: 100px; /* Adjust the desired height */
+}
+
+.custom-input input {
+    width: 50%; /* Adjust the desired width */
+}
+
+/* YourComponent.css */
+.c-container {
+    /* Your general container styles go here */
+}
+
+.left-aligned-content {
+    text-align: left;
+    margin-right: 30px; /* Adjust the margin as needed */
+}
+
+.right-aligned-content {
+    text-align: right;
+    margin-left: 20px; /* Adjust the margin as needed */
+}
+
+
+    .slds-container {
+        width: 100%;
+         margin-left: 80px;
+     }
+
+    .slds-col {
+        float: left;
+        width: 100%;
+    }
+
+    @media (min-width: 48em) {
+        .slds-size_6-of-12 {
+            width: 50%;
+        }
+    }
+
+.custom-textarea {
+    height: 120px; /* Adjust the height as needed */
+    width: 30%;    /* Adjust the width as needed */
+    font-size: 16px; /* Adjust the font size as needed */
+}
+
+.container {
+    
+    margin-left: 20px;
+}

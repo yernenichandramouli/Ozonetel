@@ -1,0 +1,34 @@
+<apex:page controller="SyncPollingCntrl" action="{!searchOrder}" showHeader="false" sidebar="false">
+ <apex:stylesheet value="{!$Resource.LoadingStatus}" />
+ <style>
+   .PopupPanel {top: 45%;!important;}
+</style>
+<apex:form >
+
+  <apex:actionStatus id="statusSaveTrip" stopText="">
+       <apex:facet name="start">
+            <div class="popupBackground" />
+            <div class="PopupPanel">
+                    <table border="0" width="100%" height="100%">
+                        <td align="center"><img src="{!$Resource.Loading}"><font color="red" size="4"><i>Please wait while we are processing your request...</i></FONT></img></td>
+                    </table>
+           </div>
+        </apex:facet>
+        
+        <apex:facet name="stop">
+           <div class="popupBackground" />
+           <div class="PopupPanel">
+                    <table border="0" width="100%" height="100%">
+                      <td align="center"><img src="{!$Resource.Loading}"><font color="red" size="4"><i>Please wait while we are syncing the order...</i></FONT></img></td>
+                    </table>
+          </div>
+        </apex:facet>
+</apex:actionStatus>
+
+  <apex:pageBlock >
+      <apex:pageBlockSection >
+            <apex:actionPoller action="{!searchOrder}" interval="7" timeout="120000" status="statusSaveTrip" reRender="counter"/>
+      </apex:pageBlockSection>
+  </apex:pageBlock>
+</apex:form>
+</apex:page>

@@ -1,0 +1,122 @@
+<apex:component access="global" controller="BoltRefundTypesWiseReportController">
+
+<apex:attribute name="displayBoltRefundTypeCases" description="To Display daily bot mertics" type="Boolean" assignTo="{!BoltRefundTypeGrouping}"/>   
+<apex:attribute name="displayGroupByStatus" description="To Display daily bot mertics" type="Boolean" assignTo="{!statusTypGrouping}"/>   
+
+
+     <!-- Stat--Daily Bot Metrics Report-->
+    <apex:outputPanel rendered="{!BoltRefundTypeGrouping}">
+        <br></br>
+        <table border="1" cellpadding="4" cellspacing="0" allign="center">
+            <thead bgcolor="mediumspringgreen" style="font-family: Arial; font-size: 9pt;">    
+                <tr>
+                    <th>ReundType</th> 
+                    <th>AP+TS</th>
+                    <th>North</th>
+                    <th>East</th>
+                    <th>Guj+Raj</th>
+                    <th>KN+KL</th>
+                    <th>MP+CG</th>
+                    <th>TamilNadu</th>
+                    <th>MH+Goa</th>
+                    <th>Others</th>
+                    <th>Total Count</th>         
+                    <th>%</th>   
+                </tr>
+            </thead>        
+            <tbody  style="font-family: Arial; font-size: 9pt;">
+                <apex:repeat value="{!RefundTypeGroup}" var="ms">
+                    <tr>
+                        <td>{!ms.status}</td>
+                        <td>{!ms.apCount}</td>
+                        <td>{!ms.delhiupCount}</td>
+                        <td>{!ms.EastAssamCount}</td>
+                        <td>{!ms.GujaratCount}</td>
+                        <td>{!ms.KNKLCount}</td>
+                        <td>{!ms.delhiMPCount}</td>
+                        <td>{!ms.TnNorthCount}</td>
+                        <td>{!ms.MumGoaCount}</td>
+                        <td>{!ms.BlankCount}</td>
+                        <td>{!ms.totalContributon}</td>
+                        <td>{!ms.percentageContributon}</td>
+                    </tr>       
+                </apex:repeat>
+                <tr>
+                    <th bgcolor="mediumspringgreen">Total</th>
+                    <td><B>{!TotalAPcount}</B></td>
+                    <td><B>{!TotaldelhiupCount}</B></td>
+                    <td><B>{!TotaldelhiMPCount}</B></td>
+                    <td><B>{!TotalEastAssamCount}</B></td>
+                    <td><B>{!TotalGujaratCount}</B></td>
+                    <td><B>{!TotalKNKLCount}</B></td>
+                    <td><B>{!TotalTnNorthCount}</B></td>
+                    <td><B>{!TotalMumGoaCount}</B></td>
+                    <td><B>{!TotalBlankCount}</B></td>
+                    <td><B>{!TotalCount}</B></td>
+                    <td><B>100.00%</B></td>
+                </tr>
+                 
+            </tbody>
+          </table>
+    </apex:outputPanel>
+<!-- End--Daily Bot Metrics Report-->
+
+
+<!-- Stat--Daily Bot Metrics Report-->
+    <apex:outputPanel rendered="{!statusTypGrouping}">
+        <br></br>
+        <table border="1" cellpadding="4" cellspacing="0" allign="center">
+            <thead bgcolor="mediumspringgreen" style="font-family: Arial; font-size: 9pt;">    
+                <tr>
+                    <th>status</th> 
+                    <th>AP+TS</th>
+                    <th>North</th>
+                    <th>East</th>
+                    <th>Guj+Raj</th>
+                    <th>KN+KL</th>
+                    <th>MP+CG</th>
+                    <th>TamilNadu</th>
+                    <th>MH+Goa</th>
+                    <th>Others</th>
+                    <th>Total Count</th>         
+                    <th>%</th>  
+                </tr>
+            </thead>        
+            <tbody  style="font-family: Arial; font-size: 9pt;">
+                <apex:repeat value="{!StatusGroup}" var="ms">
+                    <tr>
+                        <td>{!ms.status}</td>
+                        <td>{!ms.apCounts}</td>
+                        <td>{!ms.delhiupCounts}</td>
+                        <td>{!ms.EastAssamCounts}</td>
+                        <td>{!ms.GujaratCounts}</td>
+                        <td>{!ms.KNKLCounts}</td>
+                        <td>{!ms.delhiMPCounts}</td>
+                        <td>{!ms.TnNorthCounts}</td>
+                        <td>{!ms.MumGoaCounts}</td>
+                        <td>{!ms.BlankCounts}</td>
+                        <td>{!ms.totalContributon}</td>
+                        <td>{!ms.percentageContributon}</td>
+                    </tr>       
+                </apex:repeat>
+                <tr>
+                    <th bgcolor="mediumspringgreen">Total</th>
+                    <td><B>{!TotalAPcount}</B></td>
+                    <td><B>{!TotaldelhiupCount}</B></td>
+                    <td><B>{!TotaldelhiMPCount}</B></td>
+                    <td><B>{!TotalEastAssamCount}</B></td>
+                    <td><B>{!TotalGujaratCount}</B></td>
+                    <td><B>{!TotalKNKLCount}</B></td>
+                    <td><B>{!TotalTnNorthCount}</B></td>
+                    <td><B>{!TotalMumGoaCount}</B></td>
+                    <td><B>{!TotalBlankCount}</B></td>
+                    <td><B>{!statusTotalCount}</B></td>
+                    <td><B>100.00%</B></td>
+                </tr>
+                 
+            </tbody>
+          </table>
+    </apex:outputPanel>
+<!-- End--Daily Bot Metrics Report-->
+
+</apex:component>

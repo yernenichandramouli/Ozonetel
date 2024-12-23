@@ -1,0 +1,67 @@
+.container {
+    overflow: hidden; 
+    font-size: 1px;
+}
+
+.slds-card__body-slds-card__body_inner{
+    display: flex;
+    justify-content: space-between;
+    align-items:flex-start;
+}
+.slds-card__body-badge {
+    float: right;
+    margin-left: 100px;
+    /* margin-right: 10px;  */
+}
+
+.item {
+    margin-left: 10px;
+}
+
+.caseCardTest {
+    border: 1px solid #b3b2b2; 
+    padding: 10px; 
+    /* background-color: #f0f0f0; */
+    cursor: pointer; /* Make the cursor a pointer to indicate interactivity */
+    transition: background-color 0.3s ease;
+
+}
+
+.caseCardTest.highlighted {
+    background-color: #ff9900; /* Highlighted color */
+}
+
+
+.slds-card:focus {
+    box-shadow: 0 0 3px #0070d2;
+    background: Red !important;
+}
+.slds-card:focus {
+    box-shadow: 0 0 3px #0000FF;
+    background: blue !important;
+}
+
+.caseCardTest:focus {
+    background-color: lightblue;
+    border: 2px solid blue;  
+}
+
+/* 
+.utility-item-minimized {
+    width: 0; 
+}
+.card:focus {
+    background-color: blueviolet;
+}
+
+.card::after {
+    background-color: chartreuse;
+} 
+
+#badge {
+    float: right;
+    margin-left: 150px;
+} 
+.card {
+    font-size: 100px;
+} */

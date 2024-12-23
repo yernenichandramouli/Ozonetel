@@ -1,0 +1,17 @@
+<apex:page standardController="Order_Items__c" extensions="GetTransactionDetails" showHeader="false">
+    <apex:includeLightning />   
+    <div id="LightningComponentid" /> 
+    <script>
+    $Lightning.use("c:busAssignmentDetailsApp", function() {
+        $Lightning.createComponent("c:busAssignmentDetails",
+                                   {
+                                       recordId:'{!recId}'
+                                   },
+                                   "LightningComponentid",
+                                   function(cmp) {
+                                       console.log('sComponet Created Successfully!');
+                                   });
+    });    
+    
+    </script>
+</apex:page>

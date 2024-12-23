@@ -1,0 +1,23 @@
+<apex:page standardController="lead" extensions="MultipleLeadsExtension">
+<apex:form >
+ <apex:pageBlock >
+  <apex:pageblocktable value="{!leadList}" var="l">
+   <apex:column headerValue="Customer Name">
+  <apex:outputlink value="#" onclick="window.open('/{!l.Id}','_blank');">{!l.lastname}</apex:outputlink>
+  </apex:column>
+  <!--  <apex:column value="{!l.lastname}"/>-->
+    <apex:column value="{!l.Phone}"/>
+    <apex:column value="{!l.Status}"/>
+    <apex:column value="{!l.SrcCityName__c}"/>
+    <apex:column value="{!l.DestCityName__c }"/>
+    <apex:column value="{!l.DOJStart__c}"/>
+    <apex:column value="{!l.DOJEnd__c}"/>
+    <!-- <apex:column >
+   <apex:commandButton value="Assign to me" action="{!AssignToMe}">
+       <apex:param assignTo="{!selLead}"  value="{!l}"/>
+    </apex:commandbutton>
+    </apex:column>-->
+  </apex:pageblocktable>     
+ </apex:pageBlock>
+</apex:form>
+</apex:page>

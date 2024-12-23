@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>41.0</apiVersion>
+    <availableInTouch>false</availableInTouch>
+    <confirmationTokenRequired>false</confirmationTokenRequired>
+    <description>&lt;apex:outputpanel style=&quot;overflow:scroll;width:1330px;&quot; layout=&quot;block&quot;&gt;</description>
+    <label>ExceptionalRefundApprovalPage</label>
+</ApexPage>

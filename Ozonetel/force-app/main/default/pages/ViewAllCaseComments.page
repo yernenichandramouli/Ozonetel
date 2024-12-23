@@ -1,0 +1,17 @@
+<apex:page standardController="Case" extensions="HighLightPanelDataGet" showHeader="false" >
+    <apex:includeLightning />   
+	<div id="LightningComponentid" /> 
+	<script>
+    $Lightning.use("c:ViewAllCaseCommentApp", function() {
+        $Lightning.createComponent("c:viewAllCaseCommentCmp",
+                                   {
+                                       recordId:'{!recId}'
+                                   },
+                                   "LightningComponentid",
+                                   function(cmp) {
+                                       console.log('View All Componet Created Successfully!');
+                                   });
+    });    
+    
+    </script>     
+</apex:page>

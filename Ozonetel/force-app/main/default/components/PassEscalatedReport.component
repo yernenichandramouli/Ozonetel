@@ -1,0 +1,78 @@
+<apex:component access="global" controller="RefundsPendingReportController">
+
+        <apex:attribute name="displayPaasAgingCases" description="To Display daily bot mertics" type="Boolean" assignTo="{!PaasAgeGrouping}"/>
+        <apex:attribute name="displayGroupByPGType" description="To Display daily bot mertics" type="Boolean" assignTo="{!GroupByPGType}"/>
+    
+    <!-- Stat--Daily Bot Metrics Report-->
+        <apex:outputPanel rendered="{!PaasAgeGrouping}">
+            <table border="1" cellpadding="4" cellspacing="0" allign="center">
+                <thead bgcolor="mediumspringgreen" style="font-family: Arial; font-size: 9pt;">    
+                    <tr><th colspan="5">Age bucket from time moved to Paas Queue</th></tr>
+                    <tr>
+                        <th>Aging</th> 
+                        <th>Bus</th>
+                        <th>Rails</th>
+                        <th>Total Count</th>         
+                        <th>%</th>   
+                    </tr>
+                </thead>        
+                <tbody  style="font-family: Arial; font-size: 9pt;">
+                    <apex:repeat value="{!PaasEscalatedCases}" var="ms">
+                        <tr>
+                            <td>{!ms.Ageing}</td>
+                            <td>{!ms.busCount}</td>
+                            <td>{!ms.railCount}</td>
+                            <td>{!ms.totalContributon}</td>
+                            <td>{!ms.percentageContributon}</td>
+                        </tr>       
+                    </apex:repeat>
+                    <tr>
+                        <th bgcolor="mediumspringgreen">Total</th>
+                        <td><B>{!totalBusCount}</B></td>
+                        <td><B>{!totalRailsCount}</B></td>
+                        <td><B>{!TotalCount}</B></td>
+                        <td><B>100.00%</B></td>
+                    </tr>
+                     
+                </tbody>
+              </table>
+        </apex:outputPanel>
+    <!-- End--Daily Bot Metrics Report-->
+
+    <!-- Stat--Daily Bot Metrics Report-->
+    <apex:outputPanel rendered="{!GroupByPGType}">
+        <br></br>
+        <table border="1" cellpadding="4" cellspacing="0" allign="center">
+            <thead bgcolor="mediumspringgreen" style="font-family: Arial; font-size: 9pt;">    
+                <tr>
+                    <th>PG Name</th> 
+                    <th>Bus</th>
+                    <th>Rails</th>
+                    <th>Total Count</th>         
+                    <th>%</th>   
+                </tr>
+            </thead>        
+            <tbody  style="font-family: Arial; font-size: 9pt;">
+                <apex:repeat value="{!PGTypeGroup}" var="ms">
+                    <tr>
+                        <td>{!ms.PGType}</td>
+                        <td>{!ms.busCount}</td>
+                        <td>{!ms.railCount}</td>
+                        <td>{!ms.totalContributon}</td>
+                        <td>{!ms.percentageContributon}</td>
+                    </tr>       
+                </apex:repeat>
+                <tr>
+                    <th bgcolor="mediumspringgreen">Total</th>
+                    <td><B>{!totalBusCount}</B></td>
+                    <td><B>{!totalRailsCount}</B></td>
+                    <td><B>{!TotalCount}</B></td>
+                    <td><B>100.00%</B></td>
+                </tr>
+                 
+            </tbody>
+          </table>
+    </apex:outputPanel>
+<!-- End--Daily Bot Metrics Report-->
+
+</apex:component>

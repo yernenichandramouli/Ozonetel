@@ -1,0 +1,47 @@
+<apex:page controller="RpoolDetails"  docType="html-5.0">
+    <apex:form id="fm">
+        <apex:pageblock >  
+            <center>
+                <h1><font size="3" color="red">Lead Movement</font></h1> <br/> <br/> 
+            </center> 
+            <center>
+                Start Date &nbsp;<apex:input type="date" styleClass="slds-input" value="{!startDate}"/> &nbsp;&nbsp;
+                End Date&nbsp; <apex:input type="date" styleClass="slds-input" value="{!endDate}"/>&nbsp;&nbsp;
+                <apex:commandButton value="Fetch Details" action="{!RpoolData}" rerender="fm"/>    
+            </center> <br/><br/>
+            <center>
+                <table  border="1" cellpadding="8" cellspacing="0" allign="center">
+                    <thead >   
+                        <tr>
+                            <td></td> 
+                            <td>P1</td>
+                            <td>P2</td>
+                            <td>P3</td>
+                            <td>P4</td>
+                            <td>P5</td>
+                            <td>P6</td>
+                        </tr>
+                    </thead>
+                    <apex:repeat value="{!twList}" var="t">
+                        <tr>
+                            <td> {!t.oldStatus} </td>
+                            <td> {!t.p1} </td>
+                            <td> {!t.p2} </td>
+                            <td> {!t.p3} </td>
+                            <td> {!t.p4} </td>
+                            <td> {!t.p5} </td>
+                            <td> {!t.p6} </td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+            </center>
+        </apex:pageblock>
+        <!--     comb->  {!combMap}
+<br/><br/> tls-> {!twList}
+<apex:pageBlock >
+<apex:repeat value="{!twList}" var="t">
+{!t.p1}
+</apex:repeat>
+</apex:pageBlock>-->
+    </apex:form>
+</apex:page>

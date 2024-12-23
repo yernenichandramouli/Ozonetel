@@ -1,0 +1,271 @@
+<template>
+	<div if:true={isLoading} style="display:flex;flex-wrap: wrap;">
+        <lightning-spinner alternative-text="Fetching..." variant="brand" size="small" class="slds-is-absolute"></lightning-spinner>
+    </div>
+    <template if:true={showBpDpDetails}>
+        <div>
+            <lightning-card>
+                <h3 slot="title" class="slds-p-around_none">
+                    <lightning-icon icon-name="standard:work_order" size="medium"></lightning-icon>
+                    <b><span style="color: #289c04ea; padding-right:15px; padding-left:6px; font-size: larger;">Your Bus Details</span></b>
+                </h3>
+                <div style="background: #fcfcfc;" class="slds-box slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none">
+                    <b><span style="color: #337ab7; padding-right:15px; padding-left:6px;">Trip Details</span></b>
+                    <lightning-layout multiple-rows="true">
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="12">
+                            <lightning-layout multiple-rows="true">
+                                    <lightning-layout-item padding="around-small" size="12" small-device-size="6"
+                                        medium-device-size="4" large-device-size="4">
+                                        <lightning-input value={vehicleNumber} label="Vehicle Number" disabled></lightning-input>
+                                    </lightning-layout-item>
+                                <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                                    large-device-size="4">
+                                    <lightning-input value={travelsName} label="Travels Name" disabled></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                                    large-device-size="4">
+                                    <lightning-input value={doj} label="Date of journey" disabled>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        
+                            <lightning-layout multiple-rows="true">
+                                <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                                    large-device-size="4">
+                                    <lightning-input value={route} label="Route" disabled>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                                    large-device-size="4">
+                                    <lightning-input value={driver1Details} label="Driver1 Details" disabled>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                                    large-device-size="4">
+                                    <lightning-input value={trackingType} label="Tracking Type" disabled>
+                                    </lightning-input>
+                                </lightning-layout-item>
+
+                            </lightning-layout>
+                            <lightning-layout multiple-rows="true">
+                                <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                                    large-device-size="4">
+                                    <lightning-input value={rbTrackingLink} label="Redbus Tracking Link" type="url" onclick={openUrlInNewTab}>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                                    large-device-size="4">
+                                    <lightning-input value={ybTrackingLink} label="YourBus Tracking Link" type="url" onclick={openUrlInNewTab}>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+                <div style="background: #fcfcfc;" class="slds-box slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none">
+                    <b><span style="color: #337ab7; padding-right:15px; padding-left:15px; ">BP Details</span></b>
+                    <lightning-layout multiple-rows="true">
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="4">
+                            <lightning-input value={bpName} label="BP Name" disabled></lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="4">
+                            <lightning-input value={bpStaEta} label="BP ETA/ATA" disabled>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="4">
+                            <lightning-input value={bpPhoneNumber} label="BP Phone Number" disabled>
+                            </lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                    <lightning-layout multiple-rows="true">
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="3">
+                            <lightning-input value={bp360Link} label="BP 360 Link" type="url" onclick={openUrlInNewTab}>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="3">
+                            <lightning-input value={bpAddressLink} label="BP Address Link" type="url" onclick={openUrlInNewTab}>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="6">
+                            <lightning-input value={bpAddress} label="BP Address" disabled>
+                            </lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                    <lightning-layout multiple-rows="true">
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                        large-device-size="4">
+                        <lightning-input label="Is Picked By Van" type="checkbox" checked={isVanPickUp} disabled>
+                        </lightning-input>
+                    </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+    
+                <div style="background: #fcfcfc;" class="slds-box slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none">
+                    <b><span style="color: #337ab7; padding-right:15px; padding-left:15px; ">DP Details</span></b>
+                    <lightning-layout multiple-rows="true">
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="4">
+                            <lightning-input value={dpName} label="DP Name" disabled>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="4">
+                            <lightning-input value={dpStaEta} label="DP ETA/ATA" disabled>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="4">
+                            <lightning-input value={dpPhoneNumber} label="DP Phone Number" disabled>
+                            </lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                    <lightning-layout multiple-rows="true">
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="3">
+                            <lightning-input value={dp360Link} label="Dp 360 Link" type="url" onclick={openUrlInNewTab}>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="3">
+                            <lightning-input value={dpAddrLink} label="DP Address Link" type="url" onclick={openUrlInNewTab}>
+                            </lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4"
+                            large-device-size="6">
+                            <lightning-input value={dpAddress} label="DP Address" disabled>
+                            </lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </lightning-card>
+        </div>
+    </template>
+
+    
+
+    <lightning-card>
+        <h3 slot="title" class="slds-p-around_none">
+            <lightning-icon icon-name="standard:timeslot" size="medium"></lightning-icon>
+            <b><span style="color: #289c04ea; padding-right:15px; padding-left:6px; font-size: larger;">Arrival Patterns</span></b>
+        </h3>
+        <template if:true={isArrivalPatternsLoading}>
+            <lightning-spinner variant="brand" size="large"> </lightning-spinner>
+        </template>
+        <template if:true={showArrivalPatterns}>
+            <div style="background: #fcfcfc;" class="slds-box slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none">
+                
+                <lightning-layout>
+                    <lightning-layout-item  size="4" padding="around-small">
+                        <lightning-combobox  data-id="Available Values" name="types" label="Please Select BP Name" class="myCustomLabel" options={allBpNames} onchange={handleBpChange}> </lightning-combobox> 
+                    </lightning-layout-item>                                        
+                </lightning-layout>
+        
+                <div>
+                    <template if:true={arrivalsDataLoading}>
+                        <lightning-spinner variant="brand" size="large"> </lightning-spinner>
+                    </template>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-border_left slds-border_right" aria-label="Example default base table of Opportunities">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <div class="slds-truncate slds-align_absolute-center" title="Arrival Date">BoardingPoint Arrival Date</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate slds-align_absolute-center" title="Arrival Time">BoardingPoint Arrival Time</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate slds-align_absolute-center" title="Arrival Time">Status (in Min)</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={arrivalPatternsList} for:item="object">
+                                <tr class="slds-hint-parent" key={object}>
+                                    <td data-label="Arrival Date">
+                                        <div class="slds-truncate slds-align_absolute-center">{object.doj}</div>
+                                    </td>
+                                    <td data-label="Arrival Time">
+                                        <div class="slds-truncate slds-align_absolute-center">{object.arrivalTime}</div>
+                                    </td>
+                                    <th class="" scope="col">
+                                        <div class="slds-truncate slds-align_absolute-center" data-id="button2" title="Delay Time">{object.delay}</div>
+                                    </th>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </template>
+
+        <template if:false={showArrivalPatterns}>
+            <b><span class="slds-align_absolute-center" style="color: #cc0909ea; padding-right:15px; padding-left:6px; font-size: larger;">{errorMessage}</span></b>
+            <!-- <div style="background: #fcfcfc;" class="slds-box slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none">
+                
+            </div> -->
+        </template>
+        
+    </lightning-card>
+
+
+    
+
+    <!---->
+    <lightning-card>
+        <h3 slot="title" class="slds-p-around_none">
+            <lightning-icon icon-name="standard:address" size="medium"></lightning-icon>
+            <b><span style="color: #289c04ea; padding-right:15px; padding-left:6px; font-size: larger;">YourBus Live Tracking</span></b>
+        </h3>
+        <template if:false={isInvalidRbURL}>
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col">
+                    <!-- First column content goes here -->
+                    <lightning-layout>
+                        <lightning-layout-item size="12">
+                            <iframe src={rbTrackingLink} width="850" height="700" referrerpolicy={referrerPolicy}  title="YourBus Tracking Link"></iframe>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </div>
+        </template>
+        <template if:true={isInvalidRbURL}>
+            <b><span class="slds-align_absolute-center" style="color: #cc0909ea; padding-right:15px; padding-left:6px; font-size: larger;">Invalid Redbus Tracking Link</span></b>
+        </template>
+    </lightning-card>
+    
+    <!---->
+
+     <!---->
+     <lightning-card>
+        <h3 slot="title" class="slds-p-around_none">
+            <lightning-icon icon-name="standard:address" size="medium"></lightning-icon>
+            <b><span style="color: #289c04ea; padding-right:15px; padding-left:6px; font-size: larger;">YourBus Tracking</span></b>
+        </h3>
+        <template if:true={showYbTrackingLink}>
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col">
+                    <!-- First column content goes here -->
+                    <lightning-layout>
+                        <lightning-layout-item size="12">
+                            <iframe src={ybtrackingLink} width="850" height="700" referrerpolicy={referrerPolicy}  title="YourBus Tracking"></iframe>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </div>
+        </template>
+        <template if:false={showYbTrackingLink}>
+            <b><span class="slds-align_absolute-center" style="color: #cc0909ea; padding-right:15px; padding-left:6px; font-size: larger;">Tracking not not available for this bus</span></b>
+        </template>
+    </lightning-card>
+    
+    <!---->
+    
+</template>

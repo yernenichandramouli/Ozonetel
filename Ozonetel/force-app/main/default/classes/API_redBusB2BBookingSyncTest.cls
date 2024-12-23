@@ -1,0 +1,21 @@
+@isTest()
+Public class API_redBusB2BBookingSyncTest{ 
+
+ static testMethod void Success1()
+    {
+        Test.startTest();
+        string JsonMsg='{"type":"B2B_BOOKING","sentAt":"2019-08-07T17:38:24.9200844","region":"IND","syncFrom":"caller","orderItems":[{"order_item_reference_no":"94EA79RA","business_unit":null,"boarding_time":"2019-08-16T15:00:00+05:30","bus_type":"Mercedes Benz A/C Seater/Sleeper Executive (2+1)","cancellation_policy":"0:-1:0:0;","date_of_purchase":"2019-08-07T15:45:30+05:30","destination_city":"Chennai","dropping_point":"Porur","dropTime":"2019-08-16T22:00:00+05:30","inventoryItems":"","service_provider_reference_no":"94EA79RA","source_city":"Bangalore","totalRefundAmount":0.0,"service_provider_name":"TESTING ACCOUNT","service_charge":"0.00","primary_boarding_time":"2019-08-16T15:00:00+05:30","agent_ip":null,"bplandmark":null,"boarding_point":"09 th block – Marnahalli","is_partial_cancellation_allowed":true,"has_RTCBreakup":false,"refund_amount":null,"cancellation_time":"0001-01-01T00:00:00","cancellationReason":null,"inventory_id":"2000002131490089779","mTicket_enable":true,"destinationCityId":"1234","bp_Address":null,"sourceCityId":"12234","operator_cancellation_charges":null,"service_provider_id":"12233","seat_no":"22,23","cancelledSeats":"","femaleSeatcount":null,"maleSeatcount":null,"reschedulingPolicy":{"rescheduling_Charges":"0","windowTime":"2019-08-16T00:00:00+05:30"},"exepRefundAmount":null,"exepRefundType":null,"exepRefundAgentId":null,"exepRefundDateOfInitiation":null,"operationType":"UPDATE"}]}';
+        //{"type":"B2B_BOOKING","sentAt":"2019-08-07T17:38:24.9200844","region":"IND","syncFrom":"caller","orderItems":[{"order_item_reference_no":"94EA79RA","business_unit":null,"boarding_time":"2019-08-16T15:00:00+05:30","bus_type":"Mercedes Benz A/C Seater/Sleeper Executive (2+1)","cancellation_policy":"0:-1:0:0;","date_of_purchase":"2019-08-07T15:45:30+05:30","destination_city":"Chennai","dropping_point":"Porur","dropTime":"2019-08-16T22:00:00+05:30","inventoryItems":[{"fare":"10.00","ladiesSeat":"false","malesSeat":"false","operatorServiceCharge":"0.00","seatName":"22","serviceTax":"0.00","status":null,"refundAmount":null,"passenger":{"address":null,"age":"33","email":"nilika.haldar@redbus.com","gender":"MALE","mobile":"8884580492","name":"test","primary":"true","singleLadies":"false","title":"Mr"}},{"fare":"10.00","ladiesSeat":"false","malesSeat":"false","operatorServiceCharge":"0.00","seatName":"23","serviceTax":"0.00","status":null,"refundAmount":null,"passenger":{"address":null,"age":"32","email":"nilika.haldar@redbus.com","gender":"MALE","mobile":"8884580492","name":"tesfyhghjh","primary":"false","singleLadies":"false","title":"Mr"}}],"service_provider_reference_no":"94EA79RA","source_city":"Bangalore","totalRefundAmount":0.0,"service_provider_name":"TESTING ACCOUNT","service_charge":"0.00","primary_boarding_time":"2019-08-16T15:00:00+05:30","agent_ip":null,"bplandmark":null,"boarding_point":"09 th block – Marnahalli","is_partial_cancellation_allowed":true,"has_RTCBreakup":false,"refund_amount":null,"cancellation_time":"0001-01-01T00:00:00","cancellationReason":null,"inventory_id":"2000002131490089779","mTicket_enable":true,"destinationCityId":"1234","bp_Address":null,"sourceCityId":"12234","operator_cancellation_charges":null,"service_provider_id":"12233","seat_no":"22,23","cancelledSeats":"","femaleSeatcount":null,"maleSeatcount":null,"reschedulingPolicy":{"rescheduling_Charges":"0","windowTime":"2019-08-16T00:00:00+05:30"},"exepRefundAmount":null,"exepRefundType":null,"exepRefundAgentId":null,"exepRefundDateOfInitiation":null,"operationType":"UPDATE"}]}';
+        RestRequest req = new RestRequest(); 
+        RestResponse res = new RestResponse();
+        req.requestURI = '/services/apexrest/redBus/v1/redBusB2BBookingSync';  //Request URL
+        req.httpMethod = 'POST';//HTTP Request Type
+        req.requestBody = Blob.valueof(JsonMsg);
+        RestContext.request = req;
+        RestContext.response= res;
+        Test.setMock(HttpCalloutMock.class, new ExampleCalloutMock());
+        API_redBusB2BBookingSync.BookingDetails(); 
+        Test.stopTest();
+        
+    }    
+}

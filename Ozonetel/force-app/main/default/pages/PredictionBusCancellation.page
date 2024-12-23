@@ -1,0 +1,219 @@
+<apex:page controller="PredictionBusCancellation" docType="html-5.0" showheader="false" >
+    <apex:includeScript value="//code.jquery.com/jquery-1.11.1.min.js"/>
+    <!-- <apex:includeScript value="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"/>
+<apex:stylesheet value="//cdn.datatables.net/1.10.4/css/jquery.dataTables.css" /> -->
+    <apex:includeScript value="/soap/ajax/26.0/connection.js"/>
+    <apex:includeScript value="/support/console/26.0/integration.js"/>
+    <apex:stylesheet value="{!$Resource.LoadingStatus}" />
+    
+    <!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script src="{!$Resource.jqueryfixheadertable}"></script>
+<apex:stylesheet value="{!$Resource.base}" />
+<apex:stylesheet value="{!$Resource.themefile}" /> -->
+    <!-- <apex:includeScript value="https://code.jquery.com/jquery-1.11.3.min.js"/>
+<apex:includeScript value="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"/>
+<apex:stylesheet value="{!$Resource.cssF}" />-->
+    
+    
+    
+    <apex:form >
+        <script>
+        /*  $(document).ready(function() {
+        $('.fixme').fixheadertable({
+             caption : 'My header is fixed !',
+             height  : 200
+        });
+    });*/
+        </script>  
+        
+        <script>
+        function openCaseSubtab(recId) {
+        
+        if (sforce.console.isInConsole()) 
+          {
+            sforce.console.getEnclosingPrimaryTabId(function(result)
+            {
+             
+              sforce.console.openPrimaryTab(undefined,'/'+recId, true, 'Details');
+             
+            });
+          } 
+          else {
+           window.open('/' + recId);
+        }
+    }
+        
+        </script>
+        
+        <script>
+        function BOCall()
+        {
+            
+            $('.spocPopupPanel3').show(); 
+        } 
+        function Submit()
+        {
+            $('.spocPopupPanel').show();
+            
+        } 
+        </script>
+        <apex:pageBlock id="pb">
+            <apex:pageMessages id="msg"></apex:pageMessages>
+            
+            
+            <apex:pageblocksection columns="3" >
+                
+                <apex:pageblocksectionItem >
+                    Date <apex:input value="{!doj}" type="date"/></apex:pageblocksectionItem>
+                <apex:pageblocksectionItem >
+                    Time 
+                    
+                    <apex:selectList value="{!tintime}" multiselect="false" size="1">
+                        <apex:selectOption itemValue="4pm" itemLabel="4 PM"/>
+                        <apex:selectOption itemValue="6pm" itemLabel="6 PM"/>
+                        
+                        
+                    </apex:selectList>
+                </apex:pageblocksectionItem>
+                <!--    <apex:commandButton value="Search" action="{!search}" reRender="pb" style="width:70px"/>-->
+                
+                <apex:actionStatus id="status" >
+                    <apex:facet name="start" >
+                        <apex:commandButton value="Searching..." style="width:100px" disabled="true" status="status"/>                                       
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton value="Search" style="width:100px" action="{!search}" reRender="pb" disabled="{!initBt}" status="status">                   
+                        </apex:commandButton>
+                    </apex:facet>
+                </apex:actionStatus>   
+                
+            </apex:pageblocksection>
+            
+            
+            
+            <div style="float: right;">
+                <!-- <apex:commandButton value="Initiate" action="{!initiateCase}" style="width:70px" status="status" disabled="{!initBt}"  reRender="pb,pbt"/>-->
+                
+                
+                <apex:actionStatus id="loadStatus3" >
+                    <apex:facet name="start" >
+                        <apex:commandButton value="Porcessing..." style="width:100px" disabled="true" status="loadStatus"/>                                       
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton value="Initiate" style="width:100px" action="{!initiateCase}" reRender="pb,pbt,msg" disabled="{!initBt}" status="loadStatus3">                   
+                        </apex:commandButton>
+                    </apex:facet>
+                </apex:actionStatus>   
+                
+                
+                <apex:commandButton value="Call to BO" onclick="BOCall();return false;" style="width:70px"/>
+                
+                <apex:selectList value="{!status}" multiselect="false" size="1">
+                    <apex:selectOption itemValue="None" itemLabel="--None--"/>
+                    <apex:selectOption itemValue="Approved For Bus Cancellation" itemLabel="Approved For Bus Cancellation"/>
+                    <apex:selectOption itemValue="Rejected For Bus Cancellation" itemLabel="Rejected For Bus Cancellation"/>
+                </apex:selectList>
+                
+                <apex:actionStatus id="loadStatus" >
+                    <apex:facet name="start" >
+                        <apex:commandButton value="Updating..." style="width:100px" disabled="true" status="loadStatus"/>                                       
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton value="Update" style="width:100px" action="{!caseUpdate}" reRender="pb,pbt,msg" disabled="{!initBt}" status="loadStatus">                   
+                        </apex:commandButton>
+                    </apex:facet>
+                </apex:actionStatus>                
+            </div>
+            
+            
+            <!-- </apex:pageBlock>
+
+<apex:pageBlock id="pb"> style="overflow:auto;width:750px;height:250px"-->
+            
+            <div style="overflow:auto;width:1330px;height:550px;">
+                
+                <apex:pageblocktable value="{!resWrapper}" var="t" id="pbt"   >               
+                    <apex:column >
+                        <input type="radio" name="selectRadio" id="radio">
+                        <apex:actionSupport event="onclick"  rerender="arg">
+                            <apex:param name="id" assignTo="{!selectedTin}" value="{!t.tin}"/>
+                            <apex:param name="cid" assignTo="{!caseId}" value="{!t.caseNumber}"/>
+                        </apex:actionSupport>
+                    </input>
+                </apex:column>
+                
+                <apex:column headerValue="TIN" value="{!t.tin}"/>
+               
+                <apex:column headerValue="Transaction Id">
+                  <a HREF="#" onClick="openCaseSubtab('{!t.tredcId}');return false;">
+                     <apex:outputLabel value="{!t.trnId}" />
+                     </a>
+                </apex:column>
+               
+                <apex:column headerValue="DOJ" value="{!t.doj}"/>
+                <apex:column headerValue="BO Id" value="{!t.operator_id}"/>
+                <apex:column headerValue="Route Id" value="{!t.route_id}"/>
+                <apex:column headerValue="Case" value="{!t.caseNumber}"/>
+                <b>   <apex:column headerValue="Status" value="{!t.caseStatus}"/> </b>
+                
+            </apex:pageblocktable>
+        </div>
+        
+        
+        <apex:outputPanel id="bop">
+            <script>
+            console.log('calling here');
+            if('{!reEnableBOPopup}' == 'true')
+            {
+                $('.spocPopupPanel3').show();
+            }
+            
+            else
+            {
+                $('.spocPopupPanel3').hide();
+            }
+            </script>
+        </apex:outputPanel>
+        
+        <apex:outputPanel id="popup3" styleClass="spocPopupPanel3" style="display:none">      
+            <apex:outputPanel styleClass="popupBackground" layout="block" /> 
+            <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block" >
+                <apex:pageblocksection >
+                    BO Phone Number <apex:inputtext value="{!boPhoneNo}" />
+                    <apex:commandButton value="Call now" style="float:right;" styleClass="buttonStyle" action="{!connectCall2}" reRender="msg" >  <!--onclick="proceedBOCall();return false;"-->
+                        
+                    </apex:commandbutton>  
+                    <apex:commandButton value="Cancel" onclick="cancelUpdate();return false;" styleClass="buttonStyle"/>
+                    
+                </apex:pageblocksection>
+            </apex:outputpanel>       
+        </apex:outputPanel>
+        
+        
+        <apex:outputPanel id="popup" styleClass="spocPopupPanel" style="display:none">
+            
+            <apex:outputPanel styleClass="popupBackground" layout="block" />  
+            
+            <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block" >
+                <apex:pageMessages id="spocErr"></apex:pageMessages>
+                <apex:pageBlockSection title="SPOC Details" collapsible="false">
+                    <apex:pageblocksectionItem > BO Name
+                        <apex:inputtext value="{!boAgentName}" html-placeholder="Enter BO Agent Name"/>
+                    </apex:pageblocksectionItem>
+                    <apex:pageblockSectionItem >BO Phone Number
+                        <apex:inputtext value="{!bophone}"  html-placeholder="Enter BO Agent Phone Number" />
+                    </apex:pageblockSectionItem>
+                    <!--  <apex:inputfield value="{!c.BOAgentNameBySPOC__c}" html-placeholder="Enter BO Agent Name" id="boName"/> 
+<apex:inputfield value="{!c.BOAgentContactBySPOC__c}" html-placeholder="Enter BO Agent Phone Number" id="boPhone" onkeypress="return isNumber(event,'{!$Component.boPhone}')"/>
+<apex:outputfield value="{!c.Approved_By__c}" />-->
+                    
+                    <apex:commandButton value="Proceed"  styleClass="buttonStyle" onclick="proceedUpdate();return false;"/>  <!-- onmouseover="ValidateCheck('{!$Component.boPhone}','{!$Component.boName}')"/>-->
+                    <apex:commandButton value="Cancel" onclick="cancelUpdate();return false;" styleClass="buttonStyle"/>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        
+    </apex:pageBlock>
+</apex:form>
+</apex:page>

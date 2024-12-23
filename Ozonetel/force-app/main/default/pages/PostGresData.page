@@ -1,0 +1,81 @@
+<apex:page standardController="PostGres_Data__c" extensions="PostGresConnect" action="{!getOrders}" tabStyle="Contact" lightningStylesheets="true">
+<apex:slds />
+<div class="slds-scope">
+
+    <apex:form id="fd">
+        
+        <apex:pageBlock >
+            <apex:pageMessages id="msg" />       
+            <apex:pageblocksection title="Recharge" showheader="true" collapsible="true" columns="1" >
+                
+                <apex:pageblocktable value="{!respWrapper}" var="v" styleClass="slds-table slds-table--bordered">
+                    <apex:column headerValue="Order Id" value="{!v.OrderId}"/>
+                    <apex:column headerValue="Operator Name" value="{!v.OperatorName}"/>
+                    <apex:column headerValue="Plan" value="{!v.Plan}"/>
+                    <apex:column headerValue="Recharge Amount" value="{!v.RechargeAmount}"/>
+                    <apex:column headerValue="Mobile No" value="{!v.MobileNo}"/>
+                    <apex:column headerValue="Order Status" value="{!v.OrderStatus}"/>
+                    <apex:column headerValue="PG Name" value="{!tWrapper.Data.PaymentStatus.GatewayName}"/>
+                    <apex:column >
+                        <apex:pageblocksection title="Payment Items"  showheader="true" collapsible="true" columns="1" >
+                            <apex:pageBlockTable value="{!v.PaymentItems}" var="p" styleClass="slds-table slds-table--bordered">
+                                
+                                <apex:column headerValue="Id" value="{!p.id}"/>
+                                <apex:column headerValue="Price" value="{!p.price}"/>
+                                <apex:column headerValue="Payment Type" value="{!p.type_of_payment}"/>
+                                <apex:column headerValue="Status" value="{!p.status}"/>
+                                
+                                
+                            </apex:pageBlockTable> 
+                            
+                        </apex:pageblocksection>
+                    </apex:column>
+                </apex:pageblocktable>
+            </apex:pageblocksection>
+            
+            <div align="right" draggable="false" >                
+                <apex:actionStatus id="loadStatus3" >
+                    <apex:facet name="start" >
+                        <apex:commandButton value="Processing..." disabled="true" status="loadStatus" style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"/>                                       
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton value="Check Valid GFT" action="{!checkValidWFTtoGFT}" reRender="fd,gftBT,msg" rendered="{!if(respWrapper.OrderStatus=='WFT (Payment not collected from customer)',true,false)}" disabled="{!checkWftToGftButton}" status="loadStatus3" styleClass="slds-button slds-button_success" >                   
+                        </apex:commandButton>
+                    </apex:facet>
+                </apex:actionStatus>   
+                                            
+                <br/>
+                
+                <apex:outputpanel id="gftBT">
+                    <apex:outputpanel >
+                        <font color="#333300"><b>  {!sMessage} </b></font> &nbsp;&nbsp;
+                        <apex:actionStatus id="loadStatus2" >
+                            <apex:facet name="start" >
+                                <apex:commandButton value="Processing..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;" disabled="true" status="loadStatus"/>                                       
+                            </apex:facet>
+                            <apex:facet name="stop">
+                                <apex:commandButton value="Process GFT Refund" action="{!doRefundForValidGFT}" rendered="{! If(validGFT==true ,true,false) }" reRender="fd,msg"  status="loadStatus2" disabled="{!wfttogftRefundButton}" styleClass="slds-button slds-button_success">                   
+                                </apex:commandButton>
+                            </apex:facet>
+                        </apex:actionStatus>    
+                       
+                    </apex:outputpanel>
+                    
+                </apex:outputpanel>
+               
+                <apex:actionStatus id="loadStatus1" >
+                    <apex:facet name="start" >
+                        <apex:commandButton value="Processing..." disabled="true" status="loadStatus" style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"/>                                       
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton value="Initiate Refund" action="{!initiateRefund}" rendered="{!if(respWrapper.OrderStatus=='GFT(Payment collected and recharge not successful)',true,false)}" reRender="fd,msg" status="loadStatus1" disabled="{!InitiateRefundButton}" styleClass="slds-button slds-button_success">                   
+                        </apex:commandButton>
+                    </apex:facet>
+                </apex:actionStatus>    
+                
+            </div>
+        </apex:pageBlock>
+        
+    </apex:form>
+    </div>
+</apex:page>

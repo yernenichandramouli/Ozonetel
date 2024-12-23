@@ -1,0 +1,11 @@
+<apex:page standardController="Account" extensions="CZentrixRecords_cls" lightningStylesheets="true">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="1">
+                <div><b>Number of Open Cases: {!numberOfOpenCases}</b></div>
+                <div><b>No of Calls in Last One Week : <font style="/* color: Red; */ background-color: yellow;">{!numberofCalls}</font></b></div> <div><b>Last Call CSAT:<font style="/* color: Red; */background-color: greenyellow;"> {!lastCSATAnswer}</font></b></div>
+                <div><b>Last Email CSAT: {!lastCaseFeedStatus}</b></div> 
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>  
+</apex:page>

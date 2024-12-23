@@ -1,0 +1,113 @@
+<template>
+    <lightning-card>
+        <template if:true={showUpdMsg}>
+            <c-generic-toast-messages notificationtype={notifType} notificationmessage={notifMsg}>
+            </c-generic-toast-messages>
+            <div class="slds-m-bottom_x-small"></div>
+        </template>
+        <center>
+            <lightning-layout horizontal-align="space">
+                <lightning-layout-item padding="around-small">
+                    <div style="display: flex;">
+                        <span style="padding: 10px; margin-top: 15px;">DOJ</span>
+                        <div style="display: flex;">
+                            <lightning-input type="date" id="dojV" value={doj} onchange={selectedDoj} aria-setsize="8">
+                            </lightning-input>
+
+                            <lightning-button name="dojVl" variant="success" label="Search" title="Search action"
+                                onclick={selDoj} class="slds-m-left_x-small" aria-setsize="4" style="margin-top: 20px;">
+                            </lightning-button>
+                            <div if:true={searchLoad}>
+                                <lightning-spinner alternative-text="Searching..." variant="brand" size="small"
+                                    class="slds-is-absolute">
+                                </lightning-spinner>
+                            </div>
+                        </div>
+                    </div>
+                </lightning-layout-item>
+            </lightning-layout>
+        </center>
+        <!--style="width: 200px;" style="width: 300px;"-->
+        <center>
+
+
+            <div class="slds-form-element__control" style="display: flex;margin-left: 25%;">
+                <span style="padding:8px">Transactions</span>
+                <div class="slds-select_container">
+                    <select class="slds-select" id="select-01" onchange={onValueSelection} style="width: 500px;">
+                        <option value="">---None---</option>
+                        <!--iterate all picklist values from wrapper list using for:each loop-->
+                        <template for:each={tranIds} for:item="picklistItem" if:true={trnsLoad}>
+                            <option key={picklistItem.uuid} value={picklistItem.uuid}>
+                                {picklistItem.uuid}- {picklistItem.src}- {picklistItem.dest}
+                            </option>
+                        </template>
+                    </select>
+                </div><span style="padding:8px">[{tranSize}]</span>
+            </div>
+
+
+        </center>
+        <!--   <lightning-layout-item flexibility="auto" padding="around-small">
+                <lightning-button name="dojVl" variant="success" label="Search" title="Search action" onclick={selDoj}
+                    class="slds-m-left_x-small"></lightning-button>
+            </lightning-layout-item>
+     
+        <center>
+            <lightning-button name="dojVl" variant="success" label="Search" title="Search action" onclick={selDoj}
+                class="slds-m-left_x-small"></lightning-button>
+        </center>-->
+    </lightning-card>
+
+    <lightning-card>
+
+        <div if:true={imgLoad} style="display:flex;flex-wrap: wrap;margin-left: 60px;">
+
+            <template for:each={imageValues} for:item="im">
+                <div style="padding: 5px;flex: 33.33%" key={im.imageId} onchange={sendId}>
+                    <img src={im.imageId} style="height:230px;width:230px" />
+                    <br /> <br />
+                    &nbsp;&nbsp;&nbsp;&nbsp; <select class="pickLs" key={im.imageId} data-id={im.imageId}
+                        onchange={handleSelectedImage} style="display:
+                        block;">
+                        <!--   <select class="pickLs" key={im.imageId} onchange={han)dleUpdate} style="display: block;">-->
+                        <option value="New">New</option>
+                        <option key={im.imageId} value="CONFIRMED">
+                            Approve
+                        </option>
+                        <option key={im.imageId} value="DISCARD">
+                            Reject
+                        </option>
+                        <!-- <option key={im.imageId} value={im.status}>
+                            {im.status}
+                        </option>-->
+                    </select>
+                    &nbsp; <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tag:<b> {im.imageTag}</b>
+                </div>
+                <br key={im.imageId} />
+                <!--  <lightning-icon icon-name="action:approval" alternative-text="Approved" title="Approved">
+                            </lightning-icon>-->
+
+
+            </template>
+
+
+
+
+        </div><br /><br />
+        <div if:true={imgLoad}>
+            <center>
+                <lightning-button variant="success" label="Update" title="Successful action" onclick={handleUpdate}
+                    class="slds-m-left_x-small"></lightning-button>
+            </center>
+        </div>
+        <div if:true={tranSelLoad} style="display:flex;flex-wrap: wrap;">
+            <lightning-spinner alternative-text="Loading..." variant="brand" size="small" class="slds-is-absolute">
+            </lightning-spinner>
+        </div>
+        <div if:true={updateLoad} style="display:flex;flex-wrap: wrap;">
+            <lightning-spinner alternative-text="Updating..." variant="brand" size="small" class="slds-is-absolute">
+            </lightning-spinner>
+        </div>
+    </lightning-card>
+</template>

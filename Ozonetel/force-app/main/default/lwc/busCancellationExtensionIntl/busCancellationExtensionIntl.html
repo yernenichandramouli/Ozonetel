@@ -1,0 +1,265 @@
+<!--
+@File Name          : busCancellationExtensionIntl.html
+@Description        : 
+@Author             : ChangeMeIn@UserSettingsUnder.SFDoc
+@Group              : 
+@Last Modified By   : ChangeMeIn@UserSettingsUnder.SFDoc
+@Last Modified On   : 3/15/2020, 9:42:55 PM
+@Modification Log   : 
+Ver       Date            Author      		    Modification
+1.0    3/15/2020   ChangeMeIn@UserSettingsUnder.SFDoc     Initial Version
+-->
+<template>
+<lightning-card>
+<lightning-layout horizontal-align=" " >
+<lightning-layout-item flexibility="auto" padding="around-small">
+<lightning-combobox name="BO Names" label="BO Names" id="boNames" options={boOptions} value={selBO} onchange={handleselBo} > </lightning-combobox>   
+</lightning-layout-item>
+<lightning-layout-item flexibility="auto" padding="around-small">
+<lightning-input label="TIN" type="text" id="tin" placeholder="TN/SG/MY/IDXX" value={tin} onchange={handleTin} ></lightning-input> 
+</lightning-layout-item>
+<lightning-layout-item flexibility="auto" padding="around-small">
+<lightning-input label="Date Of Journey" type="date" id="doj" value={doj} onchange={handledoj} ></lightning-input>
+</lightning-layout-item>
+<lightning-layout-item flexibility="auto" padding="around-small">
+<lightning-input label="Date Of Creation" type="date"  id="createdDate" value={doi} onchange={handledoi} ></lightning-input>
+</lightning-layout-item>
+<lightning-layout-item flexibility="auto" padding="around-small">
+<lightning-combobox name="Status" placeholder="Select Status"  id="st" label="Status"
+      options={statusOptions} value={selStatus} onchange={handleStatus}></lightning-combobox> 
+</lightning-layout-item>
+<!--
+<lightning-layout-item flexibility="auto" padding="around-small">
+<lightning-combobox label="Call Status"  id="CallSt"
+value={callStatus} options={callStatusOpts}></lightning-combobox>                        
+</lightning-layout-item> -->
+<lightning-layout-item flexibility="auto" padding="around-small" >
+</br>
+<lightning-button label="Search" variant="success" icon-name="utility:search" icon-position="right"  onclick={doSearch}  ></lightning-button>                      
+</lightning-layout-item>
+</lightning-layout> 
+</lightning-card>
+<template if:true={success}>
+<lightning-layout>
+  <lightning-layout-item flexibility="auto" padding="around-small">            
+    <p style="text-align: center; color: green;font-size: large;background: white;">Records updated successfully!</p>
+  </lightning-layout-item>
+</lightning-layout>  
+</template>
+<template if:true={selectedNone}>
+  <lightning-layout>
+    <lightning-layout-item flexibility="auto" padding="around-small">            
+      <p style="text-align: center; color: rgb(201, 45, 25);font-size: large;background: white;">Please select at least one record!</p>
+    </lightning-layout-item>
+  </lightning-layout>     
+</template>
+<template if:true={NoRecordsMsg}>
+<p style="text-align: center;font-size: large;background: white;color:black" >No records found for the search criteria</p>
+</template>
+<template if:false={loaded}>
+    <lightning-spinner alternative-text="Loading"></lightning-spinner>
+</template>
+<template if:true={loaded}>
+<template if:true={showSearchResult}>
+<template if:true={showUpdate}>
+  <lightning-card>
+    <lightning-layout horizontal-align="end">
+      <lightning-layout-item>
+    <lightning-combobox name='CaseStatus' label="Status"    
+                        options={CaseStatusOpts} value={CaseStatus} onchange={handleCaseStatus}>
+    </lightning-combobox>
+    </lightning-layout-item>
+    <lightning-layout-item>
+    </br>&nbsp;
+    <lightning-button label="Update" variant="success" onclick={doUpdate}  ></lightning-button>
+    &nbsp;
+    </lightning-layout-item>
+    </lightning-layout>    
+    </lightning-card>
+</template>
+<lightning-accordion onsectiontoggle={handleSectionToggle}  active-section-name={activeSection}>
+<template for:each={mapOfValues} for:item="keyValue" for:index='count'>
+<lightning-card key={keyValue.key}>
+<lightning-accordion-section name={keyValue.key} label= {keyValue.key} >
+<div class="slds-scrollable" >
+<table id={keyValue.key} class="slds-table slds-table_cell-buffer slds-table_bordered" align="center" style="width: 100%;" >
+  <thead>
+    <tr>
+        <th>
+            <lightning-input type="checkbox" value={keyValue.key}  checked= {SelectAll} label="" onchange={selectDeselectAll} >
+            </lightning-input>
+        </th>
+        <th>Case Id</th>
+        <th>Creation Time</th>
+        <th>Trip Id</th>
+        <th>Status</th>
+        <th>Notes</th>
+        <th>Transaction</th>
+        <th>TIN</th>
+        <th>DOJ</th>
+        <th>Customer Name</th>                        
+        <th>PNR</th>
+        <th>Seats</th>
+        <th>BO NAME</th>
+        <th>Is Primary</th>
+        <th>BO Id</th>
+        <th>Source</th>
+        <th>Modified By</th>
+    </tr>
+</thead>
+<tbody>
+  <template for:each={keyValue.value} for:item="caseVal">
+    <tr key={caseVal.cs.CaseNumber}>
+      <td>
+        <lightning-input key={caseVal.cs.CaseNumber} type="checkbox" label="" value={caseVal.cs.CaseNumber} checked={caseVal.isSelect} onchange={rowSelChangeEvent} ></lightning-input>
+      </td>
+      <td>
+<!--
+        <a href="javascript:srcUp('/5000p000002bSBEAA2');"  target="_top" id={caseVal.cs.Id} >{caseVal.cs.CaseNumber}</a>
+-->
+        <lightning-button key={caseVal.cs.Id} value={caseVal.cs.Id} variant="base" label={caseVal.cs.CaseNumber} onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+      </td>
+      <td>{caseVal.cs.CreatedDate}</td>
+      <td>{caseVal.cs.Trip_ID__c}</td>
+      <td>{caseVal.cs.Status}</td>
+      <td>{caseVal.cs.Notes__c}</td>
+      <td>
+        <lightning-button key={caseVal.cs.Transaction_ID__c} value={caseVal.cs.Transaction_ID__c} variant="base" label={caseVal.cs.Transaction_ID__r.Name} onclick={handleClickTransaction} class="slds-m-left_x-small"></lightning-button>
+      </td> 
+      <td>{caseVal.cs.TIN__c}</td>
+      <td>{caseVal.cs.Date_Of_Journey_New__c}</td>
+      <td>{caseVal.custName}</td>  
+      <td>{caseVal.cs.PNR_No__c}</td>
+      <td>{caseVal.cs.Seats__c}</td>
+      <td>{caseVal.cs.Bus_Operator_Name__c}</td> 
+      <td>{caseVal.cs.Is_Primary__c}</td>
+      <td>{caseVal.cs.Service_Provider_Id__c}</td>
+      <td>{caseVal.cs.Origin}</td>
+      <td>{caseVal.cs.LastModifiedBy.Name}</td> 
+    </tr>
+  </template>
+</tbody>
+</table>
+</div>
+</lightning-accordion-section>
+</lightning-card>
+</template>
+</lightning-accordion> 
+</template> 
+<template if:true={showCallModal}>
+<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+<div class="slds-modal__container">
+<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+<lightning-layout horizontal-align="center">
+<lightning-layout-item flexibility="auto" padding="around-small">
+  <lightning-input type="number" label="BO Phone Number"  value={phNumber}></lightning-input>
+</lightning-layout-item>
+<lightning-layout-item flexibility="auto" padding="around-small">
+</br>&nbsp;
+  <lightning-button variant="success" label="Call" title="Call" onclick={callBo} ></lightning-button>
+</lightning-layout-item>
+<lightning-layout-item flexibility="auto" padding="around-small"> 
+</br>&nbsp;
+  <lightning-button variant="success" label="Cancel" title="Cancel" onclick={cancelCall} ></lightning-button>
+</lightning-layout-item>
+</lightning-layout>
+</div>
+</div>
+</section>
+<div class="slds-backdrop slds-backdrop_open"></div>
+</template>
+<template if:true={showAllUpdate}>
+<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+<div class="slds-modal__container">
+<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+<p>{updateAllCases}</p>
+<lightning-layout horizontal-align="end">
+  <lightning-layout-item flexibility="auto" padding="around-small">
+  </br>
+    <lightning-button label='Ok' variant="brand" onclick={updateAll}></lightning-button>
+  </lightning-layout-item>
+  <template if:true={showCancel}>
+    <lightning-layout-item flexibility="auto" padding="around-small">
+    </br>&nbsp;
+      <lightning-button label="Cancel" onclick={cancelUpdateAll} ></lightning-button>
+    </lightning-layout-item>  
+  </template>
+</lightning-layout>
+</div>
+</div>
+</section>
+<div class="slds-backdrop slds-backdrop_open"></div>
+</template>
+<template if:true={showCaseUpdate}>
+<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+<div class="slds-modal__container">
+<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
+  <template if:false={showComment}>
+    <p >{updateError}</p>
+    <lightning-layout horizontal-align="end">
+      <lightning-layout-item flexibility="auto" padding="around-small">
+        <lightning-button label='Ok' variant="brand" onclick={updateCase}></lightning-button>
+      </lightning-layout-item>
+    </lightning-layout>
+  </template>
+  <template if:true={showComment}>
+    <lightning-textarea label='Case Comment' value={caseComment} onchange={handleCaseComment}  ></lightning-textarea>
+    <lightning-layout horizontal-align="end">
+      <lightning-layout-item flexibility="auto" padding="around-small">
+      </br>
+        <lightning-button label='Save' variant="success" onclick={updateCase}></lightning-button>
+      </lightning-layout-item>
+        <lightning-layout-item flexibility="auto" padding="around-small">
+        </br>&nbsp;
+          <lightning-button label="Cancel" variant="success" onclick={cancelUpdateCase} ></lightning-button>
+        </lightning-layout-item>  
+      </lightning-layout>              
+        <template if:true={showCaseError}>
+          <lightning-layout>
+            <lightning-layout-item flexibility="auto" padding="around-small">            
+              <p style="color: red;">{caseErrormsg}</p>
+            </lightning-layout-item>
+          </lightning-layout>
+        </template>
+    </template>
+</div>
+</div>
+</section>
+<div class="slds-backdrop slds-backdrop_open"></div>
+</template>     
+</template>     
+<template if:true={showBoDetails}>
+<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+<div class="slds-modal__container">
+<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-4">
+<lightning-layout horizontal-align=" ">
+<lightning-layout-item flexibility="auto" padding="around-small">
+  <lightning-input type='text' label='BOAgent Name By SPOC' value={BoAgentName} placeholder='Enter BO Agent Name' onchange={handleBoName}></lightning-input>
+</lightning-layout-item>
+<lightning-layout-item flexibility="auto" padding="around-small">
+  <lightning-input type='number' pattern="[0-9]{10}" label='BOAgent Contact By SPOC' value={BoAgentNum} placeholder='Enter BO Agent Phone Number' onchange={handleBoNumber}></lightning-input>
+</lightning-layout-item> 
+</lightning-layout>  
+<!-- need to add the approved by  -->
+<lightning-layout horizontal-align=" ">
+<lightning-layout-item flexibility="auto" padding="around-small">
+</br>
+  <lightning-button label='Proceed' variant="success" onclick={updateCase}></lightning-button>
+</lightning-layout-item>
+  <lightning-layout-item flexibility="auto" padding="around-small">
+  </br>&nbsp;
+    <lightning-button label="Cancel" variant="success" onclick={cancelUpdateCase} ></lightning-button>
+  </lightning-layout-item>  
+  <template if:true={showBoError}>
+    <lightning-layout-item flexibility="auto" padding="around-small">
+      <p style="color: red;">{boErrormsg}</p>
+    </lightning-layout-item>
+  </template>
+</lightning-layout>
+</div>
+</div>
+</section>
+<div class="slds-backdrop slds-backdrop_open"></div>
+</template>     
+</template>     
+</template>

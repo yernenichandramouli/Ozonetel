@@ -1,0 +1,176 @@
+<apex:page tabStyle="Account" controller="CallPopUpControllerLtng" showHeader="true" title="Call-{!cdList[0].Mobile_Number__c}">
+      
+    <apex:form >        
+
+<apex:pageBlock rendered="{!cdBlk}">
+     
+        
+    <apex:commandButton value="Create Case" onClick="customPrimaryTab('/apex/ChatCaseCreationPage?Source=callpopup');" style="margin-left:55em;background:#04B431;color:white" rendered="{!accList.size==0}" />
+ 
+  
+    <apex:pageBlockSection title="Call Menu Details" collapsible="false" columns="2">
+        <apex:outputField value="{!cdList[0].Name}"/>
+        <apex:pageblockSectionItem >
+            User Name <apex:outputtext value="{!cdList[0].Agent_Id__c}"/>
+        </apex:pageblockSectionItem>
+        <apex:pageBlockSectionItem >
+            Customer IVR Route <apex:outputtext value="{!ivrValues}"/>
+        </apex:pageBlockSectionItem>
+        <apex:outputField value="{!cdList[0].Mobile_Number__c}"/>
+        <apex:outputField value="{!cdList[0].Language__c}"/>  
+        <apex:pageBlockSectionItem >
+            Trip Id <apex:outputField value="{!cdList[0].OrderUuid__c}"/>
+        </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+            HFT(Hero Feature) <apex:outputText value="{!hft}"/>
+        </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+    
+    
+
+    
+    
+    <apex:pageBlockSection title="Accounts" collapsible="false" columns="1"> 
+        <apex:pageBlockTable value="{!accList}" var="acc">
+            <apex:column >
+                <apex:facet name="header" >Customer Name</apex:facet>
+                <a HREF="#" onClick="openCaseSubtab('{!acc.id}');return false;">
+                    <apex:outputLabel value="{!acc.name}" />
+                </a>
+            </apex:column>
+            <!--  <apex:column headerValue="Customer Name" value="{!acc.name}"/>-->
+            <apex:column headerValue="Mobile" value="{!acc.PersonMobilePhone}"/>
+            <apex:column headerValue="Email" value="{!acc.PersonEmail}"/>
+            <apex:column headerValue="Signed in User" value="{!acc.Signed_in_User__c }"/>
+            <apex:column headerValue="User Id" value="{!acc.User_Id__c}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockSection title="Cases" collapsible="false" columns="1">
+        <apex:pageBlockTable value="{!csList}" var="cs">
+            
+            <apex:column >
+                <apex:facet name="header" >CaseId</apex:facet>
+                <a HREF="#" onClick="openCaseSubtab('{!cs.id}');return false;">
+                    <apex:outputLabel value="{!cs.CaseNumber}" />
+                </a>
+            </apex:column>
+            <apex:column headerValue="Transaction Id" value="{!cs.Transaction_id__r.Name}"/>
+            <apex:column headerValue="Issue Type" value="{!cs.Issue_Type__c}"/>
+            <apex:column headerValue="Sub Issue Type" value="{!cs.Issue_Sub_Category__c}"/>
+            <apex:column headerValue="DOJ" value="{!cs.Date_Of_Journey_New__c}"/>
+            <apex:column headerValue="TIN" value="{!cs.TIN_No__c}"/>
+            <apex:column headerValue="Ticket Amount" value="{!cs.Total_Ticket_Amount__c}"/>
+            <apex:column headerValue="Service Provider Name" value="{!cs.Service_Provider_Name__c}"/>
+            <apex:column headerValue="Source-Destianation" value="{!cs.Source__c} -> {!cs.Destination__c}"/>
+             <!--  <apex:column headerValue="CSAT">
+              {!tsMap[cs.casenumber]} 
+            </apex:column> -->
+            
+        </apex:pageBlockTable>
+    </apex:pageBlockSection>
+    
+    <apex:pageblockSection title="Transactions" collapsible="false" columns="1"  rendered="{!if(ordList.size>0,true,false)}" >
+        <apex:pageBlockTable value="{!ordList}" var="ord">
+            <apex:column >
+                <apex:facet name="header" >Transaction Id</apex:facet>
+                <a HREF="#" onClick="openCaseSubtab('{!ord.id}');return false;">
+                    <apex:outputLabel value="{!ord.name}" />
+                </a>
+            </apex:column>
+            
+            <apex:column headerValue="Trip Id" >
+                <a HREF="#" onClick="callSearchOrder('{!ord.Order_Id__c}',this);return false;">
+                    <apex:outputlabel value="{!ord.Order_Id__c}"/>
+                </a>
+            </apex:column>
+            
+            <apex:column headerValue="Trip Id" value="{!ord.Order_Id__c}"/>
+            <apex:column headerValue="TIN" value="{!ord.Order_Item_Reference_No__c}"/>
+            <apex:column headerValue="Transaction Status" value="{!ord.Transaction_Status__c}"/>
+            <apex:column headerValue="Source-Destination" value="{!ord.Source_Destination__c}"/>
+            <apex:column headerValue="BO Name" value="{!ord.Service_Provider_Info__r.name}"/>
+            <apex:column headerValue="Seat No" value="{!ord.Seat_No__c}"/> 
+        </apex:pageBlockTable>
+    </apex:pageblockSection>
+    
+    <apex:pageBlockSection title="Transactions" collapsible="false" columns="1" rendered="{!if(ordList.size<=0 && cdList[0].OrderUuid__c!=null,true,false)}"  >
+        
+        <!-- <apex:facet name="header" >Transaction Id</apex:facet>-->
+        <apex:outputtext >
+            
+            <a HREF="#" onClick="callSearchOrder('{!ordId}',this);return false;">
+                <apex:outputlabel value="{!ordId}"/>
+            </a>
+        </apex:outputtext>
+        
+    </apex:pageBlockSection>
+    
+</apex:pageBlock>
+<apex:actionFunction name="jsSerachOrder" action="{!searchOrder}"  status="statusSaveTrip" reRender="panelId">
+            <apex:param name="ordId2" assignTo="{!ordId}" value=""/>
+        </apex:actionFunction>
+        
+        <apex:outputPanel id="panelId">
+            <script>
+            if('{!redirectUrl}')
+            {
+                window.setTimeout(customPrimaryTab,0000,'{!redirectUrl}');
+                
+            }
+            </script>
+        </apex:outputPanel>
+        
+        <apex:actionStatus id="statusSaveTrip" stopText="">
+            <apex:facet name="start">
+                <div>
+                    <div class="popupBackground" />
+                    <div class="PopupPanel">
+                        <table border="0" width="100%" height="100%">
+                            
+                            <tr>
+                                <td align="center"><img src="{!$Resource.Loading}"><font color="red" size="3"><i>Please wait while we are processing your request...</i></FONT></img></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </apex:facet>
+</apex:actionStatus>
+</apex:form>
+<script type="text/javascript">  
+         
+        function openCaseSubtab(recId) 
+        {
+      
+            if (sforce.console.isInConsole()) 
+            {
+                sforce.console.getEnclosingPrimaryTabId(function(result)
+                {
+                    
+                    sforce.console.openPrimaryTab(undefined,'/'+recId, true, 'Details');
+                    
+                });
+            } 
+            else {
+                window.open('/' + recId);
+            }
+        }
+    
+    function callSearchOrder(ordId,lk) {
+        lk.onclick = function(event) {
+            event.preventDefault();
+        }
+        jsSerachOrder(ordId);
+    }
+    
+    function customPrimaryTab(url) { 
+        
+        if(sforce.console.isInConsole())
+            srcUp(url);
+        else 
+           window.open(url);
+   }
+    
+    </script>
+    <script src="/support/console/26.0/integration.js"/>
+</apex:page>

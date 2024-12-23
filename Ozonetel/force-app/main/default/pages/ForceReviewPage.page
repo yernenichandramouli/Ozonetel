@@ -1,0 +1,186 @@
+<!--
+* Name           : ForceReviewPage
+* Created Date   : 15 Nov 2017
+* Created By     : Veeramanikanta R
+* Purpose        : Used for Agents to give ratings and reviews for transactions
+*
+-->
+<apex:page controller="ForceReviewController" action="{!getTin}" showheader="false" id="pid">
+    <apex:form id="fId" >
+        
+        <head>
+            <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"/>  
+            <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"/>
+            <apex:stylesheet value="{!URLFOR($Resource.bootstrapstyle, 'bootstrap-3.3.7-dist/css/bootstrap.min.css')}"/>
+            <apex:stylesheet value="{!URLFOR($Resource.bootstrapstyle, 'bootstrap-3.3.7-dist/css/strap.css')}"/> 
+            <apex:includeScript value="{!URLFOR($Resource.bootstrapstyle, 'bootstrap-3.3.7-dist/js/bootstrap.min.js')}"/>
+            <apex:includeScript value="{!$Resource.star}"/> 
+            <apex:stylesheet value="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+            
+            <style>
+                .checked {
+                color: orange;
+                }
+                .fa-star:before {
+                font-size: x-large !important;
+                }
+            </style>
+            
+            <script>
+            var oralRating=0;
+            var BQRating=0;
+            var SRRating=0;
+            var PUNRating=0;
+            function updaterem(selNum)
+            {
+                oralRating=selNum;
+                BQRating=selNum;
+                RRating=selNum;
+                PUNRating=selNum;
+                document.getElementById('pid:fId:bqJ').value = BQRating;
+                document.getElementById('pid:fId:punJ').value = PUNRating;
+                document.getElementById('pid:fId:sbJ').value = RRating;    
+                // alert('selNum..'+selNum);
+                
+                for(var i=1;i<=selNum;i++)
+                {
+                    //alert(i+'..'+selNum);
+                    //alert(document.getElementById('bqsp'+i).className);
+                    document.getElementById('bqsp'+i).className="fa fa-star checked";
+                    document.getElementById('srsp'+i).className="fa fa-star checked";
+                    document.getElementById('pun'+i).className="fa fa-star checked";
+                    document.getElementById('id'+i).className="fa fa-star checked";
+                }
+                for(var j=selNum+1;j<=5;j++)
+                {
+                    document.getElementById('bqsp'+j).className="fa fa-star";
+                    document.getElementById('srsp'+j).className="fa fa-star";
+                    document.getElementById('pun'+j).className="fa fa-star";
+                    document.getElementById('id'+j).className="fa fa-star";
+                    
+                }
+                
+            }
+            
+            function updateIndvidualRating(selN,selId)
+            {
+                if(selId=='bqsp')
+                    BQRating=selN;
+                else if(selId=='pun')
+                    PUNRating=selN;   
+                    else if(selId=='srsp')
+                        RRating=selN;
+                                
+                document.getElementById('pid:fId:bqJ').value = BQRating;
+                document.getElementById('pid:fId:punJ').value = PUNRating;
+                document.getElementById('pid:fId:sbJ').value = RRating;    
+                
+                //  alert(BQRating+'...'+PUNRating+'..'+RRating);
+                
+                for(var i=1;i<=selN;i++)
+                {
+                    document.getElementById(selId+i).className="fa fa-star checked";
+                }
+                for(var j=selN+1;j<=5;j++)
+                {
+                    document.getElementById(selId+j).className="fa fa-star";
+                    
+                }
+                
+            }
+            </script>
+        </head>
+        
+        <apex:inputhidden value="{!busQuality}" id="bqJ"/>
+        <apex:inputhidden value="{!punctuality}" id="punJ"/>
+        <apex:inputhidden value="{!staffBehaviour}" id="sbJ"/>
+          
+        <!--  <apex:pageMessages escape="false" id="msg"/>
+        <apex:pageMessages />-->
+        <apex:pageBlock title="Ratings & Review" >
+          <apex:pageMessages escape="false" id="msg"/>
+            <span style="padding-left: 450px;font-size:13px;color:purple">  
+                <table style="width:60%; margin-left:450px" >
+                    <tr>
+                        <td>  Trip Details </td>                        
+                        <td>  {!mObj[tId].SourceName} -> {!mObj[tId].DestinationName} on {!LEFT(mObj[tId].DateOfJourney,10)} </td>
+                    </tr>                               
+                    <tr>                        
+                        <td> Travels </td> 
+                        <td> {!mObj[tId].OperatorName} </td>                        
+                    </tr>
+                    <tr><td>  
+                        Ticket Number </td>
+                        <td> {!mObj[tId].TIN}</td>
+                    </tr>                   
+                    <tr>
+                        <td>Bus Type</td>
+                        <td> {!mObj[tId].BusType}</td>
+                    </tr>
+                </table>  
+            </span>
+            
+            <center> 
+                <br/>
+                Hi {!mObj[tId].CustomerName}   <br/>
+                How was your trip? Share your valuable feedback with us.This would help other travellers as well as the bus operator in improving their service.
+                <br/><br/></center>
+         
+         <apex:outputpanel rendered="{!if(mObj[tId].IsRated==false,true,false)}"  >
+            
+            <center>  <h4>Overall Rating</h4> <br/>
+                <span class="fa fa-star" onclick="updaterem(1);" id="id1"></span>
+                <span class="fa fa-star" onclick="updaterem(2);" id="id2"></span>
+                <span class="fa fa-star " onclick="updaterem(3);" id="id3"></span>
+                <span class="fa fa-star" onclick="updaterem(4);" id="id4"></span>
+                <span class="fa fa-star" onclick="updaterem(5);" id="id5"></span>
+            </center><br/><br/>
+            
+            &emsp;&emsp;&emsp;
+            <h4>Bus Quality</h4>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+            
+            <h4>Punctuality</h4>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+            <h4>Staff Behaviour</h4> <br/>
+            <center>
+                <span class="fa fa-star" id="bqsp1" onclick="updateIndvidualRating(1,'bqsp');"></span>
+                <span class="fa fa-star" id="bqsp2" onclick="updateIndvidualRating(2,'bqsp');"></span>
+                <span class="fa fa-star" id="bqsp3" onclick="updateIndvidualRating(3,'bqsp');"></span>
+                <span class="fa fa-star" id="bqsp4" onclick="updateIndvidualRating(4,'bqsp');"></span>
+                <span class="fa fa-star" id="bqsp5" onclick="updateIndvidualRating(5,'bqsp');"></span>
+                &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                <span class="fa fa-star " id="pun1" onclick="updateIndvidualRating(1,'pun');"></span>
+                <span class="fa fa-star " id="pun2" onclick="updateIndvidualRating(2,'pun');"></span>
+                <span class="fa fa-star " id="pun3" onclick="updateIndvidualRating(3,'pun');"></span>
+                <span class="fa fa-star" id="pun4" onclick="updateIndvidualRating(4,'pun');"></span>
+                <span class="fa fa-star" id="pun5" onclick="updateIndvidualRating(5,'pun');"></span>
+                &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                <span class="fa fa-star " id="srsp1" onclick="updateIndvidualRating(1,'srsp');"></span>
+                <span class="fa fa-star " id="srsp2" onclick="updateIndvidualRating(2,'srsp');"></span>
+                <span class="fa fa-star " id="srsp3" onclick="updateIndvidualRating(3,'srsp');"></span>
+                <span class="fa fa-star" id="srsp4" onclick="updateIndvidualRating(4,'srsp');"></span>
+                <span class="fa fa-star" id="srsp5" onclick="updateIndvidualRating(5,'srsp');"></span>                              
+            </center>
+            <br/><br/>
+             </apex:outputpanel> 
+           <!--  <apex:inputtextarea value="{!comment}" style="width:30%;" /> -->
+
+            <center>
+             Customer Review <br/>     
+             <!--   <apex:inputtextarea value="{!comment}" style="width:30%;" /> -->
+             
+             <apex:outputpanel >
+                         
+                <apex:inputtextarea value="{!comment}" style="width:30%;" rendered="{!!mObj[tId].IsReviewed}"/> 
+                  </apex:outputpanel> 
+                
+                 <apex:outputpanel rendered="{!mObj[tId].IsReviewed}">
+                  Review alredy exist for this TIN.
+                 </apex:outputpanel>     
+                <br/> <br/> <br/>  
+                 
+                  <apex:commandButton value="Submit" action="{!submit}"  style="width:100px"/>
+            </center>      
+  
+        </apex:pageblock>        
+    </apex:form>    
+</apex:page>

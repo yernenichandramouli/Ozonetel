@@ -1,0 +1,4 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" >
+	    <c:activityDetails recIdL="{!v.recordId}" onclose="{!c.closeQA}" ></c:activityDetails>
+      <!--  <c:activityDetails onclose="{!c.closeQA}"/> -->
+</aura:component>

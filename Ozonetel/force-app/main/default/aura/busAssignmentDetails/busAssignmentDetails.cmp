@@ -1,0 +1,13 @@
+<aura:component controller="GetTransactionDetails" implements="flexipage:availableForAllPageTypes,force:lightningQuickAction,force:hasRecordId" >
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:attribute name="errormsg" type="String"/>
+    
+    <aura:attribute name="recordId" type="String"/>
+    <aura:if isTrue="{!(empty(v.errormsg))}">
+        <c:getBusAssignmentDetails recId="{!v.recordId}" />
+    </aura:if>        
+    <aura:if isTrue="{!not(empty(v.errormsg))}">
+        <p><b>Sorry, the operator currently does not share the bus and driver assignment details</b></p>
+        <p>Please contact the operator on the number provided.</p>
+    </aura:if>
+</aura:component>

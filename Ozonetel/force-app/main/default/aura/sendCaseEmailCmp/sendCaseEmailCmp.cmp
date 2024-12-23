@@ -1,0 +1,155 @@
+<aura:component controller="GenericEmailMessageController"
+    implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+    access="global">
+
+    <!--Part 1 [for attribute declare]-->
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="loaded" type="Boolean" default="true" />
+    <aura:attribute name="email" type="string" />
+    <aura:attribute name="selectedFromEmail" type="string" />
+    <aura:attribute name="subject" type="string" />
+    <aura:attribute name="body" type="string" />
+    <aura:attribute name="mailStatus" type="boolean" default="false" />
+    <aura:attribute name="emailfolderVSTemplateList" type="object[]" default="[]" />
+    <aura:attribute name="emailFolderList" type="object[]" default="[]" />
+    <aura:attribute name="fromAddressList" type="object[]" default="[]" />
+    <aura:attribute name="emailTemplateList" type="object[]" default="[]" />
+    <aura:attribute name="emailbody" type="String" default="" />
+    <aura:attribute name="folderId1" type="String" default="" />
+    <aura:attribute name="templateIDs" type="String" default="" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aura:id="Modalbox" aria-modal="true"
+        aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+        <lightning:spinner aura:id="mySpinner" alternativeText="Processing.." title="Processing.." variant="brand" size="large" class="slds-hide"/>
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+                    onclick="{!c.closeModal}">
+                    <lightning:icon iconName="utility:close" size="xx-small" />
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Send Email</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <!---Part 2 [header part] -->
+                <!---Part 3 [message display part] -->
+                <aura:if isTrue="{!v.mailStatus}">
+                    <div role="alertdialog" tabindex="-1" aria-labelledby="prompt-heading-id"
+                        aria-describedby="prompt-message-wrapper"
+                        class="slds-modal slds-fade-in-open slds-modal--prompt">
+                        <div class="slds-modal__container">
+                            <div class="slds-modal__header slds-theme--success slds-theme--alert-texture">
+                                <h2 class="slds-text-heading--medium" id="prompt-heading-id">Mail Status</h2>
+                            </div>
+                            <div class="slds-modal__content slds-p-around--medium">
+                                <div>
+                                    <p>Email Sent successfully to {!v.email}</p>
+                                </div>
+                            </div>
+                            <div class="slds-modal__footer slds-theme--default">
+                                <button class="slds-button slds-button--brand"
+                                    onclick="{!c.closeMessage}">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-backdrop slds-backdrop--open"></div>
+                </aura:if>
+                <div class="exampleHolder">
+                    <aura:if isTrue="{! v.loaded }">
+                        <lightning:spinner alternativeText="Loading" />
+                    </aura:if>
+                </div>
+                <!---Part 4 [mail form part]-->
+                <div class="slds-m-around--medium">
+                    <div class="slds-container--medium">
+                        <div class="slds-form--stacked">
+                            <!--Test for template -->
+                            <label><b></b></label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-form-element" aura:id="selectFrom">
+                                    <label class="slds-form-element__label" for="select-From">Select From</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" id="selectedFrom"
+                                                onchange="{!c.onFromAddressSelect}">
+                                                <option value="">Please Select From Address</option>
+                                                <aura:iteration items="{!v.fromAddressList}" var="fromAdd">
+                                                    <option value="{!fromAdd}">{!fromAdd}</option>
+                                                </aura:iteration>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="slds-form-element" aura:id="selectFolder">
+                                    <label class="slds-form-element__label" for="select-Folder">Select Folder</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" id="select-Folder"
+                                                onchange="{!c.onSelectEmailFolder}">
+                                                <option value="">Please Select Folder</option>
+                                                <aura:iteration items="{!v.emailfolderVSTemplateList}" var="folder">
+                                                    <option value="{!folder.folderId}">{!folder.folderName}</option>
+                                                </aura:iteration>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="slds-form-element" aura:id="selectTemplate">
+                                    <label class="slds-form-element__label" for="select-Template">Select
+                                        Template</label>
+                                    <div class="slds-form-element__control">
+                                        <div class="slds-select_container">
+                                            <select class="slds-select" id="select-Template"
+                                                onchange="{!c.onSelectEmailTemplate}">
+                                                <option value="">Please Select Email Template</option>
+                                                <aura:iteration items="{!v.emailTemplateList}" var="template">
+                                                    <option value="{!template.emailTemplateId}">
+                                                        {!template.emailTemplatename}</option>
+                                                </aura:iteration>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label" for="CC">Email</label>
+                                    <div class="slds-form-element__control">
+                                        <ui:inputEmail class="slds-input" aura:id="email" value="{!v.email}"
+                                            required="true" placeholder="abc@email.com" />
+                                    </div>
+                                </div>
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label" for="CC">Subject</label>
+                                    <div class="slds-form-element__control">
+                                        <ui:inputText class="slds-input" aura:id="subject" value="{!v.subject}"
+                                            placeholder="Subject" />
+                                    </div>
+                                </div>
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label" for="textareaSample2">Mail Body</label>
+                                    <div class="slds-form-element__control">
+                                        <lightning:inputRichText aura:id="body" class="custom-alignment" value="{!v.emailbody}" />
+                                        <!-- <c:richTextArea value="{!v.emailbody}"/> -->
+                                    </div>
+                                </div>
+                                <br />
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <footer class="slds-modal__footer">
+                <button class="slds-button slds-button_neutral" onclick="{!c.closeMessage}">Cancel</button>
+                <button class="slds-button slds-button_brand" onclick="{!c.sendMail}">Send</button>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</aura:component>

@@ -1,0 +1,36 @@
+<template>
+    <template if:true={isShowResp}> 
+
+  <div class="slds-clearfix">
+    <div class="slds-float_right slds-float_left slds-m-right_x-large">
+        <p>Train No :  {trainNo}</p>
+        <p>PNR No :  {pnrNo}</p>
+        <p>Journey class:  {journyClass}</p>
+        <p>Chart Status :  {chartstatus}</p>    
+    </div>
+
+   <div class="slds-float_left slds-float_left slds-m-left_x-large">
+        <p>Source :  {source}</p>
+        <p>Destination :  {destination}</p>
+        <p>DOJ :  {doj}</p>
+        <p>Train Name : {trainName}</p>   
+   </div>
+</div>
+
+</dl><br/>
+        <lightning-datatable
+                    key-field="name"
+                    hide-checkbox-column="true"
+                    data={strResp}
+                    columns={psngrfields}>
+                </lightning-datatable>
+    </template>
+
+    <template if:true={isError}>
+        <center>  <br/><p><b style="color: rgb(255, 0, 0);">ErrorMessage : {errordtlMessage}</b></p></center> 
+        <center>  <br/><p><b style="color: rgb(255, 0, 0);">ApiResponse : {errorMsg}</b></p></center> 
+        <center>  <br/><p><b style="color: rgb(255, 0, 0);">ErrorCode : {errorCod}</b></p></center> 
+    </template>
+
+
+</template>

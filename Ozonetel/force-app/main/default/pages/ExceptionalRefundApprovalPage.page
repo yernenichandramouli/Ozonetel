@@ -1,0 +1,187 @@
+<!--
+* (c) 2017 RedBus
+*
+* Name           : ExceptionalRefundApprovalPage
+* Created Date   : 18 Dec 2017
+* Created By     : Sreenivas M
+* Purpose        : Exceptional Refund Approval Page
+*
+-->
+<apex:page controller="ExceptionalRefundApprovalCntl" tabStyle="Case" id="pg" lightningStylesheets="false">
+ 
+    <apex:includeScript value="//code.jquery.com/jquery-1.11.1.min.js"/>
+    <apex:includeScript value="/soap/ajax/45.0/connection.js"/>
+    <apex:includeScript value="/support/console/42.0/integration.js"/>
+    <apex:stylesheet value="{!$Resource.LoadingStatus}" />
+    <apex:includeScript value="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"/>
+     <apex:stylesheet value="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
+    
+    <script>
+  
+    $(document).ready(function(){
+    $('.pbstyle').DataTable();
+    $('.msgCls').keyup(function(){
+    $('.updateBtn').hide();
+    if($(this).val().length >10)
+        $('.updateBtn').show();          
+    else
+        $('.updateBtn').hide();
+    })
+    });
+    
+    function closePopup(actnType)
+    {
+        $('.exRefdPopupPanel').hide();
+        $('.exRefdPopupPanel2').hide();
+        document.getElementById('pg:formId:pb:selStatus').value= '';
+        document.getElementById('pg:formId:pb:selId').value= '';
+        document.getElementById('pg:formId:pb:pbs:comIds').value= '';
+   
+    }
+    function openPopup(caseId,status,type)  
+    {
+        if(type=='B2B'){
+       // alert('b2b');
+        $('.exRefdPopupPanel2').show();
+        $('.updateBtn').hide();
+        window.scrollTo(0, 0);
+        document.getElementById('pg:formId:pb:selStatus').value = status;
+        document.getElementById('pg:formId:pb:selId').value = caseId;
+        }else{
+      //  alert('b2c');
+        $('.exRefdPopupPanel').show();
+        $('.updateBtn').hide();
+        window.scrollTo(0, 0);
+        document.getElementById('pg:formId:pb:selStatus').value = status;
+        document.getElementById('pg:formId:pb:selId').value = caseId;
+        }
+    }
+    
+    function updateComments(comId)
+    {
+      var desc = document.getElementById(comId).value;
+      alert(desc);
+    }
+    
+    </script>
+    
+    <apex:form id="formId">
+       <apex:outputpanel style="overflow:scroll;width:1630px;" layout="block">
+        <apex:pageBlock id="pb" >
+            <script>
+             $('.pbstyle').DataTable();
+             
+            </script>
+            <apex:inputHidden id="selStatus" value="{!seleStatus}"/>
+            <apex:inputHidden id="selId" value="{!selCsId}"/>
+             <B><I><apex:outputText value="Pending Exceptional Refund Cases" style="font-size:15px;color:maroon;"/></I></B>
+            <apex:actionStatus id="butnStatus" >
+               <apex:facet name="stop" >
+                   <apex:commandButton value="Refresh" action="{!refreshlist}" reRender="formId" status="butnStatus" style="background:#04B431;color:white"/>
+               </apex:facet>
+              
+                <apex:facet name="start">
+                   <apex:commandButton value="Updating Data.." status="butnStatus" style="background:#04B431;color:white" disabled="true"/>
+               </apex:facet>
+           </apex:actionStatus>
+           <!--    <apex:outputpanel style="overflow:scroll;width:1330px;" layout="block">   --> 
+           
+           
+       
+         <apex:pageblocksection columns="1" id="pbs">
+            <apex:pageBlockSectionItem >
+                 Team Wise selection:<apex:selectList value="{!selectedTeam}" multiselect="false" size="1">
+                    <apex:selectOption itemValue="" itemLabel="--None--"/>
+                    <apex:selectOption itemValue="Inbound" itemLabel="Inbound"/>
+                    <apex:selectOption itemValue="SIT" itemLabel="SIT"/>
+                    <apex:selectOption itemValue="Emails" itemLabel="Emails"/>
+                    <apex:selectOption itemValue="SGMY-Bus" itemLabel="SGMY-Bus"/>
+                    <apex:selectOption itemValue="RPW Primo" itemLabel="RPW Primo"/>
+                    <apex:selectOption itemValue="Inbound - Bangalore" itemLabel="Inbound-Bangalore"/>
+                    <apex:selectOption itemValue="Inbound - Pune" itemLabel="Inbound-Pune"/>
+                    <apex:selectOption itemValue="Management Escalation" itemLabel="Management Escalation"/>
+                    <apex:selectOption itemValue="BoltPrimoRpw" itemLabel="BoltPrimoRpw"/>
+                    <apex:selectOption itemValue="SelfHelp Bot Failure" itemLabel="SelfHelp Bot Failure"/>
+                    <apex:selectOption itemValue="Amazon" itemLabel="Amazon"/>
+                    <apex:selectOption itemValue="GI/MMT" itemLabel="GI/MMT"/>
+                    <apex:selectOption itemValue="Colombia-Bus" itemLabel="Cambodia"/>
+                    <apex:selectOption itemValue="Vietnam" itemLabel="Vietnam"/>
+                    <apex:selectOption itemValue="RDC" itemLabel="RDC"/>
+                    <apex:actionSupport event="onchange" action="{!teamWisecases}" />
+                   </apex:selectList>
+             </apex:pageBlockSectionItem>
+             
+            <apex:pageMessages id="errMsg"></apex:pageMessages>
+            
+            <apex:pageBlockTable value="{!caseList}" var="cs" width="100%" styleClass="pbstyle" id="pbTableId">
+              
+                    <apex:repeat value="{!$ObjectType.Case.FieldSets.ExceptionalRefundPage}" var="f">
+                        <apex:column value="{!cs[f]}" rendered="{!IF(OR(f.Label=="Total Ticket Amount",f.Label=="Refund Amount"),false,true)}" title="{!cs[f]}"/>
+                        
+                        <apex:column rendered="{!f.Label=="Total Ticket Amount"}">
+                            <apex:facet name="header">Total Ticket Amount</apex:facet>
+                                <apex:outputText value="{!cs['Price_Paid_Currency_ctp__c']} {!cs['Total_Fare_Value__c']}"/>
+                        </apex:column>
+                        
+                        <apex:column rendered="{!f.Label=="Refund Amount"}">
+                            <apex:facet name="header">Refund Amount</apex:facet>
+                                <apex:outputText value="{!cs['Price_Paid_Currency_ctp__c']} {!cs['Refund_Amount__c']}"/>
+                        </apex:column>
+                    </apex:repeat>
+                    
+                    <apex:column rendered="{!if(cs.Type!='B2B',true,false)}"> <apex:commandButton value="Approve" title="Initiate Refund To Customer" onclick="openPopup('{!cs.id}','Approve','B2C');return false;" id="popup" style="height:23px;width:80px;font-size:11px;background:#04B431;color:white;font-family:monospace;"/></apex:column>
+                    <apex:column rendered="{!if(cs.Type=='B2B',true,false)}"  > <apex:commandButton value="Approve" title="Initiate Refund To Customer" onclick="openPopup('{!cs.id}','Approve','B2B');return false;" id="popup2" style="height:23px;width:80px;font-size:11px;background:#04B431;color:white;font-family:monospace;"/></apex:column>
+
+                  <!--  <apex:column ><apex:commandButton value="Deny" title="Rejected For Refund Processing" onclick="openPopup('{!cs.id}','Deny');return false;" style="height:23px;width:80px;font-size:11px;background:#f90625a3;color:white;font-family:monospace;"/> </apex:column> -->
+                    <apex:column rendered="{!if(cs.Type!='B2B',true,false)}"><apex:commandButton value="Deny" title="Rejected For Refund Processing" onclick="openPopup('{!cs.id}','Deny','B2C');return false;" style="height:23px;width:80px;font-size:11px;background:#f90625a3;color:white;font-family:monospace;"/> </apex:column>
+           
+                    <apex:column rendered="{!if(cs.Type=='B2B',true,false)}"><apex:commandButton value="Deny" title="Rejected For Refund Processing" onclick="openPopup('{!cs.id}','Deny','B2B');return false;" style="height:23px;width:80px;font-size:11px;background:#f90625a3;color:white;font-family:monospace;"/> </apex:column>
+ 
+            </apex:pageBlockTable>
+              
+            <apex:outputPanel id="popup" styleClass="exRefdPopupPanel" style="display:none">   
+               
+                <apex:outputPanel styleClass="popupBackground" layout="block" />                    
+                <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block" style="width: 401px !Important;">                        
+                        Please Input Your Comments Below.Update Button Will Appear Automatically.                   
+                        <apex:inputtextarea value="{!b2cCaseComments}" id="comIds" styleClass="msgCls" style="width:370px;height: 56px;"/>
+                        <apex:actionStatus id="butnStatus2" >
+                            <apex:facet name="stop" >
+                            <apex:commandButton value="Update" action="{!initiateRefund}"  style="background:#04B431;color:white;font-family:Arial;" reRender="errMsg,pb" oncomplete="closePopup('Update');return false;" status="butnStatus2"/>
+                            </apex:facet>
+
+                            <apex:facet name="start">
+                            <apex:commandButton value="Please Wait.." status="butnStatus2" style="background:#04B431;color:white;font-family:Arial;" disabled="true"/>
+                            </apex:facet>
+                        </apex:actionStatus>
+                        <apex:commandButton value="Cancel" onclick="closePopup('Cancel');return false;"/>
+                </apex:outputpanel>
+            </apex:outputpanel>
+            
+             <apex:outputPanel id="popup2" styleClass="exRefdPopupPanel2" style="display:none"> 
+           
+                <apex:outputPanel styleClass="popupBackground" layout="block" />                    
+                <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block" style="width: 401px !Important;">    
+                       Seller Central Id &nbsp;&nbsp; <apex:inputtext value="{!sellerCentralId}" />      <br/>              
+                       Please Input Your Comments Below.Update Button Will Appear Automatically.                   
+                        <apex:inputtextarea value="{!caseComments}" id="comIds2" styleClass="msgCls" style="width:370px;height: 56px;"/>
+                        <apex:actionStatus id="butnStatus3" >
+                            <apex:facet name="stop" >
+                            <apex:commandButton value="Update" action="{!B2BExceptionalRefund}"  style="background:#04B431;color:white;font-family:Arial;" reRender="errMsg" oncomplete="closePopup('Update');return false;" status="butnStatus3"/>
+                            </apex:facet>
+
+                            <apex:facet name="start">
+                            <apex:commandButton value="Please Wait.." status="butnStatus3" style="background:#04B431;color:white;font-family:Arial;" disabled="true"/>
+                            </apex:facet>
+                        </apex:actionStatus>
+                        <apex:commandButton value="Cancel" onclick="closePopup('Cancel');return false;"/>
+                </apex:outputpanel>
+            </apex:outputpanel>
+            
+        </apex:pageblocksection> 
+   <!--  </apex:outputpanel>-->
+        </apex:pageBlock>
+        </apex:outputpanel>
+        
+    </apex:form>
+</apex:page>

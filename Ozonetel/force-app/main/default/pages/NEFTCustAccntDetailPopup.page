@@ -1,0 +1,608 @@
+<!--
+ * (c) 2017 RedBus
+ *
+ * Name           : NEFTCustAccntDetailPopup
+ * Created Date   : 04 Mar 2017
+ * Created By     : Sreenivas M
+ * Purpose        : VF Page to insert bus cancellation case and NEFT Wallet Debit case
+ *
+ -->
+
+<apex:page controller="NEFTCustAccntDetailPopup" showHeader="false" sidebar="false" docType="html-5.0" lightningStylesheets="true">
+  <apex:slds />
+  <div class="slds-scope">
+  <apex:form > 
+    <apex:pageBlock rendered="{!showPanelAccnt}">
+      <apex:pageBlockSection title="Customer Account Details" collapsible="false" columns="1">
+        <apex:pageMessages id="errMsgCancel"></apex:pageMessages>
+        <apex:inputField value="{!accnt.Beneficiary_Name__c}" required="true" />
+        <apex:inputField value="{!accnt.BankName__c}" required="true" />
+        <apex:inputField value="{!accnt.Bank_Account_Number__c}" required="true" />
+        <apex:inputField value="{!accnt.BranchName__c}" required="true" />
+        <apex:inputField value="{!accnt.IFSCCode__c}" required="true" />
+        <apex:inputField value="{!accnt.Amount__c}" required="true" />
+        <apex:inputField value="{!accnt.Description}" required="true" />
+      </apex:pageBlockSection>
+      <center>
+        <apex:actionStatus id="SaveButtonStatus1">
+          <apex:facet name="stop">
+            <apex:commandButton value="Submit" action="{!NEFTSubmit}" rerender="errMsgCancel,busCancePanel" status="SaveButtonStatus1"
+              styleClass="slds-button slds-button_success" />
+          </apex:facet>
+          <apex:facet name="start">
+            <apex:commandButton value="Request Processing..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"
+              disabled="true" status="SaveButtonStatus1" />
+          </apex:facet>
+        </apex:actionStatus>
+
+      </center>
+    </apex:pageBlock>
+
+    <!--  Bus cancellation Case Creation Start  -->
+    <apex:outputPanel id="popup" styleClass="spocPopupPanel" rendered="{!showBusCancelPane}">
+      <apex:outputPanel styleClass="popupBackground" layout="block" />
+      <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block">
+          <apex:pageMessages id="busCreationMsg"></apex:pageMessages>
+        <div class="slds-form">
+          <div class="slds-section slds-is-open">
+            <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e98d">
+              <span class="slds-truncate slds-p-horizontal_x-small " title="Section Title">Create Bus Cancellation Case</span>
+            </h3>
+            <div aria-hidden="false" class="slds-section__content slds-section__content slds-m-left_small">
+              <div class="slds-form-element slds-form-element_horizontal">
+                <label class="slds-form-element__label" for="csOrgn"> Case Origin:</label>
+                <div class="slds-form-element__control">
+                  <apex:selectList size="1" value="{!caseOrigin}" multiselect="false" id="csOrgn">
+                    <apex:selectOptions value="{!items}" />
+                    <apex:actionSupport event="onchange" reRender="chaId" />
+                  </apex:selectList>
+                </div>
+              </div>
+
+              <div class="slds-form-element slds-form-element_horizontal">
+                <label class="slds-form-element__label" for="desc">Parent Case :</label>
+                <div class="slds-form-element__control">
+                  <apex:inputField id="parentId" value="{!cObj.ParentId}" />
+                </div>
+              </div>
+              
+               <div class="slds-form-element slds-form-element_horizontal">
+                <label class="slds-form-element__label" for="desc">BO Description:</label>
+                <div class="slds-form-element__control">
+                  <apex:inputField id="boDescId" value="{!cObj.BO_Description__c}" />
+                </div>
+              </div>
+
+              <div class="slds-m-top_small">
+                <apex:actionStatus id="SaveButtonStatus" rendered="{!!busCanBt}">
+                  <apex:facet name="stop">
+                    <apex:commandButton value="Submit" action="{!BusCancelSubmit}" rerender="busCreationMsg,busCancePanel" status="SaveButtonStatus"
+                      styleClass="slds-button slds-button_success" />
+                  </apex:facet>
+                  <apex:facet name="start">
+                    <apex:commandButton value="Request Processing..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"
+                      disabled="true" status="SaveButtonStatus" />
+                  </apex:facet>
+                </apex:actionStatus>
+
+                <apex:actionStatus id="SaveButtonStatusb2b" rendered="{!busCanBt}">
+                  <apex:facet name="stop">
+                    <apex:commandButton value="Submit B2B" action="{!B2BBusCancellationInitiation}" rerender="busCreationMsg,popup,busCancePanel"
+                      status="SaveButtonStatusb2b" styleClass="slds-button slds-button_success" />
+                  </apex:facet>
+                  <apex:facet name="start">
+                    <apex:commandButton value="Request Processing..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"
+                      disabled="true" status="SaveButtonStatusb2b" />
+                  </apex:facet>
+                </apex:actionStatus>
+
+                <apex:commandButton value="Cancel" onclick="closeForm();" styleClass="slds-button slds-button_success slds-m-left_x-small"
+                />
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </apex:outputPanel>
+    </apex:outputPanel>
+    <!--  Bus cancellation Case Creation End  -->
+
+    <!--  Update ARN Number Start-->
+    <apex:outputPanel id="arnPanel" styleClass="spocPopupPanel" rendered="{!showARNUpdateForm}">
+      <apex:outputPanel styleClass="popupBackground" layout="block" />
+      <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block">
+        <apex:pageMessages id="arnCreationMsg"></apex:pageMessages>
+        <div class="slds-form">
+          <div class="slds-section slds-is-open">
+            <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e98d">
+              <span class="slds-truncate slds-p-horizontal_x-small " title="Section Title">Please Fill Refunded Details</span>
+            </h3>
+            <div aria-hidden="false" class="slds-section__content slds-section__content slds-m-left_small">
+              <div class="slds-form-element slds-form-element_horizontal">
+                <label class="slds-form-element__label" for="refNumm"> Refund Refernce Number</label>
+                <div class="slds-form-element__control">
+                  <apex:inputtext value="{!arnNumber}" styleClass="slds-text" id="refNumm"/>
+                </div>
+              </div>
+
+              <div class="slds-form-element slds-form-element_horizontal">
+                <label class="slds-form-element__label" for="refDateIds"> Refund Date</label>
+                <div class="slds-form-element__control">
+                  <apex:input value="{!refundedDate}" id="refDateIds" type="date" styleClass="slds-date" />
+                </div>
+              </div>
+              <div class="slds-m-top_small">
+                <apex:actionStatus id="updateARNNumStatus">
+                  <apex:facet name="stop">
+                    <apex:commandButton value="Update" rerender="arnCreationMsg,busCancePanel" status="updateARNNumStatus" styleClass="slds-button slds-button_success"
+                    />
+                  </apex:facet>
+                  <apex:facet name="start">
+                    <apex:commandButton value="Request Processing..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"
+                      disabled="true" status="updateARNNumStatus" />
+                  </apex:facet>
+                </apex:actionStatus>
+                <apex:commandButton value="Cancel" onclick="closeForm();" styleClass="slds-button slds-button_success slds-m-left_x-small"/>
+              
+              </div>
+            </div>
+          </div>
+        </div>
+      </apex:outputPanel>
+    </apex:outputPanel>
+    <!--  Update ARN Number End-->
+
+    <!-- Invalid BP Number Start-->
+ <!-- <apex:outputPanel id="invalidBpNum" styleClass="spocPopupPanel" rendered="{!BPnumberr}"> -->
+    <apex:outputPanel id="invalidBpNum" styleClass="spocPopupPanel" rendered="{!BPnumberr}">
+      <apex:outputPanel styleClass="popupBackground" layout="block" />
+      <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block">
+        <apex:pageMessages id="invbpCreationMsg"></apex:pageMessages>
+          <div class="slds-form">
+          <div class="slds-section slds-is-open">
+            <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e98d">
+              <span class="slds-truncate slds-p-horizontal_x-small " title="Section Title">Please Fill BP Number Details</span>
+            </h3>
+            <div aria-hidden="false" class="slds-section__content slds-section__content slds-m-left_small">
+
+            <div class="slds-grid slds-wrap slds-grid_align-left slds-grid--align-spread">
+
+              <div class="slds-col slds-size--1-of-2 slds-medium-size--1-of-2">
+                  <div class="slds-form-element slds-form-element_horizontal slds-form-element_readonly">
+                    <label class="slds-form-element__label" for="bpMob">BP Contact Number:</label>
+                    <div class="slds-form-element__control">
+                      <div class="slds-form-element__static">{!lstordrItm[0].Agent_IP__c}</div>
+                    </div>
+                  </div>
+              </div>
+
+              <div class="slds-col slds-size--1-of-2 slds-medium-size--1-of-2">
+                <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label" for="cbpNum"> Customer provided BP No:</label>
+                    <div class="slds-form-element__control">
+                      <apex:inputText value="{!mobileno}" id="cbpNum" styleClass="slds-text" onkeypress="return isNumber(event,'{!$Component.cbpNum}')"
+                      />
+                    </div>
+                </div>
+              </div>
+                
+              <div class="slds-col slds-size--1-of-2 slds-medium-size--1-of-2">
+                <div class="slds-form-element slds-form-element_horizontal">
+                  <label class="slds-form-element__label" for="csStatus"> Call Status:</label>
+                  <div class="slds-form-element__control">
+                    <apex:selectList label="Call Status" size="1" value="{!selCallopt}" required="true" multiselect="false" id="csStatus">
+                      <apex:selectOptions value="{!CallOptions}" />
+                    </apex:selectList>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="slds-col slds-size--1-of-2 slds-medium-size--1-of-2">
+                  <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                    <label class="slds-form-element__label" for="comm">Comments</label>
+                    <div class="slds-form-element__control">
+                      <apex:inputText value="{!commnts}" id="comm" styleClass="slds-text" required="True" />
+                    </div>
+                  </div>
+              </div>
+
+              <div class="slds-m-top_small">
+                <apex:actionStatus id="BPstatus">
+                  <apex:facet name="stop">
+                    <apex:commandButton value="Submit" action="{!wrongBPnumber}" rerender="invbpCreationMsg,busCancePanel" status="BPstatus" styleClass="slds-button slds-button_success"
+                    />
+                  </apex:facet>
+                  <apex:facet name="start">
+                    <apex:commandButton value="Request Processing..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"
+                      disabled="true" status="BPstatus" />
+                  </apex:facet>
+                </apex:actionStatus>
+                <apex:commandButton value="Cancel" onclick="closeForm();" styleClass="slds-button slds-button_success slds-m-left_x-small"/>
+
+              </div>
+             <!--
+              <div class="slds-form" role="list">
+
+              <div class="slds-form__row">
+                <div class="slds-form__item" role="listitem">
+                  <div class="slds-form-element slds-form-element_horizontal slds-form-element_readonly">
+                    <label class="slds-form-element__label" for="bpMob">BP Contact Number:</label>
+                    <div class="slds-form-element__control">
+                      <div class="slds-form-element__static">{!lstordrItm[0].Agent_IP__c}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="slds-form__item" role="listitem">
+                  <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label" for="cbpNum"> Customer provided BP No:</label>
+                    <div class="slds-form-element__control">
+                      <apex:inputText value="{!mobileno}" id="cbpNum" styleClass="slds-text" onkeypress="return isNumber(event,'{!$Component.cbpNum}')"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="slds-form__row">
+
+                <div class="slds-form__item" role="listitem">
+                  <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label" for="csStatus"> Call Status:</label>
+                    <div class="slds-form-element__control">
+                      <apex:selectList label="Call Status" size="1" value="{!selCallopt}" required="true" multiselect="false" id="csStatus">
+                        <apex:selectOptions value="{!CallOptions}" />
+                      </apex:selectList>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="slds-form__item" role="listitem">
+                  <div class="slds-form-element slds-form-element_horizontal slds-is-editing">
+                    <label class="slds-form-element__label" for="comm">Comments</label>
+                    <div class="slds-form-element__control">
+                      <apex:inputText value="{!commnts}" id="comm" styleClass="slds-text" required="True" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="slds-m-top_small">
+                <apex:actionStatus id="BPstatus">
+                  <apex:facet name="stop">
+                    <apex:commandButton value="Submit" action="{!wrongBPnumber}" rerender="errMsgCancel,busCancePanel" status="BPstatus" styleClass="slds-button slds-button_success"
+                    />
+                  </apex:facet>
+                  <apex:facet name="start">
+                    <apex:commandButton value="Request Processing..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"
+                      disabled="true" status="BPstatus" />
+                  </apex:facet>
+                </apex:actionStatus>
+              </div> 
+            </div>
+          -->
+            </div>
+          </div>
+        </div>
+       </div>
+      </apex:outputPanel>
+    </apex:outputPanel>
+    <!-- Invalid BP Number End -->
+
+    <!-- Send SMS start -->
+    <apex:outputPanel rendered="{!sendSMS}">
+      <apex:pageMessages id="smsMsg"></apex:pageMessages>
+      <div class="slds-form">
+        <div class="slds-section slds-is-open">
+          <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e98d">
+            <span class="slds-truncate slds-p-horizontal_x-small " title="Section Title">Send SMS</span>
+          </h3>
+          <div aria-hidden="false" class="slds-section__content slds-section__content slds-m-left_small">
+            <div class="slds-form-element slds-form-element_horizontal slds-form-element_readonly">
+              <label class="slds-form-element__label" for="mob">Booking MobileNo</label>
+              <div class="slds-form-element__control">
+                <div class="slds-form-element__static">{!mobileno}</div>
+              </div>
+            </div>
+            <div class="slds-form-element slds-form-element_horizontal slds-is-editing slds-form-element_1-col">
+              <label class="slds-form-element__label" for="desc">Description</label>
+              <div class="slds-form-element__control">
+                <apex:inputTextarea value="{!description}" id="desc" styleClass="slds-textarea" />
+              </div>
+            </div>
+
+            <div class="slds-m-top_small">
+            <apex:actionStatus id="SendSMSBtnStatus">
+              <apex:facet name="stop">
+                <apex:commandButton value="Send" action="{!sendSMS}" style="width:100px" rerender="smsMsg,busCancePanel" status="SendSMSBtnStatus"
+                  styleClass="slds-button slds-button_success" />
+              </apex:facet>
+              <apex:facet name="start">
+                <apex:commandButton value="Processing..." disabled="true" status="SendSMSBtnStatus" style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial"
+                />
+              </apex:facet>
+            </apex:actionStatus>
+            <apex:commandButton value="Cancel" onclick="closeForm();" styleClass="slds-button slds-button_success slds-m-left_x-small"
+                            />
+            </div>
+          </div>
+        </div>
+      </div>
+    </apex:outputPanel>
+
+    <!-- Send SMS End -->
+
+    <!-- Mark Payment as Completed (WFT to GFT) Start-->
+    <apex:outputPanel id="wfttogftPanel" styleClass="spocPopupPanel" rendered="{!CmpltPaymnt}">
+      <apex:outputPanel styleClass="popupBackground" layout="block" />
+      <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block">
+        <apex:pageMessages id="wftMsg"/>
+        <div class="slds-form">
+          <div class="slds-section slds-is-open">
+            <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e98d">
+              <span class="slds-truncate slds-p-horizontal_x-small " title="Section Title">Please Fill Payment Details</span>
+            </h3>
+            <div aria-hidden="false" class="slds-section__content slds-section__content slds-m-left_small">
+              <div class="slds-form-element slds-form-element_horizontal">
+                <label class="slds-form-element__label" for="pgIds"> Po No:</label>
+                <div class="slds-form-element__control">
+                  <apex:selectList size="1" value="{!selectedPGid}" multiselect="false" id="pgIds">
+                    <apex:selectOptions value="{!totalPgIds}" />
+                  </apex:selectList>
+                </div>
+              </div>
+
+              <div class="slds-form-element slds-form-element_horizontal">
+                <label class="slds-form-element__label" for="pgRef">PG Reference Id</label>
+                <div class="slds-form-element__control">
+                  <apex:inputtext id="pgRef" value="{!pgRefId}" styleClass="slds-text" />
+                </div>
+              </div>
+
+              <div class="slds-m-top_small">
+                <apex:actionStatus id="Cmpltpaystatus">
+                  <apex:facet name="stop">
+                    <apex:commandButton value="Submit For Approval" action="{!markPaymentCompelted}" rerender="wftMsg,busCancePanel" status="Cmpltpaystatus"
+                      styleClass="slds-button slds-button_success" />
+                  </apex:facet>
+                  <apex:facet name="start">
+                    <apex:commandButton value="Request Processing..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"
+                      disabled="true" status="Cmpltpaystatus" />
+                  </apex:facet>
+                </apex:actionStatus>
+
+                <apex:commandButton value="Cancel" onclick="closeForm();" styleClass="slds-button slds-button_success slds-m-left_x-small"
+                />
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </apex:outputPanel>
+    </apex:outputPanel>
+    <!-- Mark Payment as Completed (WFT to GFT) End -->
+
+    <!-- Update Refund Status in Neon Start-->
+    <apex:outputPanel id="refStatusPanel" styleClass="spocPopupPanel" rendered="{!showRefundStatus}">
+      <apex:outputPanel styleClass="popupBackground" layout="block" />
+      <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block">
+        <apex:pageMessages id="refMsg"/>
+        <div class="slds-form">
+          <div class="slds-section slds-is-open">
+            <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e98d">
+              <span class="slds-truncate slds-p-horizontal_x-small " title="Section Title">Please Fill Refund Details</span>
+            </h3>
+            <div aria-hidden="false" class="slds-section__content slds-section__content slds-m-left_small">
+              <div class="slds-form-element slds-form-element_horizontal">
+                <label class="slds-form-element__label" for="refNum"> PG Refund Refernce Number</label>
+                <div class="slds-form-element__control">
+                  <apex:inputtext value="{!refundRefNum}" required="true" id="refNum" styleClass="slds-text" />
+                </div>
+              </div>
+
+              <div class="slds-form-element slds-form-element_horizontal">
+                <label class="slds-form-element__label" for="refStat">Refund Status</label>
+                <div class="slds-form-element__control">
+                  <apex:selectList size="1" value="{!refStatus}" multiselect="false" id="refStat">
+                    <apex:selectOption itemLabel="Refunded Sucessfully" itemValue="REFUND_SUCCESSFUL"></apex:selectOption>
+                  </apex:selectList>
+                </div>
+              </div>
+
+              <div class="slds-m-top_small">
+                <apex:actionStatus id="refundButtonStatus">
+                  <apex:facet name="stop">
+                    <apex:commandButton value="Submit" rerender="refMsg,busCancePanel" status="refundButtonStatus" action="{!updateRefundStatus}"
+                      styleClass="slds-button slds-button_success" />
+                  </apex:facet>
+                  <apex:facet name="start">
+                    <apex:commandButton value="Request Processing..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"
+                      disabled="true" status="refundButtonStatus" />
+                  </apex:facet>
+                </apex:actionStatus>
+
+                <apex:commandButton value="Cancel" onclick="closeForm();" styleClass="slds-button slds-button_success" />
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </apex:outputPanel>
+    </apex:outputPanel>
+    <!-- Update Refund Status in Neon End-->
+
+    <!-- Call To Customer Start-->
+    <apex:outputPanel id="callToCustPanel" styleClass="spocPopupPanel" rendered="{!showCallPopup}">
+      <apex:outputPanel styleClass="popupBackground" layout="block" />
+      <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block">
+        <apex:pageMessages id="calToCusMsg"/>
+        <div class="slds-form">
+          <div class="slds-section slds-is-open">
+            <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e98d">
+              <span class="slds-truncate slds-p-horizontal_x-small " title="Section Title">Bus Operator Details</span>
+            </h3>
+            <div aria-hidden="false" class="slds-section__content slds-section__content slds-m-left_small">
+              <div class="slds-form-element slds-form-element_horizontal">
+                <label class="slds-form-element__label" for="boPhoneNo"> Bus Operator Mobile</label>
+                <div class="slds-form-element__control">
+                  <apex:inputtext value="{!mobileno}" onkeypress="return isNumber(event,'{!$Component.boPhone}')" id="boPhoneNo" />
+                </div>
+              </div>
+
+              <div class="slds-m-left_small">
+                <apex:actionStatus id="callButnStatus">
+                  <apex:facet name="stop">
+                    <apex:commandButton value="Call" action="{!callToBo}" rerender="calToCusMsg,busCancePanel" status="callButnStatus" styleClass="slds-button slds-button_success"
+                    />
+                  </apex:facet>
+
+                  <apex:facet name="start">
+                    <apex:commandButton value="Connecting..." status="callButnStatus" style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;"
+                      disabled="true" />
+                  </apex:facet>
+                </apex:actionStatus>
+                <apex:commandButton value="Cancel" onclick="closeForm();" styleClass="slds-button slds-button_success slds-m-left_x-small"
+                                />
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </apex:outputPanel>
+    </apex:outputPanel>
+
+    <!-- Call To Customer End-->
+
+    <!--
+              <apex:pageBlock rendered="{!showTicketConfirm}">
+               <apex:outputPanel id="popup" styleClass="spocPopupPanel">
+               <apex:outputPanel styleClass="popupBackground" layout="block" />            
+               <apex:outputPanel styleClass="analysiSetPopupEmail" layout="block" >
+               <apex:pageMessages id="errMsgCancel"></apex:pageMessages>
+                   <apex:pageBlockSection title="Ticket Confirmation Details" columns="1" collapsible="false">
+                  <apex:pageBlockSectionItem > PNR NO:<apex:inputText value="{!pnrvalue}" required="true"/></apex:pageBlockSectionItem> 
+                 <apex:pageBlockSectionItem > Seat NO:<apex:inputText value="{!seatno}" required="true"/></apex:pageBlockSectionItem> 
+                  </apex:pageBlockSection>
+                    <center>  
+                         <apex:actionStatus id="GftConformationBtnStatus" >
+                              <apex:facet name="stop">
+                                 <apex:commandButton value="Submit" action="{!confirmGFT}" rerender="errMsgCancel,busCancePanel" status="GftConformationBtnStatus"/>
+                              </apex:facet>
+                              <apex:facet name="start">                            
+                                   <apex:commandButton value="Request Processing..." style="height:30px;width:150px;font-size:15px;background:#04844b;color:white;font-family:Arial;" disabled="true" status="GftConformationBtnStatus"/>
+                               </apex:facet>
+                         </apex:actionStatus>
+                        </center>
+                         </apex:outputPanel>
+                 </apex:outputPanel>
+              </apex:pageBlock>-->
+
+    <apex:outputPanel id="busCancePanel">
+      <script>
+        if ('{!ClosePopup}' === 'true') {
+
+          window.setTimeout(closeRefreshForm, 3000);
+        }
+      </script>
+    </apex:outputPanel>
+
+    <apex:outputPanel id="chaId">
+      <script>
+        if ('{!caseOrigin}' !== 'InBound Call')
+          alert('Please Select The Parent Case');
+
+      </script>
+    </apex:outputPanel>
+
+  </apex:form>
+
+  <style>
+    .analysiSetPopupEmail {
+      background-color: #FCFAFC;
+      border-width: 2px;
+      z-index: 9999;
+      left: 20%;
+      padding: 10px;
+      position: absolute;
+      border: 1px solid #DA9627;
+      width: 672px;
+      margin-left: -130px;
+      top: 10px;
+      border-top-style: outset;
+      border-top-width: 5px;
+      border-top-color: #DA9627;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      -moz-border-radius: 10px;
+      -moz-box-shadow: -2px -2px 10px rgba(0, 0, 0, .25) inset, 2px 2px 10px white inset;
+      border-radius: 15px;
+    }
+
+    .popupBackground {
+      background-color: #542D78;
+      opacity: 0.20;
+      filter: alpha(opacity=20);
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 998;
+      position: absolute;
+      cursor: wait;
+    }
+
+    .loaderCss {
+      height: 30px;
+      width: 150px;
+      font-size: 15px;
+      background: #04844b;
+      color: white;
+      font-family: Arial;
+    }
+  </style>
+
+  <script type="text/javascript">
+
+    function closeForm() {
+         window.close();
+    }
+
+    function closeRefreshForm()
+    {
+       window.opener.RefreshPrimaryTab();
+      window.close();
+    }
+
+    window.onload = function () {
+      testOpenSubtab();
+    };
+
+    function testOpenSubtab() {
+      sforce.console.getEnclosingPrimaryTabId(openSubtab);
+    };
+
+    var openSubtab = function openSubtab(result) {
+      var primaryTabId = result.id;
+      sforce.console.setTabTitle('NEFT Wallet Debit');
+    };
+
+    function isNumber(evt, phId) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+      }
+      else {
+        if (document.getElementById(phId).value.length < 10)
+          return true;
+        else
+          return false;
+      }
+    }
+
+  </script>
+  <script src="/support/console/45.0/integration.js" />
+  <script src="/soap/ajax/45.0/connection.js" />
+  </div>
+</apex:page>

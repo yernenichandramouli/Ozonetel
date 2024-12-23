@@ -1,0 +1,123 @@
+<!--
+* Name           : Wallet_Credit
+* Created Date   : 15 June 2017
+* Created By     : Veeramanikanta
+* Purpose        : Manual Credits Amount for Accounts
+*
+-->
+
+<apex:page controller="WalletCreditController" showHeader="false" lightningStylesheets="true">
+    <apex:slds />
+    <div class="slds-scope">
+
+        <!--  <apex:form rendered="{!if($Profile.Name !='System Administrator' && $Profile.Name !='Services Heads and Managers Profile' && $Profile.Name !='Team Leaders Profile' && $Profile.Name !='SME Profile' && $Profile.Name !='Tech Ops',TRUE,FALSE)}">
+    Currently option is disabled !!
+    </apex:form> 
+    
+   rendered="{!if($Profile.Name =='System Administrator' || $Profile.Name =='Services Heads and Managers Profile' || $Profile.Name =='Team Leaders Profile' || $Profile.Name =='SME Profile' || $Profile.Name =='Tech Ops',TRUE,FALSE)}" 
+    -->
+  <apex:outputPanel rendered="{!rbusrId!=null}">
+        <apex:form id="pg">
+              
+
+            <apex:pageblock title="Wallet Credit">
+                <apex:pageMessages escape="false" id="msg" />
+
+                <apex:pageblocksection columns="1">
+                    <font color="#00529B">
+                        <B>This amount will be credited into the Signed In User of this transaction and You can not credit into
+                            travelled Customer Account.So,Please confirm EmailId and Phone Number with customer before creating
+                            a case.</B>
+                    </font>
+                    <apex:pageblocksectionItem rendered="{! If(email !='' ,true,false) }">
+                        Email
+                        <apex:outputtext value="{!email}" />
+                    </apex:pageblocksectionItem>
+
+                    <apex:pageblocksectionItem rendered="{! If(mobile!='' ,true,false) }">
+                        Mobile
+                        <apex:outputtext value="{!mobile}" />
+                    </apex:pageblocksectionItem>
+
+                    <apex:pageblocksectionItem rendered="{! If(tin!='' ,true,false) }">
+                        TIN
+                        <apex:outputtext value="{!tin}" />
+                    </apex:pageblocksectionItem>
+
+                    <apex:pageblocksectionItem >
+                        Currency
+                        <apex:outputText value="{!selectedCurrency}" />
+                    </apex:pageblocksectionItem>
+
+
+                    <apex:pageblocksectionItem rendered="{! If(orIt.RecordType.name == 'Hotels' ,true,false) }">
+                        Select Sub Category
+                        <apex:selectList value="{!selectedSubCategory}" size="1" style="width:100px">
+                            <apex:selectOptions value="{!subCategory}" />
+                        </apex:selectList>
+                    </apex:pageblocksectionItem>
+
+                    <apex:pageblocksectionItem >
+                        Amount
+                        <apex:outputpanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputtext value="{!amount}" />
+                            </div>
+                        </apex:outputpanel>
+                    </apex:pageblocksectionItem>
+
+                    <apex:pageblocksectionItem >
+                        Description
+                        <apex:outputpanel >
+                            <div class="requiredInput">
+                                <div class="requiredBlock"></div>
+                                <apex:inputtextarea value="{!description}" />
+                            </div>
+                        </apex:outputpanel>
+                    </apex:pageblocksectionItem>
+
+                    <apex:pageblocksectionItem >
+                        Parent Case
+                        <apex:selectList value="{!selParentCase}" size="1" style="width:100px">
+                            <apex:selectOptions value="{!parentCases}" />
+                        </apex:selectList>
+                    </apex:pageblocksectionItem>
+                    
+                    <apex:pageblocksectionItem >
+                        Refund Category
+                            <apex:selectList value="{!selectedRefundCategory}" size="1" style="width:100px" required="true">
+                                <apex:selectOptions value="{!refundOptions}" />
+                            </apex:selectList>
+                    </apex:pageblocksectionItem>
+                </apex:pageblocksection>
+
+                <apex:commandButton value="Submit" action="{!submit}" disabled="{!submitButton}" reRender="msg,pg" status="statusSaveTrip"
+                    styleClass="slds-button slds-button_success" style="margin-left:15em" />
+
+
+                <apex:actionStatus id="statusSaveTrip">
+                    <apex:facet name="start">
+                        <div class="demo-only" style="height:6rem">
+                            <div class="slds-spinner_container" style="position:fixed">
+                                <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+                                    <span class="slds-assistive-text">Loading</span>
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageblock>
+        </apex:form>
+         </apex:outputPanel>
+<apex:outputPanel rendered="{!rbusrId=''}">
+<center>
+   <br/>
+   <br/>
+   <p><b>This is not a signed in transaction.So,you can not credit the amount</b></p>
+ </center>
+</apex:outputPanel>
+    </div>
+</apex:page>

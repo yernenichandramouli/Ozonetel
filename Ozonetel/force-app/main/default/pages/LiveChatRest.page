@@ -1,0 +1,50 @@
+<apex:page >
+   <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"/>
+  
+   <apex:form >
+       <apex:pageBlock >
+           <apex:pageBlockSection >
+             <apex:commandButton value="Start Chat" onclick="callChatInitiate();return false;"/>
+           </apex:pageBlockSection>
+       </apex:pageBlock>
+   </apex:form>
+   
+   <script>
+        var $j = jQuery.noConflict();
+        function callChatInitiate() {
+
+           $j.ajax({
+                url: 'https://d.la1-c2-ukb.salesforceliveagent.com/chat/rest/System/SessionId',
+                type: 'GET',
+                contentType: 'application/json',
+                dataType: 'json',
+                cache :false,
+
+                beforeSend: function(request) {
+                    request.setRequestHeader('X-LIVEAGENT-API-VERSION','40');
+                    request.setRequestHeader('X-LIVEAGENT-AFFINITY','null');                        
+                    request.setRequestHeader('Access-Control-Allow-Origin', '*');
+                  request.setRequestHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+                  request.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Range, Content-Disposition, Content-Description');
+  
+                   
+                 },
+
+                crossDomain: true,
+               // alert('before send');
+                success: function(result) {
+                    //process the result
+                    alert('Result..' + result);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert('Error: ' + jqXHR.status+jqXHR);
+                    console.log('jqXHR..'+jqXHR);
+                    alert('ErrorThrown: ' + errorThrown+textStatus);
+                }
+            });
+
+
+        }
+
+   </script>
+</apex:page>

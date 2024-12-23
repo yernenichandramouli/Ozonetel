@@ -1,0 +1,58 @@
+<template>
+    <div class="spinner">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading" variant="brand" size="large">
+            </lightning-spinner>
+        </template>
+    </div>
+    <!-- <template if:true={isError}>
+        <b><span style="color: #a30808;">{errorMessage}</span></b>
+    </template> -->
+    <template if:false={isError}>
+        <lightning-card>
+            <lightning-layout vertical-align=center >
+    
+                <lightning-layout-Item padding=around-small>
+                    <lightning-input type="Text" name="OperatorName" label="Operator Name" disabled="true" value={operatorName}>
+                    </lightning-input>
+                </lightning-layout-Item>
+    
+                <lightning-layout-Item padding=around-small>
+                    <lightning-input type="Text" name="vehicleNumber" label="Vehicle Number" disabled="true" value={vehicleNumber}>
+                    </lightning-input>
+                </lightning-layout-Item>
+    
+                <lightning-layout-Item padding=around-small>
+                    <lightning-input type="Text" name="driverNumber" label="Driver Number" disabled="true" value={driverNumber}>
+                    </lightning-input>
+                </lightning-layout-Item>
+                <lightning-layout-Item padding=around-small>
+                    <lightning-input type="Text" name="driverName" label="Driver Name" disabled="true" value={driverName}>
+                    </lightning-input>
+                </lightning-layout-Item>
+            </lightning-layout>
+            <!-- 2nd row Data-->
+            <lightning-layout vertical-align=center >
+    
+                <lightning-layout-Item padding=around-small>
+                    <lightning-input type="Text" name="conductorNumber" label="Conductor Number" disabled="true" value={conductorNumber}>
+                    </lightning-input>
+                </lightning-layout-Item>
+    
+                <lightning-layout-Item padding=around-small>
+                    <lightning-input type="Text" name="conductorName" label="Conductor Name" disabled="true" value={conductorName}>
+                    </lightning-input>
+                </lightning-layout-Item>
+    
+                <lightning-layout-Item padding=around-small>
+                    <lightning-input type="Text" name="source" label="Source" disabled="true" value={source}>
+                    </lightning-input>
+                </lightning-layout-Item>
+                <lightning-layout-Item padding=around-small>
+                    <lightning-input type="Text" name="Destination" label="Destination" disabled="true" value={destination}>
+                    </lightning-input>
+                </lightning-layout-Item>
+            </lightning-layout>
+        </lightning-card>  
+    </template>
+</template>

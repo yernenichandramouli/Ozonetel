@@ -1,0 +1,24 @@
+<template>
+    <lightning-card title="Case Details" icon-name="standard:case">
+        <div class="slds-p-around_medium">
+            <lightning-layout>
+                <lightning-layout-item>
+                    <p><strong>Subject:</strong> {subject}</p>
+                </lightning-layout-item>
+                <lightning-layout-item>
+                    <p><strong>Summary:</strong> {summary}</p>
+                </lightning-layout-item>
+                <lightning-layout-item>
+                    <p><strong>Status:</strong> {status}</p>
+                </lightning-layout-item>
+                <lightning-layout-item>
+                    <p><strong>Issue:</strong> {issue}</p>
+                </lightning-layout-item>
+                <lightning-layout-item>
+                    <p><strong>Resolution:</strong> {resolution}</p>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+        <lightning-spinner if:true={isLoading} alternative-text="Loading"></lightning-spinner>
+    </lightning-card>
+</template>

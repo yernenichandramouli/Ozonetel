@@ -1,0 +1,315 @@
+<apex:page controller="UserTripsCntrl" tabStyle="Case" readOnly="true" docType="html-5.0"  language="en" showHeader="false" lightningStylesheets="true" applyBodyTag="false" applyHtmlTag="false" >
+<apex:slds />
+<div class="slds-box slds-theme_default">
+<div class="slds-scope">
+<head>
+<apex:includeScript value="/soap/ajax/42.0/connection.js"/>
+<apex:includeScript value="/support/console/42.0/integration.js"/>
+<apex:stylesheet value="{!$Resource.LoadingStatus}" />
+</head>
+
+<script>
+     function callSearchOrder(lnk,ordId,source) {
+     lnk.onclick = function(event) {
+            event.preventDefault();
+         }
+       if(source=='B2C')        
+          jsSerachOrder(ordId);
+       else
+          jsSerachTin(ordId);
+          
+      }
+      
+      function customPrimaryTab(url) 
+     {
+       
+         if(!url){
+            return;    
+         }
+         if(sforce.console.isInConsole())
+         {
+            sforce.console.getEnclosingPrimaryTabId(function(result)
+            {
+             sforce.console.openPrimaryTab(undefined,url,true,'{!ordId}');
+             });
+         }
+           
+        else 
+           {
+             if (UITheme.getUITheme() === 'Theme4d' || UITheme.getUITheme() === 'Theme4u')                  
+                sforce.one.navigateToURL(url,true);
+             else 
+                window.open(url);
+          }
+    }
+     
+ </script>
+ 
+ <style>
+   .bPageBlock .detailList .dataCol {
+    width: 10%;
+   }
+   tr.dataRow {
+    height: 25px;
+   }
+
+   body .pbBody table.list tr.dataRow th, body .pbBody table.list tr.dataRow td
+   {
+    color:black;
+   }
+
+
+</style>
+<body>
+<apex:form >
+
+<apex:actionFunction action="{!searchUserTrips}" name="callMethod" reRender="userTripId,msg" status="statusSaveTrip"/>
+
+<apex:actionStatus id="statusSaveTrip">
+            <apex:facet name="start">
+                <div class="demo-only" style="height:6rem">
+                    <div class="slds-spinner_container" style="position:fixed">
+                        <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+                            <span class="slds-assistive-text">Loading</span>
+                            <div class="slds-spinner__dot-a"></div>
+                            <div class="slds-spinner__dot-b"></div>
+                        </div>
+                    </div>
+                </div>
+            </apex:facet> 
+        </apex:actionStatus>
+
+<apex:actionFunction name="jsSerachOrder" action="{!searchOrder}" status="statusSaveTrip" reRender="panelId,msg,msg2">
+    <apex:param name="ordId2" assignTo="{!ordId}" value=""/>
+</apex:actionFunction>
+
+<apex:actionFunction name="jsSerachTin" action="{!searchB2BTin}" status="statusSaveTrip" reRender="panelId,msg,msg2">
+    <apex:param name="ordId2" assignTo="{!ordId}" value=""/>
+</apex:actionFunction>
+
+<apex:outputPanel id="panelId">
+    <script>
+        if('{!redirectUrl}')
+        {
+          window.setTimeout(customPrimaryTab,0000,'{!redirectUrl}');
+          
+         }
+    </script>
+</apex:outputPanel>
+ <apex:pageBlock >
+       <div class="slds-form">
+       <apex:outputpanel id="blke">
+      <div class="slds-section slds-is-open">
+         <h3 class="slds-section__title slds-theme_shade" style="background-color:#f1e78d">
+                    <span class="slds-truncate slds-p-horizontal_x-small " title="Section Title">User Trips Search Criteria</span>
+                </h3>
+                <div aria-hidden="false" class="slds-section__content">
+                    <div class="slds-grid slds-wrap slds-grid_align-left slds-grid--align-spread">
+                       
+                        <div class="slds-col slds-size--1-of-9 slds-medium-size--1-of-9 slds-m-left_xx-large">
+                            <div class="slds-form-element slds-form-element">
+                                <label class="slds-form-element__label" for="Region">Region</label>
+                                <div class="slds-form-element__control">
+                                    <apex:selectList multiselect="false" size="1"  value="{!region}"  >
+                                    <apex:selectOption itemLabel="--None--" itemValue=""></apex:selectOption>
+                                    <apex:selectOption itemLabel="Domestic" itemValue="IND"></apex:selectOption>
+                                    <apex:selectOption itemLabel="International" itemValue="INTL"></apex:selectOption>
+                                    <apex:selectOption itemLabel="Intl BusPass/Coupon" itemValue="COUPON"></apex:selectOption>
+                                    <apex:selectOption itemLabel="DOTCOM" itemValue="RDC"></apex:selectOption>
+                                    <!--<apex:selectOption itemLabel="B2B" itemValue="B2B"></apex:selectOption>-->
+                                    <apex:selectOption itemLabel="B2B-Amazon" itemValue="Amazon"></apex:selectOption>
+                                    <apex:selectOption itemLabel="B2B-IRCTC" itemValue="IRCTC"></apex:selectOption>
+                                    <apex:selectOption itemLabel="Rails" itemValue="Rails"></apex:selectOption>
+ 
+                                    <apex:selectOption itemLabel="Things TODO" itemValue="THINGSTODO"></apex:selectOption>
+ 									<apex:actionsupport event="onchange" action="{!EnableB2B}" rerender="blke"/>                                    
+                                    </apex:selectList>  
+                                </div>
+                            </div>
+                         
+                        </div>
+                       
+                       
+                       <div class="slds-col slds-size--4-of-11 slds-medium-size--4-of-11">
+                            <div class="slds-form-element slds-form-element">
+                                <label class="slds-form-element__label" for="Tin">  TIN Number</label>
+                                <div class="slds-form-element__control">
+                                    <apex:input type="text" id="Tin" styleClass="slds-input" value="{!Tin}" disabled="{!disB2CTin}"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                       <div class="slds-col slds-size--3-of-11 slds-medium-size--3-of-11">
+                            <div class="slds-form-element slds-form-element">
+                                <label class="slds-form-element__label" for="tripid"> TripId</label>
+                                <div class="slds-form-element__control">
+                                    <apex:input type="text" id="tripid" styleClass="slds-input" value="{!tripid}" disabled="{!(b2bSel || isRails)}"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                         <apex:outputPanel rendered="{!isRails}" id="railsId">
+                         <div class="slds-col slds-size--3-of-11 slds-medium-size--3-of-11">
+                            <div class="slds-form-element slds-form-element">
+                                <label class="slds-form-element__label" for="tripid">Rails PNR</label>
+                                <div class="slds-form-element__control">
+                                    <apex:input type="text" id="pnrid" styleClass="slds-input" value="{!railsPnr}"/>
+                                </div>
+                            </div>
+                        </div>
+                        </apex:outputPanel>
+                        
+                        <div class="slds-col slds-size--2-of-11 slds-medium-size--2-of-11">
+                            <div class="slds-form-element slds-form-element">
+                                <label class="slds-form-element__label" for="PhoneNo"> Mobile No</label>
+                                <div class="slds-form-element__control">
+                                    <apex:input type="text" id="PhoneNo" styleClass="slds-input" value="{!PhoneNo}"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-col slds-size--1-of-11 slds-medium-size--1-of-11">
+                            <div class="slds-form-element slds-form-element">
+                                <label class="slds-form-element__label" for="emailId">  E-Mail</label>
+                                <div class="slds-form-element__control">
+                                     <apex:input type="text" id="emailid" styleClass="slds-input" value="{!emailId}" disabled="{!b2bSel}" />
+                                </div>
+                            </div>
+                        </div>
+                     
+                      
+                        
+                        <div class="slds-col slds-size--1-of-9 slds-medium-size--1-of-9">
+                            <div class="slds-form-element slds-form-element">
+                                <label class="slds-form-element__label"/>
+                                <div class="slds-form-element__control">
+                              
+                                   <apex:commandButton value="Search"  action="{!searchUserTrips}" reRender="userTripId,userTripsb2b,msg" status="statusSaveTrip" rendered="{!!b2bSel}"/> 
+                                   <apex:commandButton value="Search" action="{!SearchB2BTrips}"  reRender="userTripId,userTripsb2b,msg" status="statusSaveTrip" rendered="{!b2bSel}"/> 
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                  </div>
+                </div>
+                </apex:outputpanel>
+            </div>
+        
+
+
+     <apex:outputpanel id="userTripId" layout="block" >    
+     <apex:outputpanel rendered="{!!b2bSel}">
+     
+      <center><apex:outputText rendered="{!showNoResult}" value=""> <font style="background-color: yellow;"><B>No records found for this search criteria </b></font></apex:outputText></center>
+        <apex:pagemessages id="msg"/>
+       
+     <apex:pageBlock title="User Trips Details" rendered="{!AND(resultFound,region!=null)}">
+           <apex:pageBlockTable value="{!tripsResponse}" var="res" styleClass="slds-table slds-table_cell-buffer slds-table_bordered" id="tabId" >
+           
+            <apex:column >
+             <apex:facet name="header">Trip Id</apex:facet>
+                <apex:outputPanel rendered="{!(NOT(res.isTripIdSearch)||(res.isTripIdSearch && res.hasPayment))}">
+    	           <a HREF="#" onClick="callSearchOrder(this,'{!res.cartId}','B2C');return false;">
+        	           <apex:outputlabel value="{!res.cartId}"/>
+            	   </a>
+             	</apex:outputPanel>
+             	<apex:outputPanel rendered="{!res.isTripIdSearch && NOT(res.hasPayment)}">
+                     <apex:outputlabel value="{!res.cartId}"/>
+               </apex:outputPanel>
+             </apex:column>
+             
+           <!-- <apex:column headerValue="Transaction Id" >
+            <apex:outputLabel value="{!res.transactionNo}"/>
+            </apex:column>-->
+            
+            <apex:column headerValue="Tin Number">
+            <apex:outputLabel value="{!res.tin}"/> 
+            </apex:column>  
+                                 
+            <apex:column headerValue="Transaction Status" styleClass="slds-truncate">
+            <apex:outputLabel value="{!res.status}"/> 
+            </apex:column>  
+                    
+            <apex:column headerValue="Date of Journey">
+            <apex:outputLabel value="{!res.dateOfJourney}"/>
+            </apex:column>
+            
+            <apex:column headerValue="Source">
+            <apex:outputLabel value="{!res.source}"/>
+            </apex:column>
+            
+            <apex:column headerValue="Destination">
+             <apex:outputLabel value="{!res.destination}"/>
+            </apex:column>
+            
+           <!--<apex:column headerValue="Bus Operator Name">
+            <apex:outputLabel value="{!res.travels}"/>
+            </apex:column>-->
+            
+           <!-- <apex:column headerValue="Date of Issue" value="{!res.creationDate}" />-->
+           <!-- <apex:column headerValue="PNR">
+            <apex:outputLabel value="{!res.pnr}" rendered="false"/>
+            </apex:column>
+            
+            <apex:column headerValue="Seats">
+            <apex:outputLabel value="{!res.seats}"/>
+            </apex:column>
+            
+            <apex:column headerValue="User Id">
+            <apex:outputLabel value="{!res.userId}"/>  
+            </apex:column>-->
+            
+            <apex:column headerValue="Email Id">
+            <apex:outputLabel value="{!res.emailId}"/>
+            </apex:column>
+            
+            <apex:column headerValue="Phone">
+            <apex:outputLabel value="{!res.phone}"/>
+            </apex:column>
+            
+            <apex:column rendered="{!isTripIdSearch}" headerValue="Has Payment Item?">
+            
+             <apex:outputText value="{!IF(res.hasPayment, 'Yes', 'No')}" />
+                     
+           
+            </apex:column>
+              
+               
+            </apex:pageBlockTable>
+     </apex:pageBlock>    
+     </apex:outputpanel>
+     </apex:outputpanel>
+     
+     
+     <apex:outputPanel id="userTripsb2b">
+     <apex:outputpanel rendered="{!b2bSel}">  
+    
+        <center><apex:outputText rendered="{!showNoResult}"> <font style="background-color: yellow;"><B>No records found for this search criteria </b></font></apex:outputText></center>
+       
+     <apex:pageBlockSection title="B2B User Trips Details" columns="1" collapsible="false"  rendered="{!resultFound}">
+     
+     
+     <apex:pageBlockTable value="{!userTripsResp.bookings}" var="res"  >
+            <apex:column headerValue="Tin" >
+               <a HREF="#" onClick="callSearchOrder(this,'{!res.tin}','B2B');return false;">
+                   <apex:outputlabel value="{!res.tin}"/>
+               </a>
+             </apex:column>
+              <apex:column headerValue="Status" value="{!res.status}" />
+            <apex:column headerValue="Source" value="{!res.source}"/>
+            <apex:column headerValue="Destination" value="{!res.destination}" />                        
+            <apex:column headerValue="DOJ" value="{!res.doj}"/>
+           
+           
+          
+     </apex:pageBlockTable>
+    </apex:pageBlockSection>
+   </apex:outputPanel>
+ </apex:outputpanel>
+  </apex:pageBlock>
+</apex:form>
+
+</body>
+</div></div>
+</apex:page>

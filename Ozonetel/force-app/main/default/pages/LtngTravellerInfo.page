@@ -1,0 +1,40 @@
+<!--
+ * (c) 2017 RedBus
+ *
+ * Name           : LtngTravellerInfo
+ * Created Date   : 26 jan 2020
+ * Created By     : mahendra k
+ * Purpose        : VF page to display all passenger details.
+ *
+ -->
+<apex:page controller="LtngTravellerInfoCntrl" action="{!getPassangerDetails}" showHeader="false" sidebar="false" lightningStylesheets="true">
+<apex:slds />
+<div class="slds-scope">
+<apex:form >
+<apex:outputPanel rendered="{!tinNo!=null}">
+<apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock title="Passenger Details For Tin -{!tinNo}" >
+           
+                  <apex:pageBlockTable value="{!listTravellers}" var="wrps" columns="6" styleClass="slds-table slds-table--bordered slds-table--striped">
+                     <apex:column value="{!wrps.name}" headerValue="Name"/>
+                     <apex:column value="{!wrps.Age}" headerValue="Age"/>
+                     <apex:column value="{!wrps.Gender}" headerValue="Gender"/>
+                     <apex:column value="{!wrps.SeatNumber}" headerValue="SeatNumber"/>
+                     <apex:column value="{!phoneNo}" headerValue="Mobile Number"/>
+                     <apex:column value="{!emialId}" headerValue="EmialId"/>
+                     
+                  </apex:pageBlockTable>
+           
+        </apex:pageBlock>
+
+</apex:outputPanel>
+<apex:outputPanel rendered="{!tinNo==null}">
+<center>
+   <br/>
+   <br/>
+   <p><b>TIN Number is required to process your request</b></p>
+ </center>
+</apex:outputPanel>
+</apex:form>
+</div>
+</apex:page>

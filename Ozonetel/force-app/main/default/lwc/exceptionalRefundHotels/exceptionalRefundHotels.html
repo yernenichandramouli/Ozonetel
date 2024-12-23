@@ -1,0 +1,67 @@
+<template>
+    <!-- Spinner displayed while loading -->
+    <template if:true={isLoading}>
+        <div class="spinner">
+            <lightning-spinner alternative-text="Loading..." size="large"></lightning-spinner>
+        </div>
+    </template>
+
+    <!-- Button Centered Below -->
+    <template if:true={showExceptionalButton}>
+        <div class="button-container">
+            <button class="button-37" role="button" onclick={handleExceRefundClick}>Exceptional Refund</button>
+        </div>
+    </template>
+
+    <template if:true={showExceptionalRefundPage}>
+        <div class="c-container">
+            <lightning-layout multiple-rows="true">
+                <lightning-layout-item  size="12">
+                        <lightning-layout-item  size="3">
+                            <p>
+                                <b>Note:</b> Exceptional Refund is applicable only once the DOJ has crossed.
+                            </p>
+                        </lightning-layout-item>
+                        <lightning-layout-item  size="9">
+                            <div style="background: #fcfcfc;" class="slds-box slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none">
+                                <lightning-layout  multiple-rows="true">
+                                    <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="4">
+                                        <lightning-input value={maxRefundAmountToShow} label="Max Refundable Amount" data-field-name="maxRefundAmount" required disabled></lightning-input>
+                                    </lightning-layout-item>  
+                                    <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="4">
+                                        <lightning-input  label="Amount to be Refunded" data-field-name="refundAmount" required ></lightning-input>
+                                    </lightning-layout-item>      
+                                    <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="4">
+                                        <lightning-input  label="Parent Case Number" value="" data-field-name="parentCase" required></lightning-input>
+                                    </lightning-layout-item>       
+                                </lightning-layout>
+                                <lightning-layout  multiple-rows="true">
+                                    <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="6">
+                                        <lightning-combobox label="Refund Reason" value="" data-field-name="refundReason" required options={refundReasonValues}>
+                                    </lightning-combobox> 
+                                </lightning-layout-item> 
+                                <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="6">
+                                    <lightning-input  type="test" label="Refund Description" value="" data-field-name="refundDescription" required></lightning-input>
+                                </lightning-layout-item>
+                                </lightning-layout>       
+                                <!-- Button Container Below Refund Reason and Description -->
+                                <div class="button-container">
+                                    <button class="button-37" onclick={handleSubmitForApprovalClick}>Submit</button>
+                                </div>                              
+                            </div>
+                        </lightning-layout-item>              
+                </lightning-layout-item> 
+                
+            </lightning-layout>
+        </div> 
+    </template>
+
+    <template if:true={issuccess}>
+        <div class="success-message-container">
+            <div class="success-message-box">
+                <p>{successMessageToShow}</p>
+            </div>
+        </div>
+    </template>
+    
+</template>

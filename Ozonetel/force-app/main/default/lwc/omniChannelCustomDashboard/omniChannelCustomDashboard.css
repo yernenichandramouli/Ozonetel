@@ -1,0 +1,39 @@
+.custom-box {
+    background-color: #0070d2; /* Salesforce Blue */
+    color: white;               /* Text color */
+    font-size: 50px;           /* Font size */
+    font-weight: bold;         /* Bold text */
+    text-align: center;        /* Center text */
+    padding:    0px;             /* Padding for spacing */
+    border-radius: 0px;       /* Rounded corners */
+    cursor: pointer;           /* Change cursor to pointer */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+.custom-box-heading {
+    background-color: #0070d2; /* Salesforce Blue */
+    color: white;               /* Text color */
+    font-size: 16px;           /* Font size */
+    font-weight: bold;         /* Bold text */
+    text-align: center;        /* Center text */
+    padding: 20px;             /* Padding for spacing */
+    border-radius: 0px;       /* Rounded corners */
+    cursor: pointer;           /* Change cursor to pointer */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+.custom-box:hover {
+    background-color: #005fb2; /* Darker blue on hover */
+}
+
+.custom-box:active {
+    background-color: #004a8c; /* Even darker blue when active */
+}
+
+.fullscreen-background {
+    background-color: white;
+    height: 100vh; /* Full viewport height */
+    width: 100vw;  /* Full viewport width */
+    margin: 0;
+    padding: 0;
+}

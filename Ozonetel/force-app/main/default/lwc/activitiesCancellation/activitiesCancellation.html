@@ -1,0 +1,135 @@
+<template>
+  
+  <div class="slds-text-heading_large slds-text-align_center slds-text-color_success"><b><i>{transStatus}</i></b></div>
+  
+
+  <template if:true={showInitiateCancelBtn} class="slds-is-relative">
+    <lightning-button label="Initiate Cancellation" title="Refund Breakup" variant="success" onclick={checkTicketStatus} class="slds-align_absolute-center"></lightning-button>
+
+    <div if:true={isLoaded}>
+      <lightning-spinner alternative-text="Loading..." variant="brand" size="large" class="slds-is-absolute"></lightning-spinner>
+    </div>
+  </template>
+
+  <br></br>
+  <template if:true={showAnyMsg}>
+    <div class={notifcationThemeClass} role="alert">
+      <span class="slds-assistive-text">{notificationType}</span>
+      <span class={notifcationContainerClass} title="Description of icon when needed">
+        <svg class="slds-icon slds-icon_x-large" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <use xlink:href={iconClass}></use>
+        </svg>
+      </span>
+      <h2>{notificationMessage}</h2>
+      <!--
+      <div class="slds-notify__close">
+        <button class="slds-button slds-button_icon slds-button_icon-small slds-button_icon-inverse" title="Close">
+          <svg class="slds-button__icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <use xlink:href="/apexpages/slds/latest/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+          </svg>
+          <span class="slds-assistive-text">Close</span>
+        </button>
+      </div>
+    -->
+    </div>
+  </template>
+
+  <!-- <lightning-card title="Hello" icon-name="custom:custom14">
+    <div class="slds-m-around_medium">
+      Hellos, {greeting}! {recordId}
+    </div>
+    <lightning-button-group>
+      <lightning-button
+        label="Refund Breakup"
+        title="Refund Breakup"
+        variant="success"
+        onclick={checkTicketStatus}
+      >
+      </lightning-button>
+      <lightning-button
+        label="Initiate Cancellation"
+        title="Initiate Cancellation"
+        variant="brand"
+        onclick={checkTicketStatus}
+      >
+      </lightning-button>
+    </lightning-button-group>
+  </lightning-card> 
+  <div class="slds-m-vertical_medium">
+    <p>
+      The label of the button that was clicked is:
+      <span class="slds-text-heading_small"
+        >{clickedButtonLabel}- {isLoaded}</span
+      >
+    </p>
+  </div>-->
+
+  <template if:true={isCanData}>
+    <lightning-card title="Refund Breakup" icon-name="utility:moneybag">
+
+      <template if:false={isActivityCancellable}>
+        <p class="slds-p-horizontal_small">
+          <b>Sorry!This Activity Can not be Cancelled</b>
+        </p>
+      </template>
+
+      <template if:true={isActivityCancellable}>
+        <div class="slds-m-left_xx-large slds-m-bottom_medium">
+          <table style="width:50%">
+            <tr>
+              <th>Base Fare</th>
+              <td class="slds-text-align--right">Rs. {baseFare}</td>
+            </tr>
+            <tr>
+              <th>Taxes</th>
+              <td class="slds-text-align--right">Rs. {taxes}</td>
+            </tr>
+            <tr>
+              <th>Total Ticket Fare</th>
+              <td class="slds-text-align--right">Rs. <B>{totalTktFare}</B></td>
+            </tr>
+            <tr>
+              <th>Discount</th>
+              <td style="color: red" class="slds-text-align--right">
+                Rs. {discount}
+              </td>
+            </tr>
+            <tr>
+              <th>Amount Paid By Customer</th>
+              <td class="slds-text-align--right">
+                Rs. <B>{amntPaidByCust}</B>
+              </td>
+            </tr>
+            <tr>
+              <th>Wallet Offer Amount</th>
+              <td style="color: red" class="slds-text-align--right">
+                Rs. {walletOfferAmt}
+              </td>
+            </tr>
+            <tr>
+              <th>Cancellation Charges</th>
+              <td style="color: red" class="slds-text-align--right">
+                Rs. {cancellationCharges}
+              </td>
+            </tr>
+            <tr>
+              <th>Total Refundable Amount</th>
+              <td class="slds-text-align--right">
+                Rs. <B>{finalRefAmount}</B>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <template if:true={showCancelTicketBtn}>        
+          <lightning-button label="Cancel Ticket" title="Cancel Ticket" variant="success" style="margin-left: 25em;" onclick={cancelTransaction}></lightning-button>
+        </template>
+        </template>
+
+    </lightning-card>
+  </template>
+<!--
+  <lightning-button label="Cancel Ticket" title="Cancel Ticket" variant="success" style="margin-left: 25em;" onclick={cancelTransaction}></lightning-button>
+  <template if:true={cancelledData}>
+    {cancelledData}
+  </template>-->
+</template>

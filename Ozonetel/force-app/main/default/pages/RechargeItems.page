@@ -1,0 +1,58 @@
+<!--
+* Name           : RechargeItems 
+* Created Date   : 21 Sep 2017
+* Created By     : Veeramanikanta R
+* Purpose        : To display Recharge transactions on Account side bar
+-->
+<apex:page standardController="Account" extensions="RechargeItemsExtension" lightningStylesheets="true">
+<apex:slds />
+   <div class="slds-scope">
+    <apex:form >
+        <apex:pageBlock >
+          <apex:pageMessages ></apex:pageMessages>
+            <apex:pageblocktable value="{!pgList}" var="pg">
+                
+                <apex:column headerValue="Order Id">
+                 <!--   <apex:outputLink value="/{!pg.id}">
+                        <apex:outputText value="{!pg.Order_Id__c}">
+                        </apex:outputText>
+                    </apex:outputLink> -->
+                                         <apex:outputLabel value="{!pg.Order_Id__c}" styleClass="slds-text-link" onClick="isLightningExperience('{!pg.id}','{!pg.Order_Id__c}');return false;"/>
+
+                </apex:column>
+                
+                <apex:column value="{!pg.Mobile__c}"/>
+             <!--   <apex:column value="{!pg.Email__c}"/> 
+                     -->
+                <apex:column value="{!pg.Created_Date_Time__c}"/>  
+            </apex:pageblocktable>   
+        </apex:pageBlock>    
+    </apex:form>
+    </div>
+    <script>
+     function isLightningExperience(recId,recName)
+     {
+      if(sforce.console.isInConsole())
+            {
+                sforce.console.getEnclosingPrimaryTabId(function(result)
+                {
+                 sforce.console.openSubtab(result.id,'/'+recId,true,recName,null);
+                           
+                });
+            }
+            
+            else
+            {
+            
+                if (UITheme.getUITheme() === 'Theme4d' || UITheme.getUITheme() === 'Theme4u')                  
+                     sforce.one.navigateToSObject(recId,'detail');
+                else 
+                    window.open('/' + recId);
+            }
+         
+     
+     }
+     <apex:includeScript value="/support/console/45.0/integration.js" />
+
+    </script>
+</apex:page>

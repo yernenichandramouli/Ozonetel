@@ -1,0 +1,19 @@
+<apex:page controller="CallController" showHeader="false" sidebar="false" docType="html-5.0">
+    <apex:form >
+        <apex:pageMessages id="msg"></apex:pageMessages>
+        <apex:pageblock >
+            <apex:pageBlockSection title="Call to Customer" collapsible="false" columns="1" rendered="{!showCallPopup}">
+                <apex:pageBlockSectionItem >Customer Phone Number<apex:inputtext value="{!mobileno}" onkeypress="return isNumber(event,'{!$Component.boPhone}')" id="boPhoneNo"/></apex:pageBlockSectionItem>
+                <apex:actionStatus id="callButnStatus" >
+                    <apex:facet name="stop" >
+                        <apex:commandButton value="Call" action="{!call}" style=" height:25px;width:150px;font-size:12px;background:#04B431;color:white;font-family:Arial;" rerender="msg" status="callButnStatus"/>
+                    </apex:facet>
+                    
+                    <apex:facet name="start">
+                        <apex:commandButton value="Connecting..." status="callButnStatus" style="background:#04B431;color:white" disabled="true"/>
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockSection>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

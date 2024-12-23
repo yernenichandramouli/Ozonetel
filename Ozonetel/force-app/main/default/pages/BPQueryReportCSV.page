@@ -1,0 +1,13 @@
+<apex:page controller="BPQueryReport" showheader="false" contenttype="text/csv#BPQueriesReport"  cache="true">
+
+ <apex:form >
+    <apex:pageBlock title="Boarding Point Query Report">
+      <apex:pageblocktable value="{!bList}" var="b">
+       <apex:column headerValue="Date" value="{!b.datev}"/>
+        <apex:column headerValue="Cases" value="{!b.caseCount}"/>
+        <apex:column headerValue="Transactions" value="{!b.tCount}"/>        
+      </apex:pageblocktable>  
+    </apex:pageBlock>
+  </apex:form>
+
+</apex:page>

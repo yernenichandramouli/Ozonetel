@@ -1,0 +1,44 @@
+<apex:page controller="BPQueryReport" docType="html-5.0">
+  <apex:form id="formId" >
+    <apex:pageBlock title="Boarding Point Query Report">
+    <apex:pageblocksection columns="3">
+    <apex:pageblocksectionItem >
+    From Date
+    <apex:input value="{!fromDate}" type="date"/>
+    </apex:pageblocksectionItem>
+     <apex:pageblocksectionItem >
+     To Date
+    <apex:input value="{!toDate}" type="date"/>
+   </apex:pageblocksectionItem>
+   
+   <apex:commandButton value="Search" action="{!countRecords}" status="statusSaveTrip" reRender="pb,formId" style="width:100px"/>
+   
+   <apex:actionStatus id="statusSaveTrip" stopText="">
+       <apex:facet name="start">
+            <div>
+                <div class="popupBackground" />
+                <div class="PopupPanel">
+                    <table border="0" width="100%" height="100%">
+                        
+                        <tr>
+                            <td align="center"><img src="{!$Resource.Loading}"><font color="red" size="3"><i>Please wait while we are processing your request...</i></FONT></img></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </apex:facet>
+</apex:actionStatus>
+   
+    </apex:pageblocksection>
+      <apex:pageblocktable value="{!bList}" var="b" id="pb">
+       <apex:column headerValue="Date" value="{!b.datev}"/>
+        <apex:column headerValue="Cases" value="{!b.caseCount}"/>
+        <apex:column headerValue="Transactions" value="{!b.tCount}"/>   
+         <apex:column headerValue="Transactions / Cases" value="{!b.percentage}"/>        
+      </apex:pageblocktable>  
+      <br/><br/>
+      <apex:commandButton value="Export" action="{!exportToExcel}" style="width:100px"/>
+    </apex:pageBlock>
+    
+  </apex:form>
+</apex:page>

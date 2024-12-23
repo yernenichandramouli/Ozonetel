@@ -1,0 +1,98 @@
+<template>
+    <div class="fullscreen-background">
+        <lightning-layout horizontal-align="center" multiple-rows="true">
+            <lightning-layout-item size="2" padding="around-medium">
+                <div style="background-color:#01aae5" class="custom-box-heading" onclick={showAgentDetails}>Total Agents Logged in SF</div>
+                <div style="background-color:#01aae5" class="custom-box" onclick={showAgentDetails}>{totalAgentsLoggedInSF}</div>
+                <!-- <div style="background-color:#01aae5" class="custom-box" onclick={showAgentDetails}>Total Agents - {totalAgentsLoggedInSF}</div> -->
+            </lightning-layout-item>
+            <lightning-layout-item size="2" padding="around-medium">
+                <div style="background-color:#d41b76" class="custom-box-heading" onclick={showTable2}>Total Agents in Omni</div>
+                <div style="background-color:#d41b76" class="custom-box" onclick={showTable2}>{totalAgentsLoggedInOmni}</div>
+                <!-- <div style="background-color:#ef7800" class="custom-box" onclick={showTable2}>Total Agents in Omni - {totalAgentsLoggedInOmni}</div> -->
+            </lightning-layout-item>
+            <lightning-layout-item size="2" padding="around-medium">
+                <div style="background-color:#01841e" class="custom-box-heading" onclick={showTable3}>Online Agents in Omni</div>
+                <div style="background-color:#01841e" class="custom-box" onclick={showTable3}>{totalOnlineAgents}</div>
+                <!-- <div style="background-color:#01841e" class="custom-box" onclick={showTable3}>Online Agents in Omni  - {totalOnlineAgents}</div> -->
+            </lightning-layout-item>
+            <lightning-layout-item size="2" padding="around-medium">
+                <div style="background-color:#ef7800" class="custom-box-heading" onclick={showTable4}>Agents on Break in Omni</div>
+                <div style="background-color:#ef7800" class="custom-box" onclick={showTable4}>{totalBreakAwayAgents}</div>
+                <!-- <div style="background-color:#ef7800" class="custom-box" onclick={showTable4}>Agents on Break in Omni - {totalBreakAwayAgents}</div> -->
+            </lightning-layout-item>
+            <lightning-layout-item size="2" padding="around-medium">
+                <div style="background-color:#ce0900" class="custom-box-heading" onclick={showTable5}>Offline Agents in Omni</div>
+                <div style="background-color:#ce0900" class="custom-box" onclick={showTable5}>{totalofflineAgents}</div>
+                <!-- <div style="background-color:#ce0900" class="custom-box" onclick={showTable5}>Offline Agents in Omni - {totalofflineAgents}</div> -->
+            </lightning-layout-item>
+            </lightning-layout>
+
+            <lightning-layout horizontal-align="center" multiple-rows="true">
+
+             <lightning-layout-item size="2" padding="around-medium">
+                <div style="background-color:#19f3c1" class="custom-box-heading" onclick={showTable6}>Total Waiting Chats</div>
+                <div style="background-color:#19f3c1" class="custom-box" onclick={showTable6}>{totalwaitingChatsCount}</div>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="2" padding="around-medium">
+                <div style="background-color:#ef0cde" class="custom-box-heading" onclick={showTable7}>Total Ongoing Chats</div>
+                <div style="background-color:#ef0cde" class="custom-box" onclick={showTable7}>{totalOngoingChatsCount}</div>
+                <!-- <div style="background-color:#01aae5" class="custom-box" onclick={showAgentDetails}>Total Agents - {totalAgentsLoggedInSF}</div> -->
+            </lightning-layout-item>
+
+        </lightning-layout>
+
+        <div>
+            <template if:true={isTable1Visible}>
+            <lightning-card title="Total Agents" >
+                <lightning-button id="totalAgentsData" variant="brand" label="Export data" title="Export Data" onclick={exportContactData}></lightning-button>
+                <lightning-datatable data-table="totalAgentsData" data={totalAgentsData} columns={showAgentDetailsCol} sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting} key-field="id" hide-checkbox-column="true"></lightning-datatable>
+            </lightning-card>
+        </template>
+
+        <template if:true={isTable2Visible}>
+            <lightning-card title="Agents in Omni">
+                <lightning-button id="agentsInOmniData" variant="brand" label="Export data" title="Export Data" onclick={exportContactData}></lightning-button>
+                    <lightning-datatable data-table="agentsInOmniData" show-row-number-column="true" data={agentsInOmniData} columns={agentcolumns} sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting} key-field="id" hide-checkbox-column="true"></lightning-datatable>
+            </lightning-card>
+        </template>
+
+        <template if:true={isTable3Visible}>
+            <lightning-card title="Online in Omni">
+                <lightning-button id="onlineInOmniData" variant="brand" label="Export data" title="Export Data" onclick={exportContactData}></lightning-button>
+                <lightning-datatable data-table="onlineInOmniData" data={onlineInOmniData} columns={agentcolumns} sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting} key-field="id" hide-checkbox-column="true"></lightning-datatable>
+            </lightning-card>
+        </template>
+
+        <template if:true={isTable4Visible}>
+            <lightning-card title="Break in Omni">
+                <lightning-button id="breakInOmniData" variant="brand" label="Export data" title="Export Data" onclick={exportContactData}></lightning-button>
+                <lightning-datatable data-table="breakInOmniData" data={breakInOmniData} columns={agentcolumns} sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting} key-field="id" hide-checkbox-column="true"></lightning-datatable>
+            </lightning-card>
+        </template>
+
+        <template if:true={isTable5Visible}>
+            <lightning-card title="Offline in Omni">
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                    <lightning-button id="offlineInOmniData" variant="brand" label="Export data" title="Export Data" onclick={exportContactData}></lightning-button>
+                </div>
+                <lightning-datatable data-table="offlineInOmniData" data={offlineInOmniData} columns={showAgentDetailsCol} sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting} key-field="id" hide-checkbox-column="true"></lightning-datatable>
+            </lightning-card>
+        </template>
+
+        <template if:true={isTable6Visible}>
+            <lightning-card title="Waiting Chats">
+                <lightning-datatable data-table="totalWaitingChatsData" data={totalWaitingChatsData} columns={showWaitingChatsCol} sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting} key-field="id" hide-checkbox-column="true"></lightning-datatable>
+            </lightning-card>
+        </template>
+
+        <template if:true={isTable7Visible}>
+            <lightning-card title="Waiting Chats">
+                <lightning-datatable data-table="totalOngoingChatsData" data={totalOngoingChatsData} columns={showWaitingChatsCol} sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting} key-field="id" hide-checkbox-column="true"></lightning-datatable>
+            </lightning-card>
+        </template>
+
+        </div>
+    </div>
+</template>

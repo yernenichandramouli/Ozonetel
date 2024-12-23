@@ -1,0 +1,7 @@
+<apex:page >
+  <apex:form >
+        <apex:pageBlock title="Tutorialkart.com" helpTitle="needHelp" helpUrl="https://www.tutorialkart.com">
+            <apex:commandButton value="Clickme" action="http://10.5.10.26:8000/v2/bulk/search?a=137&sdojsec=1655736000&edojsec=1655750400&serviceId=10011&status=all"/>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

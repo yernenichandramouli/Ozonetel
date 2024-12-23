@@ -1,0 +1,76 @@
+<apex:page controller="LiveAgentRESTAPIPageCntrl" >
+<apex:form >
+  <apex:pageBlock >
+      <apex:pageBlockSection title="SessionId API Details" columns="1">
+          <apex:commandButton title="Get Session Id" action="{!getSessionId}" reRender="sessresp" value="Get Session Id"/>
+          
+          <apex:outputPanel layout="block" id="sessresp">
+          <apex:pageBlockSection collapsible="false">
+           <apex:outputText id="Id" value="{!sessionId}" label="Id"/>
+          <apex:outputText id="Key" value="{!sessionKey}" label="Key"/>
+           <apex:outputText id="affinityToken" value="{!affinityToken}" label="affinityToken"/>
+            <apex:outputText id="clientPollTimeout" value="{!clientPollTimeout}" label="clientPollTimeout"/>
+                      <apex:outputText value="{!apiResp}" label="API Resp"></apex:outputText>
+
+</apex:pageBlockSection>
+          </apex:outputPanel>
+      </apex:pageBlockSection>
+      
+      
+      <apex:pageBlockSection columns="1" title="Create Visitor Session Details">
+          <apex:commandButton title="Create Visitor Session" action="{!getChasitorInit}" reRender="visResp,AgentPBS" value="Create Visitor Session"/>
+           
+          <apex:outputPanel layout="block" id="visResp">
+          <apex:pageBlockSection collapsible="false">
+              <apex:outputText label="Status Code" value="{!visStatusCode}"></apex:outputText>
+              <apex:outputText label="Status" value="{!visStatus}"></apex:outputText>
+              <apex:outputText value="{!apiResp2}" label="API Resp"></apex:outputText>
+              <apex:outputText value="{!compReqBody}" label="Comp Resp"></apex:outputText>
+              
+              
+             <!--   <apex:outputText label="Msg Status Code" value="{!msgsStatusCode}"></apex:outputText>
+              <apex:outputText label="Msg Status" value="{!msgsStatus}"></apex:outputText>
+              <apex:outputText value="{!apiResp3}" label="Mess API Resp"></apex:outputText> -->
+           </apex:pageBlockSection>
+          </apex:outputPanel>
+          
+      </apex:pageBlockSection>
+      
+      <apex:outputPanel id="AgentPBS">
+          <apex:pageBlockSection columns="1" title="Messages From Agent" >               
+              <apex:actionStatus startText="Loading..." stopText="Stoped..." id="st"></apex:actionStatus>
+          <!--   <apex:actionPoller reRender="msgpbs,msc" interval="10" status="st" action="{!dummyFetch}"/>  -->
+          </apex:pageBlockSection>
+      </apex:outputPanel>
+      
+      <apex:pageBlockSection id="msgpbs" title="Send Messages To Agent">
+                 <apex:pageMessages id="errMsg"></apex:pageMessages>      
+
+      <script>
+                     function nnn()
+                     {
+                      alert('.....llllll...');
+                      }
+                      </script>
+          <apex:outputText label="Msg Status Code" value="{!msgsStatusCode}" id="msc"></apex:outputText>
+              <apex:outputText label="Msg Status" value="{!msgsStatus}"></apex:outputText>
+              <apex:outputText value="{!apiResp3}" label="Mess API Resp"></apex:outputText>
+      
+      
+      </apex:pageBlockSection>
+      
+      
+       
+      
+      <apex:pageBlockSection id="msgpbs2" title="Send Messages To Agent">
+          <apex:inputTextarea id="msg" value="{!msgText}"/>
+          <apex:commandButton title="Send" action="{!sendMessage}" reRender="msgpbs2"/>
+      </apex:pageBlockSection>
+      
+      <apex:pageblockSection id="agentMsg" title="Messages From Agent">
+      <apex:outputText id="AgentmsgText" value="{!agentMsgText}"/>
+      </apex:pageblockSection>
+      
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

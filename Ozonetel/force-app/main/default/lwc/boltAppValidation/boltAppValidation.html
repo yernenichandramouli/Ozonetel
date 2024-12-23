@@ -1,0 +1,115 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 06-12-2023
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+  <template  if:true={firstScreen}> 
+
+  <lightning-card title="Screen 1 - Bus Staff OutCall">
+  <div class="slds-box slds-grid slds-grid_vertical-align-center slds-grid_align-center">
+     <lightning-layout >
+         <lightning-layout-item>
+              <lightning-record-view-form
+              record-id={recordId}
+              object-api-name="Case">
+         <strong><h1><lightning-output-field field-name="Issue_Type__c"></lightning-output-field></h1> </strong></br>
+          <strong><h1><lightning-output-field field-name="Issue_Sub_Category__c"></lightning-output-field></h1></strong></br>
+         
+        <template  if:true={isDriverName}> 
+        <h1 class="label"> Driver Name: <lightning-formatted-text value={driverName} class="slds-text-heading_small">
+          </lightning-formatted-text>
+         </h1></br>
+        </template>
+
+        <template  if:true={isDriverNo}> 
+           <h1 class="label"> Driver Number: <lightning-formatted-text value={driverNumber} class="slds-text-heading_small">
+         </lightning-formatted-text>
+        </h1></br>
+        </template>
+
+        <template  if:true={isNoDriverNo}> 
+          <strong><lightning-input type="text" label="BO Staff Number"  name="input2" required pattern="[0-9]{10,14}" minlength="10" maxlength="14" message-when-pattern-mismatch="Only Phone number as min 10 - max 14 digits"></lightning-input> </strong>
+          </template>
+          
+          <template  if:true={isNoDriverName}> 
+          <strong><lightning-input type="text" label="BO Staff Name" name="input1" required > </lightning-input> </strong>  
+          </template>
+          
+        <strong><lightning-textarea label="BO Staff Comments" placeholder="comment here..." required name="input3"></lightning-textarea> </strong>
+
+          <br/><lightning-button variant="success"  label="Save & Next"  onclick={handleClickFirstScreen}></lightning-button> 
+
+          </lightning-record-view-form>
+       </lightning-layout-item>
+      </lightning-layout>
+     </div>
+  </lightning-card>
+
+</template> 
+
+
+
+  <div if:true={fetchLoad} style="display:flex;flex-wrap: wrap;">
+      <lightning-spinner alternative-text="Updating..." variant="brand" size="small" class="slds-is-absolute">
+      </lightning-spinner>
+ </div>
+
+<template if:true={secondScreen}>
+  <lightning-card title="Screen 2 - BOLT Validation">
+<div class="slds-box">
+<table style="width:100%">
+  <thead>
+  <tr>
+     <th style="width:6%" > Level</th>
+     <th style="width:50%">Question</th>
+     <th style="width:15%;margin-right:2%">Type</th>
+     <th style="width:19%">Comment</th>
+  </tr> 
+  </thead>
+
+  <tbody>
+   <template for:each={respWrapper} for:item="resp">
+      <tr key={resp.questionNumber} data-item={resp.question}> 
+        <td> {resp.serialNumber}</td>
+        <td>{resp.question}</td>
+          <td>
+          <lightning-combobox class="slds-m-right_x-small" key={resp.questionNumber} data-target-id ={resp.questionNumber} name={resp.questionNumber} value={pickValue} options={resp.pickValues} onchange={handleChangePickval}></lightning-combobox>   
+          </td>
+          <td>                   
+         <lightning-input key={resp.questionNumber}  data-target-id ={resp.questionNumber} type="text" onchange={handleChangeComment}></lightning-input>
+         </td>
+      </tr>
+    </template>
+  </tbody>
+</table>
+
+<lightning-layout  multiple-rows="true" vertical-align="center">
+<lightning-layout-item>
+
+</lightning-layout-item>
+<template  if:true={isMaxRefundAmnt}> 
+  <strong><h1 class="label"> Max Refund Amount: <lightning-formatted-text value={maxRefundAmnt} class="slds-text-heading_small">
+</lightning-formatted-text>
+</h1></strong></br>
+</template>
+
+<template  if:true={isNoMaxRefundAmnt}> 
+<lightning-input type="text" label="Please Calculate Refund Amount(Mandatory)" name="tickentamount" required onchange={handleChangeTicketAmount}> </lightning-input>   
+</template>
+
+</lightning-layout>
+  <center><lightning-button variant="success"  disabled={btnDisable} label="Save" onclick={handleClickSecondScreen}></lightning-button> </center></br>
+    <center><lightning-button variant="destructive"  label="Cancel" onclick={handleCancel}></lightning-button> </center>
+
+</div>
+</lightning-card>
+</template>
+
+<template if:true={errorScreen}>
+    <strong><h1>This issue type is not mapped under Bolt Validation</h1></strong>
+</template>
+
+</template>

@@ -1,0 +1,28 @@
+<template>
+    <template if:true={recordId}>
+        <lightning-quick-action-panel header="BusShift Details">
+            <!-- <lightning-spinner alternative-text="Loading" size="small" if:true={isLoading} ></lightning-spinner> -->
+            <template if:false={hideButton}>
+                <div class="slds-align_absolute-center">
+                    <lightning-button variant="success" label="Get BusShift Details" onclick={handleClick}></lightning-button>
+                </div>
+            </template>
+            <!-- <c-spinner is-loading={isLoading}></c-spinner> -->
+                <lightning-datatable
+                    key-field="NameType"
+                    hide-checkbox-column="true"
+                    data={data}
+                    columns={columns}>
+                </lightning-datatable>
+            <template if:true={isError}>
+                <div class="slds-text-heading_large slds-text-align_center" style="color:rgb(216, 78, 85);">Service Clubbing Details are not available</div>
+            </template>
+
+            <div slot="footer">
+                <lightning-button variant="neutral" label="Cancel" onclick={closeAction} ></lightning-button>
+            </div>
+
+        </lightning-quick-action-panel>
+    </template>
+    
+</template>

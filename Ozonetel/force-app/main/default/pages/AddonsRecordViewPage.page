@@ -1,0 +1,44 @@
+<apex:page standardController="Activities__c" extensions="ActivityOtherItemsExtension">
+    <apex:includeLightning />
+    <div id="container">
+    </div>
+    <apex:pageBlock >      
+            <apex:pageBlockSection title="Price Breakup" columns="1">                
+                <apex:pageblocktable value="{!priceBreakup}" var="v2"> 
+                    <apex:column headerValue="Component Name" value="{!v2.componentName}"/>                 
+                    <apex:column headerValue="Amount" value="{!v2.value}"/>                        
+                    <apex:column headerValue="Refund Amount" value="{!v2.refundableValue}"/>
+                    <apex:column headerValue="Cancellation Available?" value="{!v2.isCancellationPolicyApplicable}"/>                                           
+                </apex:pageblocktable>
+            </apex:pageBlockSection>  
+        </apex:pageBlock>
+     <apex:pageBlock >
+        <apex:repeat value="{!payWrapper}" var="pay">
+            <apex:pageBlockSection columns="1" title="Refunds">
+                <apex:repeat value="{!pay.paymentItemList}" var="pt3">
+                    <apex:pageBlockTable value="{!pt3.refunds}" var="re"  rendered="{!If(pt3.refunds!=null,true,false)}" >
+                        <apex:column headerValue="Refund Type" value="{!re.refundType}"/>
+                        <apex:column headerValue="Refund Status" value="{!re.refundStatus}"/>
+                        <apex:column headerValue="Refund Amount" value="{!re.refundAmount.amount}"/>
+                        <apex:column headerValue="Ref Num" value="{!re.refNo}"/>
+                        <apex:column headerValue="Refund Time" value="{!re.refundTime}"/>
+                    </apex:pageBlockTable>
+                </apex:repeat>
+            </apex:pageBlockSection>
+        </apex:repeat>
+    </apex:pageBlock>
+    <script>
+    
+        
+        $Lightning.use("c:AddonRecordViewApp", function () {
+            $Lightning.createComponent(
+                "c:AddonRecordViewForm",
+                {'sfrecordId': '{!$CurrentPage.parameters.id}'},
+                "container",
+                function (cmp) {
+                    console.log('addon record view form component created');
+                });
+        });
+    </script>
+    
+</apex:page>

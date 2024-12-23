@@ -1,0 +1,7 @@
+<apex:page >
+  <script>
+      window.open('/apex/BusHireAutoDailerPage','_blank');          
+      window.open('https://redbus.my.salesforce.com/home/home.jsp','_self');
+  </script>
+  <!-- // window.open('https://redbus.my.salesforce.com/setup/forcecomHomepage.apexp?setupid=ForceCom','_self')  -->
+</apex:page>

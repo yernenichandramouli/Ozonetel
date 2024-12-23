@@ -1,0 +1,23 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+    <aura:handler event="lightning:omniChannelWorkAccepted" action="{! c.onWorkAccepted }"/>
+
+    <!-- Attribute to store queried cases -->
+    <aura:attribute name="caseList" type="Object[]" />
+
+     <!-- Attribute to define columns for lightning:datatable -->
+    <aura:attribute name="columns" type="List" default="[
+        { label: 'Case Number', fieldName: 'CaseNumber', type: 'text' },
+        { label: 'Issue Type', fieldName: 'IssueType', type: 'text' },
+        { label: 'Sub Issue Type', fieldName: 'SubIssueType', type: 'text' },
+        { label: 'Subject', fieldName: 'Subject', type: 'text' }
+    ]" />
+    
+    <!-- Table to display the cases -->
+    <lightning:datatable
+        data="{! v.caseList }"
+        columns="{! v.columns }"
+        keyField="CaseNumber"
+        hideCheckboxColumn="true"
+        tableStyle="table-layout:auto;"
+    />
+</aura:component>

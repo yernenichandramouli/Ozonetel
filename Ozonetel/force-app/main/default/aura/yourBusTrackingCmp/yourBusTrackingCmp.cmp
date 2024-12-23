@@ -1,0 +1,5 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global" >
+	 <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:attribute name="recordId" type="String"/>
+    <c:yourBusTracking recordId="{!v.recordId}" onclose="{!c.closePopUp}" > </c:yourBusTracking>
+</aura:component>

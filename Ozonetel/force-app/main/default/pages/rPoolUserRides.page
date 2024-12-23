@@ -1,0 +1,113 @@
+<apex:page controller="RPoolTripsCtrl" tabStyle="DBLog_Summary__c" showheader="false" >
+    
+
+    <apex:form > 
+        <apex:pageBlock >
+            <apex:pageMessages id="msg" />       
+            
+            <center>
+                <h1><font size="3" color="red">Customer Rides</font></h1> <br/> <br/> 
+                Email &nbsp;&nbsp;<apex:inputText value="{!email}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+                Mobile &nbsp;&nbsp;<apex:inputText value="{!mobile}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+                
+                <apex:actionStatus id="loadStatus" >
+                    <apex:facet name="start" >
+                        <img src="/img/loading.gif" />
+                        <apex:commandButton value="Searching..." style="width:100px" disabled="true" status="loadStatus"/>                                       
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton value="Search" style="width:100px" action="{!getUserDetails}" rerender="pblk,msg" status="loadStatus">                   
+                        </apex:commandButton>
+                    </apex:facet>
+                </apex:actionStatus>   
+            </center>  
+        </apex:pageBlock>
+        <apex:outputpanel id="pblk">
+            <apex:pageBlock rendered="{!pblock}" >
+                <center >
+                    <apex:Commandlink action="{!WalletHistoryPage}" target="_blank"   >
+                        <apex:commandButton style="widh:150px"  value="Wallet History" >
+                        </apex:commandButton>
+                    </apex:Commandlink>&nbsp;&nbsp;
+                    
+                    <apex:Commandlink action="{!ExceptionalCreditPage}"  target="_blank" >
+                        <apex:param assignTo="{!type}" value="expCredit" />
+                        <apex:commandButton style="widh:150px"  value="Exceptional Credit" />
+                    </apex:Commandlink>&nbsp;&nbsp;
+                    
+                    <apex:Commandlink action="{!CaseCreatePage}"  target="_blank" >                   
+                        <apex:commandButton style="widh:150px"  value="Create Case" />
+                    </apex:Commandlink>&nbsp;&nbsp;
+                    
+                    <!--  <apex:Commandlink action="{!BlockUserPage}"  target="_blank" >
+<apex:commandButton style="widh:150px"  value="Block User" />
+</apex:Commandlink>-->
+                </center><br/> 
+                <apex:pageBlockSection title="Past Rides - {!usLs.size}" columns="1">
+                    <apex:repeat value="{!usLs}" var="u">
+                        <apex:pageBlockSection title="Trip - {!u.driDetails.ipocDate}" columns="1">
+                            <b>  <font size="2" color="red">Driver</font> {!u.driDetails.parentTripIdentifier}</b> 
+                            <apex:pageblocktable value="{!u.driDetails}" var="dr">
+                                <apex:column headerValue="Name" value="{!dr.name}" id="naU" />  
+                                <apex:column headerValue="Ride Id" value="{!dr.rideId}" /> 
+                                <apex:column headerValue="Email" value="{!dr.email}" />  
+                                <apex:column headerValue="Mobile" value="{!dr.mobile}" />  
+                                <apex:column headerValue="Source" value="{!dr.srcAddress}" />  
+                                <apex:column headerValue="Destination" value="{!dr.destAddress}" />  
+                                <apex:column headerValue="Total Seats" value="{!dr.totalSeats}" />  
+                                <apex:column headerValue="Vehicle No" value="{!dr.vehicleNo}" />  
+                                <apex:column headerValue="Vehicle Nmae" value="{!dr.vehicleName}" /> 
+                            </apex:pageblocktable>
+                            
+                            <b>  <font size="2" color="green">Co-Passenger/s</font></b>   
+                            <apex:pageblocktable value="{!u.paxDetails}" var="ps">
+                                
+                                <apex:column headerValue="Id" value="{!ps.tripIdentifier}" /> 
+                                <apex:column headerValue="Ride Id" value="{!ps.rideId}" />  
+                                <apex:column headerValue="Name" value="{!ps.name}" />  
+                                <apex:column headerValue="Email" value="{!ps.email}" />  
+                                <apex:column headerValue="Mobile" value="{!ps.mobile}" /> 
+                                <apex:column headerValue="Seat Requested" value="{!ps.seatsRequested}" />  
+                                <apex:column headerValue="Source" value="{!ps.srcAddress}" />  
+                                <apex:column headerValue="Destination" value="{!ps.destAddress}" />   
+                                <apex:column headerValue="Fare" value="{!ps.fare}" /> 
+                                <apex:column headerValue="Date" value="{!ps.ipocDate}"/>
+                            </apex:pageblocktable>
+                        </apex:pageBlockSection>
+                    </apex:repeat>
+                </apex:pageblocksection>
+                
+                <apex:pageBlockSection title="Future Rides - {!FutUsLs.size}" columns="1">
+                    <apex:repeat value="{!FutUsLs}" var="u">
+                        <apex:pageBlockSection title="Trip - {!u.driDetails.ipocDate}" columns="1">
+                            <b>  <font size="2" color="red">Driver</font></b> 
+                            <apex:pageblocktable value="{!u.driDetails}" var="dr">
+                                <apex:column headerValue="Name" value="{!dr.name}" id="naU" />  
+                                <apex:column headerValue="Email" value="{!dr.email}" />  
+                                <apex:column headerValue="Mobile" value="{!dr.mobile}" />  
+                                <apex:column headerValue="Source" value="{!dr.srcAddress}" />  
+                                <apex:column headerValue="Destination" value="{!dr.destAddress}" />  
+                                <apex:column headerValue="Total Seats" value="{!dr.totalSeats}" />  
+                                <apex:column headerValue="Vehicle No" value="{!dr.vehicleNo}" />  
+                                <apex:column headerValue="Vehicle Nmae" value="{!dr.vehicleName}" /> 
+                            </apex:pageblocktable>
+                            
+                            <b>  <font size="2" color="green">Co-Passenger/s</font></b>   
+                            <apex:pageblocktable value="{!u.paxDetails}" var="ps">                               
+                                <apex:column headerValue="Id" value="{!ps.tripIdentifier}" />  
+                                <apex:column headerValue="Name" value="{!ps.name}" />  
+                                <apex:column headerValue="Email" value="{!ps.email}" />  
+                                <apex:column headerValue="Mobile" value="{!ps.mobile}" /> 
+                                <apex:column headerValue="Seat Requested" value="{!ps.seatsRequested}" />  
+                                <apex:column headerValue="Source" value="{!ps.srcAddress}" />  
+                                <apex:column headerValue="Destination" value="{!ps.destAddress}" />   
+                                <apex:column headerValue="Fare" value="{!ps.fare}" /> 
+                                <apex:column headerValue="Date" value="{!ps.ipocDate}"/>
+                            </apex:pageblocktable>
+                        </apex:pageBlockSection>
+                    </apex:repeat>
+                </apex:pageblocksection>
+            </apex:pageBlock>
+        </apex:outputpanel>        
+    </apex:form>    
+</apex:page>

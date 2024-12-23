@@ -1,0 +1,69 @@
+.container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.header {
+    font-weight: bold;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-table th, .custom-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+.button {
+    margin-top: 10px;
+    padding-bottom:3px;
+}
+
+.vertical-table {
+    border-collapse: collapse;
+    width: 50%;
+	margin-left: 18%;
+}
+
+.viewContainer {
+}
+
+.vertical-table th, .vertical-table td {
+    border: 1px solid #0176d3;
+    text-align: left;
+    padding: 8px;
+	 /* Additional styles */
+    background-color: #f2f2f2; /* Light gray background */
+    font-family: Arial, sans-serif; /* Font family */
+    color: #333; /* Text color */
+    /* Add any other styles you need */
+}
+
+.vertical-table th {
+    background-color: #f2f2f2;
+}
+
+.custom-panel {
+    width: 30px; /* Set the desired width */
+    max-height: 40px; /* Set the desired max-height */
+    overflow-y: auto; /* Add vertical scrollbar if content exceeds max-height */
+}
+
+.vertical-table caption {
+    text-align: center; /* Center alignment */
+    font-weight: bold; /* Bold text */
+    font-size: 19px; /* Adjust the font size as needed */
+    padding: 10px; /* Add padding of 10 pixels on all sides */
+  }
+
+  .bold-center {
+    padding: 12px;
+    font-weight: bold; /* Make the text bold */
+    text-align: center; /* Center-align the text */
+   color: #1d8e0a;
+}

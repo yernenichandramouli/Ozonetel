@@ -1,0 +1,13 @@
+<apex:page controller="BDevQueueController" showHeader="false">
+<apex:form >
+<apex:pageMessages id="msg" /> 
+
+  <apex:pageBlock title="Attach File">
+    <apex:pageblocksection >
+    <apex:inputFile value="{!objAttachment.body}" filename="{!objAttachment.name}" id="file"/>
+    <apex:commandButton value="Save" action="{!attachFile}" style="width:100px" />
+    </apex:pageblocksection>
+  
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

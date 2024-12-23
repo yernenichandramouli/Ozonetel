@@ -1,0 +1,144 @@
+<template>
+<table>
+    <template if:true={csLoad}>
+        <lightning-spinner alternative-text="Loading..." variant="brand" size="small" class="slds-is-absolute">
+        </lightning-spinner>
+    </template>
+    
+    <tr>
+    <td>
+        <lightning-layout>
+            <lightning-layout-item flexibility="auto" padding="around-small" >    
+                <lightning-input type="text" label="Transaction ID" name="TID" 
+                    value={ordId} disabled ></lightning-input>
+            </lightning-layout-item>  
+        </lightning-layout>                      
+    </td>
+    <td>
+        <lightning-layout> 
+        <lightning-layout-item flexibility="auto" padding="around-small" >    
+            <lightning-input type="text" label="Trip ID" name="TripID" 
+            value={tripId} disabled ></lightning-input> 
+        </lightning-layout-item>
+    </lightning-layout>
+    </td>          
+</tr>
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item flexibility="auto" padding="around-small" >    
+                <lightning-input type="text" label="Country" name="country" 
+                    value={csRecord.Country__c} disabled ></lightning-input>
+                </lightning-layout-item>            
+        </lightning-layout>        
+    </td>
+    <td>
+    <lightning-layout>
+        <lightning-layout-item flexibility="auto" padding="around-small" >    
+            <lightning-combobox label="Business Type" name="businessType"  onchange={handleBusinessTypeChange}
+                options={businessTypeValues} value={csRecord.Business_Type__c}></lightning-combobox>
+        </lightning-layout-item>
+    </lightning-layout>
+    </td>
+</tr> 
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item flexibility="auto" padding="around-small" >    
+                <lightning-combobox label="Status" name="status" required="required" onchange={handleStatusChange}
+                    options={statusValues} placeholder="--None--" value={csRecord.Status}></lightning-combobox>
+            </lightning-layout-item>            
+        </lightning-layout>    
+    </td>
+    <td>
+        <lightning-layout>
+        <lightning-layout-item flexibility="auto" padding="around-small" >    
+            <lightning-combobox label="Issue Type" name="issue" required="required" onchange={IssueTypePickListValues}
+                options={issueTypeValuesA} placeholder="--None--" value={selectedCountry}></lightning-combobox>
+        </lightning-layout-item>
+    </lightning-layout>
+    </td>
+</tr>
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item flexibility="auto" padding="around-small" >    
+                <lightning-combobox label="Sub Issue Type" name="subIssue" onchange={handleSubIssueTypeChange}
+                    options={dependentValues} placeholder="--None--" value={selectedState} disabled={isEmpty}>
+                </lightning-combobox>
+            </lightning-layout-item>            
+        </lightning-layout>    
+    </td>
+    <td>
+    <lightning-layout>
+        <lightning-layout-item flexibility="auto" padding="around-small" >    
+            <lightning-combobox label="Priority" name="Priority" onchange={handlePriorityChange}
+            options={priorityValues}  value={csRecord.priority}>
+        </lightning-combobox>
+        </lightning-layout-item>
+    </lightning-layout>
+    
+    </td>
+</tr> 
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item flexibility="auto" padding="around-small" >    
+                <lightning-input type="checkbox" label="Does Customer Require CallBack?" onchange={handleCBRChange}
+                    value={csRecord.Does_Customer_Require_CallBack__c}>
+                </lightning-input>
+            </lightning-layout-item>            
+        </lightning-layout>    
+    </td>
+    <td>
+    <lightning-layout>
+        <lightning-layout-item flexibility="auto" padding="around-small" >    
+            <lightning-combobox label="Case Origin" name="caseOrigin" required="required" onchange={handleCaseOriginChange}
+                options={caseOriginValues}  value={csRecord.Case_origin}>
+            </lightning-combobox>
+        </lightning-layout-item>
+    </lightning-layout>    
+    </td>
+</tr> 
+<tr>
+    <td>
+        <lightning-layout horizontal-align=" " >
+            <lightning-layout-item flexibility="auto" padding="around-small" >    
+                <template if:true={csRecord.Does_Customer_Require_CallBack__c}>    
+                    <lightning-layout>
+                        <lightning-layout-item flexibility="auto" padding="around-small" >    
+                            <lightning-input type="text" label="Call Back By (Number of hours)" onchange={handleCBTChange}
+                                checked={csRecord.Call_Back_Time__c}>
+                            </lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>    
+                    </template>
+                
+            </lightning-layout-item>            
+        </lightning-layout>    
+    </td>
+    <td>
+    </td>
+</tr> 
+</table>
+<lightning-textarea label="Description" name="description" onchange={handleDescriptionChange}
+value={csRecord.Description}>
+</lightning-textarea>
+
+<lightning-button label="Save" onclick={handleSave} disabled={saveBt} variant="brand"></lightning-button>
+
+<!---<template if:true={showPopup}>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">        
+            <p style="color: red;">Open case is already exist for this transaction, Please write description here for why you want to create one more case.</p>    
+            <lightning-textarea label="Description" name="description" onchange={handleDescriptionPChange}
+            value={csRecord.Description_p}>
+            </lightning-textarea>          
+            <lightning-button label="Proceed" onclick={handleProceed} variant="brand"></lightning-button>  
+            <lightning-button label="Cancel" onclick={handleCancel} variant="Neutral"></lightning-button>  
+        </div>
+        </div>
+    </section>
+</template>  -->
+</template>

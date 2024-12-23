@@ -1,0 +1,114 @@
+<template>
+              
+                   <center><c-activity-details sfrecord-id2={sfrecordId}></c-activity-details></center>
+                               
+       <lightning-card title="Additional Services" icon-name="custom:custom18">
+              <template if:true={showform}>
+
+                     <div class="slds-grid slds-grid_align-space slds-box">
+                            <div class="slds-col slds-size_1-of-2">
+                                   <h1 class="label">Activity Name: <lightning-formatted-text value={recDetails.fields.Activity_Name__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label"> Voucher Id: <lightning-formatted-text value={recDetails.fields.Voucher_Id__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label">Amount: <lightning-formatted-number value={recDetails.fields.Amount__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-number>
+                                   </h1></br>
+                                   <h1 class="label">Voucher Realize Date: <lightning-formatted-date-time value={recDetails.fields.Voucher_Realization_Date__c.value} year="numeric" day="2-digit" month="long" hour="2-digit" minute="2-digit" class="slds-text-heading_small">
+                                          </lightning-formatted-date-time>
+                                   </h1></br>
+                                   <h1 class="label">Purchase Date: <lightning-formatted-date-time value={recDetails.fields.Date_Of_Purchase__c.value} year="numeric" day="2-digit" month="long" hour="2-digit" minute="2-digit" class="slds-text-heading_small">
+                                          </lightning-formatted-date-time>
+                                   </h1></br>
+                                   <h1 class="label"> Booking Id: <lightning-formatted-text value={recDetails.fields.Booking_Id__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label"> No of Adults: <lightning-formatted-number value={recDetails.fields.No_of_Adults__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-number>
+                                   </h1></br>
+                                   <h1 class="label">No of Childern: <lightning-formatted-number value={recDetails.fields.No_of_Children__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-number>
+                                   </h1></br>
+                                   <h1 class="label">Service Provider Name: <lightning-formatted-text value={recDetails.fields.Service_Provider_Name__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label">Service Provider Id: <lightning-formatted-text value={recDetails.fields.Service_Provider_Id__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+
+
+                            </div>
+
+                            <div class="slds-col slds-size_1-of-2">
+                                   <h1 class="label">Transcation Status: <lightning-formatted-text value={recDetails.fields.Transaction_Status__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label"> Activity Type: <lightning-formatted-text value={recDetails.fields.Activity_Type__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label"> Activity Uuid: <lightning-formatted-text value={recDetails.fields.Activity_uuid__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label"> Order Id: <lightning-formatted-text value={recDetails.fields.Order_Id__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label">Order Uuid: <lightning-formatted-text value={recDetails.fields.OrderUuid__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label">Discount Value: <lightning-formatted-number value={recDetails.fields.Discount_Value__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-number>
+                                   </h1></br>
+                                   <h1 class="label">Number Of Vouchers: <lightning-formatted-number value={recDetails.fields.No_of_vouchers__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-number>
+                                   </h1></br>
+                                   <h1 class="label"> PNRs: <lightning-formatted-text value={recDetails.fields.PNRs__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label">Sales Channel: <lightning-formatted-text value={recDetails.fields.Sales_Channel__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+
+                                   <h1 class="label">Transcation id: <a href={finalReUrl} target="_blank">{recDetails.fields.Order_Item_id__c.value}</a>
+                                                                          </h1></br>
+
+
+                            </div>
+
+                     </div>
+                     <h3 class="slds-section__title">Customer Details</h3>
+                     <div class="slds-grid slds-grid_align-space slds-box">
+
+                            <div class="slds-col slds-size_1-of-2">
+                                   <h1 class="label">Booking User Name: <lightning-formatted-text value={recDetails.fields.Booking_user_Name__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label"> Booking User EmailId: <lightning-formatted-email value={recDetails.fields.Booking_User_Email__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-email>
+                                   </h1></br>
+                                   <h1 class="label"> Booking User MobileNo: <lightning-formatted-phone value={recDetails.fields.Booking_User_Mobile__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-phone>
+                                   </h1></br>
+                                   <h1 class="label"> Booking UserId: <lightning-formatted-text value={recDetails.fields.Booking_UserUserid__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                   <h1 class="label">Customer Name: <lightning-formatted-text value={recDetails.fields.Customer_Name__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-text>
+                                   </h1></br>
+                                   <h1 class="label">Customer EmailId: <lightning-formatted-email value={recDetails.fields.Customer_Email_id__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-email>
+                                   </h1></br>
+                                   <h1 class="label">Customer MobileNo: <lightning-formatted-phone value={recDetails.fields.Customer_Mobile_No__c.value} class="slds-text-heading_small">
+                                          </lightning-formatted-phone>
+                                   </h1></br>
+                            </div>
+                     </div>
+
+
+              </template>
+       </lightning-card>
+
+</template>

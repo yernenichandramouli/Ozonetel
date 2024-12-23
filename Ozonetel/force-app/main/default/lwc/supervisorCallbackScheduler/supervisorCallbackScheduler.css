@@ -1,0 +1,43 @@
+/* calendar.css */
+.calendar {
+    padding: 20px;
+    background-color: #f4f6f9;
+    border: 1px solid #d8dde6;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+}
+
+
+.day-view {
+    padding: 20px;
+}
+
+.slots {
+    display: flex;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+.slots div {
+    margin: -4px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    width: 25%;
+    text-align: center;
+}
+
+  .available {
+        background-color: green;
+    }
+
+    .partially-booked {
+        background-color: yellow;
+    }
+
+    .fully-booked {
+        background-color: red;
+    }

@@ -1,0 +1,175 @@
+<!--
+* (c) 2017 RedBus
+*
+* Name           : PaymentItemsPage
+* Created Date   : 19 Dec 2018
+* Created By     : Sreenivas M
+* Purpose        : VF page to display all payment item details.
+*
+-->
+<apex:page extensions="PaymentItemsCntrl" standardController="Order_Items__c" showHeader="false" sidebar="false" lightningStylesheets="true">
+    <!-- <apex:slds /> -->
+    <apex:form >
+        
+        <apex:actionFunction name="doInit" action="{!getPaymentDetails}" rerender="teb,errMsg"/>
+        
+        <apex:outputPanel >
+            <script>
+            window.onload=function()
+            {
+                doInit();
+                
+            };
+            </script>
+        </apex:outputPanel>
+        <apex:pageMessages id="errMsg"></apex:pageMessages>
+        <apex:pageBlock title="Payment Details For TripId -{!orderId}" id="teb">
+            
+            <apex:pageBlockTable value="{!listPayItems}" var="wrps" columns="11">
+                <apex:column value="{!wrps.id}" headerValue="PO No"/>
+                <apex:column value="{!wrps.payment_system}" headerValue="Payment System"/>
+                <apex:column value="{!wrps.payment_system_ref_no}" headerValue="Payment/Offer Code Ref"/>
+                <apex:column value="{!wrps.amount_payable_currency} {!wrps.amount_payable_value}" headerValue="Transaction Amount"/>
+                <apex:column value="{!wrps.pgName}" headerValue="PG Type"/>
+                <apex:column headerValue="RB PG Ref Id" value="{!wrps.PgRefNo}"/>
+                <apex:column value="{!wrps.payment_system_ref_no}" headerValue="PG Reference ID"/>
+                <apex:column value="{!wrps.payment_status}" headerValue="Payment Status"/>
+                <apex:column value="{!wrps.latestPgStatus}" headerValue="Payment Latest Status"/>
+                <apex:column value="{!wrps.guid}" headerValue="Payment UUID"/>
+                <apex:column headerValue="IsOffline"><apex:inputCheckbox value="{!wrps.isOffline}" disabled="true"/></apex:column>
+                
+            </apex:pageBlockTable>
+            
+            <apex:outputpanel rendered="{!upiBts}">
+                <center>
+                    
+                    <apex:actionStatus id="loadStatus" >
+                        <apex:facet name="start" >
+                            <img src="/img/loading.gif" />
+                            <apex:commandButton value="Fetching details..." style="width:200px" disabled="true" status="loadStatus"/>                                       
+                        </apex:facet>
+                        <apex:facet name="stop">
+                            <apex:commandButton value="Refund Attempts & Status" style="width:200px" action="{!RefundAteempts}" rerender="refPb" status="loadStatus" >                   
+                            </apex:commandButton>
+                        </apex:facet>
+                    </apex:actionStatus>    
+                    
+                    <apex:commandButton value="Process UPI Refund" style="width:200px"  action="{!processUPI}" reRender="upr"/>
+                </center>
+            </apex:outputpanel>
+        </apex:pageBlock>
+        
+        <apex:outputpanel id="refPb">
+            <apex:pageBlock title="Refund Attempts"  rendered="{!upiBts}">
+                
+                <apex:pageBlockTable value="{!refundStatusLs.data}" var="ref" columns="11" >
+                    <apex:column value="{!ref.orderId}" headerValue="Order Id"/>
+                    <apex:column value="{!ref.refId}" headerValue="Ref Id"/>
+                    <apex:column value="{!ref.refundStatus}" headerValue="Refund Status"/>
+                    <apex:column value="{!ref.type}" headerValue="Type"/>
+                    <apex:column value="{!ref.amount}" headerValue="Amount"/>
+                    <apex:column value="{!ref.processedTime}" headerValue="Processed Time"/>
+                    <apex:column value="{!ref.processedBy}" headerValue="Processed By"/>
+                    <apex:column value="{!ref.comment}" headerValue="Comment"/>
+                    <apex:column value="{!ref.transactionId}" headerValue="PG Ref Id"/>
+                </apex:pageBlockTable>       
+            </apex:pageBlock>
+        </apex:outputpanel>
+        
+        <apex:outputpanel id="upr">
+            <apex:pageblock rendered="{!upiRefAccess}">
+                You don't have permission to process UPI refund!!
+            </apex:pageblock>
+            
+            <apex:pageblock rendered="{!upieb}">
+                <apex:sectionHeader title="UPI Refund" subtitle="Process UPI Refunds"/>
+                <apex:pageMessages id="msg"/>
+                <apex:pageblocksection columns="1" title="Payment Status Check" id="ps" collapsible="false">
+                    <apex:pageBlockSectionItem >
+                        VPA  <apex:inputText value="{!vpa}" disabled="{!disInputs}"/>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageBlockSectionItem rendered="{!if(refAmount!=null,true,false)}" >
+                        
+                        Refund Amount   <apex:outputText value="{!refAmount}" />
+                        
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem rendered="{!if(refAmount==null,true,false)}">
+                        
+                        Refund Amount   <apex:inputText value="{!refAmount}"/>
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageBlockSectionItem >
+                        PG Transaction ID <apex:selectList value="{!pgTransactionId}" size="1" multiselect="false" disabled="{!pgTranId}">
+                        <apex:actionSupport event="onchange" action="{!RefundAmount}" reRender="upr"/>
+                        <apex:selectOptions value="{!rbPGRefIds}" />
+                        
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        .   <apex:outputpanel >
+                        <apex:actionStatus id="loadStatus" >
+                            <apex:facet name="start" >
+                                <apex:commandButton value="Processing..." style="width:150px"  disabled="true" status="loadStatus"/>                                       
+                            </apex:facet>
+                            <apex:facet name="stop">
+                                <apex:commandButton value="Check Payament Status" style="width:150px" action="{!RefundStatusCheck}"  disabled="{!disInputs}" reRender="msg,ps,pr" status="loadStatus">                                                  
+                                </apex:commandButton>
+                            </apex:facet>
+                        </apex:actionStatus>    
+                        </apex:outputpanel>
+                        <!--<apex:commandButton  value="Check Payament Status" action="{!RefundStatusCheck}"  disabled="{!disInputs}" style="width:150px" reRender="msg,ps,pr"/>-->
+                    </apex:pageBlockSectionItem>
+                </apex:pageblocksection>
+                <apex:outputpanel id="pr">
+                    <!-- rendered="{!enableRefund}" -->
+                    <apex:pageblocksection columns="1" title="Process Refund"  rendered="{!enableRefund}">
+                        <apex:pageBlockSectionItem >
+                            VPA  <apex:outputtext value="{!vpa}"/> 
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            Refund Amount <apex:outputtext value="{!refAmount}"/> 
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            PG Transaction ID  <apex:outputtext value="{!pgTransactionId}"/> 
+                        </apex:pageBlockSectionItem>
+                        <!--   <apex:pageBlockSectionItem >
+PG Order Id  <apex:inputText value="{!pgOrderId}"/>
+</apex:pageBlockSectionItem>-->
+                        <apex:pageBlockSectionItem >
+                            PG Order Id     <apex:selectList value="{!pgOrderId}" size="1" multiselect="false">
+                            <apex:selectOptions value="{!pgOrderIdVals}"/>
+                            </apex:selectList>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            Trex Order Item id  <apex:outputText value="{!trexOrderItmId}"/>
+                        </apex:pageBlockSectionItem>
+                        
+                        <apex:pageBlockSectionItem >
+                            Processing By <apex:outputtext value="{!uObj.email}"/>
+                        </apex:pageBlockSectionItem>
+                        <br/>
+                        <apex:pageBlockSectionItem >
+                            .  <apex:outputpanel >
+                            <apex:actionStatus id="loadStatus" >
+                                <apex:facet name="start" >
+                                    <apex:commandButton value="Processing..." style="width:150px"  disabled="true" status="loadStatus"/>                                       
+                                </apex:facet>
+                                <apex:facet name="stop">
+                                    <apex:commandButton value="Refund" style="width:150px" action="{!RefundInitiate}"  disabled="{!refInitBt}" reRender="msg,ps,pr" status="loadStatus">                                                  
+                                    </apex:commandButton>
+                                </apex:facet>
+                            </apex:actionStatus>    
+                            </apex:outputpanel>
+                            <!--<apex:commandButton value="Refund" action="{!RefundInitiate}" style="width:150px" reRender="msg"/>-->
+                        </apex:pageBlockSectionItem>
+                    </apex:pageblocksection>
+                </apex:outputpanel>   
+            </apex:pageblock>
+        </apex:outputpanel>
+    </apex:form>
+</apex:page>

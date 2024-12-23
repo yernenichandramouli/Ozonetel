@@ -1,0 +1,330 @@
+<apex:component access="global" controller="BusCAgeingRefundBreakupCntrl">
+    <apex:attribute name="displayAgeingRefBreakup" description="To Display Ageing Refund Breakup" type="Boolean" assignTo="{!showAgeingRefBreakup}"/>
+    <apex:attribute name="displayZeroDayBreakup" description="To Display Zero Day Breakup" type="Boolean" assignTo="{!showZeroDayBreakup}"/>
+    <apex:attribute name="displayRecoverableBreakup" description="To Display Recoverable Amount Breakup" type="Boolean" assignTo="{!showRecoveredBreakup}"/>
+    <apex:attribute name="displayNotesRecoveredBreakup" description="To Display Closed Cases Recoverable Amount Breakup By Notes" type="Boolean" assignTo="{!showNotesRecoveredBreakup}"/>
+    <apex:attribute name="displayMTDRefBreakup" description="To Display MTD Bus Cancellation Status Breakup" type="Boolean" assignTo="{!showMTDCasesBreakup}"/>
+    <apex:attribute name="displayMTDAgeingRefBreakup" description="To Display MTD Ageing Refund Bus Cancellation % between Ops and BD Team" type="Boolean" assignTo="{!showMTDAgeingCasesBreakup}"/>
+    <apex:attribute name="displayDailyBotMetrics" description="To Display daily bot mertics" type="Boolean" assignTo="{!showBotMetrics}"/>
+    
+    <!-- Stat--Ageing Refund Breakup By Status -->
+        <apex:outputPanel rendered="{!showAgeingRefBreakup}">
+            <table border="1" cellpadding="4" cellspacing="0" allign="center">
+                <thead bgcolor="mediumspringgreen">    
+                    <tr>
+                        <th>Case Status</th> 
+                        <th>Records Count</th>
+                        <th>Total Ticket Amount</th>
+                        <th>Contribution %</th>
+                       
+                    </tr>
+                </thead>        
+                <tbody  style="font-family: Arial; font-size: 9pt;">
+                    <apex:repeat value="{!StatusBreakup}" var="cs">
+                        <tr>
+                            <td>{!cs['csStatus']}</td>
+                            <td>{!cs['recCount']}</td>
+                            <td>{!cs['total']}</td>
+                        <!--    <td><apex:outputText value="{!cs['recCount']/totalRecCount}%"/></td> -->
+                            <td>
+                                <apex:outputText value="{0, number, 0.00%}">
+                                       <apex:param value="{!cs['recCount']/totalRecCount}"/>
+                                 </apex:outputText>
+                             </td>                                       
+                        </tr>       
+                    </apex:repeat>
+                     <tr>
+                        <th bgcolor="mediumspringgreen">Grand Total</th>
+                        <td><B>{!totalRecCount}</B></td>
+                        <td><B>{!totalAmount}</B></td>
+                        <td><B>100.00%</B></td>
+                    </tr>
+                </tbody>
+              <!--  <tfooter>
+                    <tr>
+                        <th bgcolor="mediumspringgreen">Grand Total</th>
+                        <td><B>{!totalRecCount}</B></td>
+                        <td><B>{!totalAmount}</B></td>
+                        <td><B>100.00%</B></td>
+                    </tr>
+                </tfooter>   -->
+            </table>
+        </apex:outputPanel>
+    <!-- End--Ageing Refund Breakup By Status -->
+    
+    <!-- Stat--Zero Day Cases Breakup By Status -->
+        <apex:outputPanel rendered="{!showZeroDayBreakup}">
+        <br></br>
+      <!--  <center>Zero Day Cases Inflow Status Breakup</center> -->
+
+            <table border="1" cellpadding="4" cellspacing="0" allign="center">
+                <thead bgcolor="mediumspringgreen">    
+                    <tr>
+                        <th>Case Status</th> 
+                        <th>Records Count</th>
+                        <th>Contribution %</th>
+                       
+                    </tr>
+                </thead>        
+                <tbody  style="font-family: Arial; font-size: 9pt;">
+                    <apex:repeat value="{!ZeroDayBreakup}" var="cs">
+                        <tr>
+                            <td>{!cs['csStatus']}</td>
+                            <td>{!cs['recCount']}</td>
+                            <td>
+                                <apex:outputText value="{0, number, 0.00%}">
+                                       <apex:param value="{!cs['recCount']/totalZeroDayRecCount}"/>
+                                 </apex:outputText>
+                             </td>                                       
+                        </tr>       
+                    </apex:repeat>
+                     <tr>
+                        <th bgcolor="mediumspringgreen">Grand Total</th>
+                        <td><B>{!totalZeroDayRecCount}</B></td>
+                        <td><B>100.00%</B></td>
+                    </tr>
+                </tbody>
+            </table>
+        </apex:outputPanel>
+    <!-- End--Zero Day Cases Breakup By Status -->
+    
+    <!-- Stat--Ageing Refund Recoverable Amount Breackup By Status -->
+        <apex:outputPanel rendered="{!showRecoveredBreakup}">
+        <br></br>
+      <!--  <center>Auto Refunded Cases Status Breakup</center> -->
+            <table border="1" cellpadding="4" cellspacing="0" allign="center">
+                <thead bgcolor="mediumspringgreen">    
+                    <tr>
+                        <th>Case Status</th> 
+                        <th>Records Count</th>
+                        <th>Total Ticket Amount</th>
+                        <th>Contribution %</th>
+                       
+                    </tr>
+                </thead>        
+                <tbody  style="font-family: Arial; font-size: 9pt;">
+                    <apex:repeat value="{!RecoveredBreakup}" var="cs">
+                        <tr>
+                            <td>{!cs['csStatus']}</td>
+                            <td>{!cs['recCount']}</td>
+                            <td>{!cs['total']}</td>
+                            <td>
+                                <apex:outputText value="{0, number, 0.00%}">
+                                       <apex:param value="{!cs['recCount']/totalRecovrableRecCount}"/>
+                                 </apex:outputText>
+                             </td>                                       
+                        </tr>       
+                    </apex:repeat>
+                     <tr>
+                        <th bgcolor="mediumspringgreen">Grand Total</th>
+                        <td><B>{!totalRecovrableRecCount}</B></td>
+                        <td>
+                            <B>
+                                
+                                <apex:outputText value="{0, number, 0.00}">
+                                       <apex:param value="{!totalRecovrableAmount}"/>
+                                 </apex:outputText>
+                            </B>
+                        </td>
+                        <td><B>100.00%</B></td>
+                    </tr>
+                </tbody>
+            </table>
+        </apex:outputPanel> 
+    <!-- End--Ageing Refund Recoverable Amount Breackup By Status -->
+    
+    <!-- Stat--Ageing Refund Recoverable Amount Breakup For Closed Cases By Notes -->
+        <apex:outputPanel rendered="{!showNotesRecoveredBreakup}">
+        <br></br>
+      <!--  <center>Bus Operator Status For Closed Cases</center> -->
+        
+            <table border="1" cellpadding="4" cellspacing="0" allign="center">
+                <thead bgcolor="mediumspringgreen">    
+                    <tr>
+                        <th>BO/BD Status</th> 
+                        <th>Records Count</th>
+                        <th>Total Ticket Amount</th>
+                        <th>Contribution %</th>
+                       
+                    </tr>
+                </thead>        
+                <tbody  style="font-family: Arial; font-size: 9pt;">
+                    <apex:repeat value="{!NotesRecoveredBreakup}" var="cs">
+                        <tr>
+                            <td>{!cs['csNotes']}</td>
+                            <td>{!cs['recCount']}</td>
+                            <td>{!cs['total']}</td>
+                            <td>
+                                <apex:outputText value="{0, number, 0.00%}">
+                                       <apex:param value="{!cs['recCount']/totalNotesRecovrableRecCount}"/>
+                                 </apex:outputText>
+                             </td>                                       
+                        </tr>       
+                    </apex:repeat>
+                     <tr>
+                        <th bgcolor="mediumspringgreen">Grand Total</th>
+                        <td><B>{!totalNotesRecovrableRecCount}</B></td>
+                        <td>
+                            <B>
+                                <apex:outputText value="{0, number, 0.00}">
+                                       <apex:param value="{!totalNotesRecoverableAmount}"/>
+                                 </apex:outputText>
+                            </B>  </td>                         
+                        <td><B>100.00%</B></td>
+                    </tr>
+                </tbody>
+            </table>
+        </apex:outputPanel> 
+    <!-- End--Ageing Refund Recoverable Amount Breakup For Closed Cases By Notes -->
+    
+    <!-- Stat--MTD Open Cases Breakup By Status -->
+        <apex:outputPanel rendered="{!showMTDCasesBreakup}">
+        <br></br>
+            <table border="1" cellpadding="4" cellspacing="0" allign="center">
+                <thead bgcolor="mediumspringgreen">    
+                    <tr>
+                        <th>Case Status</th> 
+                        <th>Records Count</th>
+                        <th>Contribution %</th>
+                       
+                    </tr>
+                </thead>        
+                <tbody  style="font-family: Arial; font-size: 9pt;">
+                    <apex:repeat value="{!MTDOpenCasesBreakup}" var="cs">
+                        <tr>
+                            <td>{!cs['csStatus']}</td>
+                            <td>{!cs['recCount']}</td>
+                            <td>
+                                <apex:outputText value="{0, number, 0.00%}">
+                                       <apex:param value="{!cs['recCount']/totalMTDOpenRecCount}"/>
+                                 </apex:outputText>
+                             </td>                                       
+                        </tr>       
+                    </apex:repeat>
+                     <tr>
+                        <th bgcolor="mediumspringgreen">Grand Total</th>
+                        <td><B>{!totalMTDOpenRecCount}</B></td>
+                        <td><B>100.00%</B></td>
+                    </tr>
+                </tbody>
+            </table>
+        </apex:outputPanel>
+    <!-- End--MTD Open Cases Breakup By Status -->
+    
+    <!-- Stat--MTD All Cases Breakup By Status -->
+        <apex:outputPanel rendered="{!showMTDCasesBreakup}">
+        <br></br>
+        <p>Below is the break up of MTD Open and Closed bus cancellation cases which has flown in through different sources.</p>
+            <table border="1" cellpadding="4" cellspacing="0" allign="center">
+                <thead bgcolor="mediumspringgreen">    
+                    <tr>
+                        <th>Case Status</th> 
+                        <th>Records Count</th>
+                        <th>Contribution %</th>
+                       
+                    </tr>
+                </thead>        
+                <tbody  style="font-family: Arial; font-size: 9pt;">
+                    <apex:repeat value="{!MTDCasesBreakup}" var="cs">
+                        <tr>
+                            <td>{!cs['csStatus']}</td>
+                            <td>{!cs['recCount']}</td>
+                            <td>
+                                <apex:outputText value="{0, number, 0.00%}">
+                                       <apex:param value="{!cs['recCount']/totalMTDRecCount}"/>
+                                 </apex:outputText>
+                             </td>                                       
+                        </tr>       
+                    </apex:repeat>
+                     <tr>
+                        <th bgcolor="mediumspringgreen">Grand Total</th>
+                        <td><B>{!totalMTDRecCount}</B></td>
+                        <td><B>100.00%</B></td>
+                    </tr>
+                </tbody>
+            </table>
+        </apex:outputPanel>
+    <!-- End--MTD All Cases Breakup By Status -->
+    
+    <!-- Stat--MTD Ageing Cases Breakup By BD Team Vs Ops Team -->
+        <apex:outputPanel rendered="{!showMTDAgeingCasesBreakup}">
+        
+        <br></br>
+            <table border="1" cellpadding="4" cellspacing="0" allign="center">
+                <thead bgcolor="mediumspringgreen">    
+                    <tr>
+                        <th>Status</th> 
+                        <th>Records Count</th>
+                        <th>Total Ticket Amount</th>
+                        <th>Contribution %</th>
+                       
+                    </tr>
+                </thead>        
+                <tbody  style="font-family: Arial; font-size: 9pt;">
+                    <apex:repeat value="{!MTDAgeingRecoveredBreakup}" var="cs">
+                        <tr>
+                            <td>{!cs}</td>
+                            <td>{!mapStatusToRecCount[cs]}</td>
+                            <td>{!mapStatusToAmount[cs]}</td>
+                            <td>
+                                <apex:outputText value="{0, number, 0.00%}">
+                                       <apex:param value="{!mapStatusToRecCount[cs]/totalMTDAgeingRecCount}"/>
+                                 </apex:outputText>
+                             </td>                                       
+                        </tr>       
+                    </apex:repeat>
+                     <tr>
+                        <th bgcolor="mediumspringgreen">Grand Total</th>
+                        <td><B>{!totalMTDAgeingRecCount}</B></td>
+                        <td>
+                            <B>
+                                
+                                <apex:outputText value="{0, number, 0.00}">
+                                       <apex:param value="{!totalMTDAgeingRecoverableAmount}"/>
+                                 </apex:outputText>
+                            </B>
+                        </td>
+                        <td><B>100.00%</B></td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        </apex:outputPanel>
+    <!-- End--MTD Ageing Cases Breakup By BDTeam Vs Ops Team-->
+    
+    <!-- Stat--Daily Bot Metrics Report-->
+        <apex:outputPanel rendered="{!showBotMetrics}">
+            <table border="1" cellpadding="4" cellspacing="0" allign="center">
+                <thead bgcolor="mediumspringgreen" style="font-family: Arial; font-size: 9pt;">    
+                    <tr>
+                        <th>Date</th> 
+                        <th>Unique Users</th>
+                        <th>Total Sessions</th>
+                        <th>Handled By Bot</th>
+                        <th>Transfered To Agent</th>
+                        <th>Directly Connected To Agent</th>
+                        <th>Missed Sessions</th>
+                        <th>% Sessions Ended by Bot</th>
+                                               
+                    </tr>
+                </thead>        
+                <tbody  style="font-family: Arial; font-size: 9pt;">
+                    <apex:repeat value="{!BotBreakup}" var="ms">
+                        <tr>
+                            <td><apex:outputText value="{0,date,dd/MMM/yy}"> <apex:param value="{!ms.Metric_Date__c}"/> </apex:outputText></td>
+                            <td>{!ms.Unique_Users__c}</td>
+                            <td>{!ms.Total_Sessions__c}</td>
+                            <td>{!ms.Handled_By_Bot__c}</td>
+                            <td>{!ms.Transfer_To_Agent__c}</td>
+                            <td>{!ms.Handled_By_Agent__c}</td>
+                            <td>{!ms.Total_Sessions__c- ms.Handled_By_Bot__c-ms.Transfer_To_Agent__c-ms.Handled_By_Agent__c}</td>
+                            <td>{!ms.Ended_By_Bot__c}</td>
+                                               
+                        </tr>       
+                    </apex:repeat>
+                     
+                </tbody>
+              </table>
+        </apex:outputPanel>
+    <!-- End--Daily Bot Metrics Report-->
+</apex:component>

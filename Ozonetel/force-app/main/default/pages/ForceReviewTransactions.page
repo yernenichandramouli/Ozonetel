@@ -1,0 +1,81 @@
+<apex:page controller="ForceReviewController" docType="html-5.0" showHeader="false">
+    <apex:form >
+        <apex:pageMessages escape="false" id="msg"/>          
+        
+        <apex:pageblock title="Ratings & Reviews">
+            
+            <apex:pageblocksection columns="4">
+                <apex:pageblocksectionItem >
+                    From Date
+                    <apex:input value="{!fromDate}" type="date"/>
+                </apex:pageblocksectionItem>
+                <apex:pageblocksectionItem >
+                    To Date
+                    <apex:input value="{!toDate}" type="date"/>
+                    
+                </apex:pageblocksectionItem>
+                <apex:pageblocksectionItem >
+                   Country <apex:selectList value="{!country}" size="1">
+                     <apex:selectOption itemLabel="SG" itemValue="SG"></apex:selectOption>
+                     <apex:selectOption itemLabel="MY" itemValue="MY"></apex:selectOption>                   
+               </apex:selectList>
+                
+                </apex:pageblocksectionItem>
+                
+                <apex:commandButton value="Search" status="statusSaveTrip"  action="{!getTransactions}" reRender="ThePage,msg" style="width:100px"/>
+                <apex:actionStatus id="statusSaveTrip" stopText="">
+                    <apex:facet name="start">
+                        <div>
+                            <div class="popupBackground" />
+                            <div class="PopupPanel">
+                                <table border="0" width="100%" height="100%">
+                                    
+                                    <tr>
+                                        <td align="center"><img src="{!$Resource.Loading}"><font color="red" size="3"><i>Please wait while we are processing your request...</i></FONT></img></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionStatus>
+    </apex:pageblocksection><br/><br/>
+    
+    <apex:pageBlock id="ThePage">
+        
+        <apex:pageBlockSection columns="1">
+            
+            <apex:pageBlockTable value="{!reqVFList}" var="res" >  
+                <apex:column headerValue="TIN">
+                    <apex:commandLink action="{!FRPage}" value="{!res.TIN}" target="_blank" >
+                        <apex:param name="h" value="{!res.TIN}" assignTo="{!tinNo}"/>
+                    </apex:commandLink>
+                    
+                </apex:column>
+                
+                <apex:column value="{!res.TIN}" headerValue="TIN"/>
+                <apex:column headerValue="Source" value="{!res.SourceName}"/>
+                <apex:column headerValue="Destination" value="{!res.DestinationName}"/>
+                <apex:column headerValue="Mobile No" value="{!res.mobileNo}"/>
+                <apex:column headerValue="DOJ" value="{!res.DateOfJourney}"/> 
+            </apex:pageBlockTable>
+          
+       <!--   <apex:repeat value="{!reqWrapperList}" var="res">
+           <a >{!res.TIN}</a>
+           <a >{!res.SourceName}</a>
+           <a >{!res.DestinationName}</a>
+           <a >{!res.mobileNo}</a>
+           <a >{!res.DateOfJourney}</a>
+           
+          </apex:repeat>-->
+            
+            <apex:outputPanel >
+                <apex:commandButton value="<<Previous" action="{!previous}" rendered="{!hasPrevious}" reRender="ThePage" style="width:100px" />
+                <apex:commandButton value="Next >>" action="{!next}" rendered="{!hasNext}" reRender="ThePage" style="width:100px"/>
+            </apex:outputPanel>  
+            
+        </apex:pageBlockSection>
+    </apex:pageBlock>    
+    
+</apex:pageblock>
+</apex:form>
+</apex:page>

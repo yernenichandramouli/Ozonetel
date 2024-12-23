@@ -1,0 +1,112 @@
+/* Styling for the main container */
+.slds-p-around_medium {
+    padding: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
+    border: 1px solid #dcdcdc; /* Adding border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for better appearance */
+    background-color: #f9f9f9; /* Light background */
+}
+
+/* Styling for the lightning-combobox (country picklist) */
+lightning-combobox {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+lightning-combobox .slds-form-element__control {
+    border: 1px solid #dcdcdc; /* Adding a border */
+    border-radius: 6px;
+    padding: 0.5rem;
+}
+
+/* Styling for the phone and email inputs */
+lightning-input {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+lightning-input .slds-input {
+    border: 1px solid #dcdcdc; /* Adding a border */
+    border-radius: 6px;
+    padding: 0.5rem;
+    font-size: 0.9rem; /* Reducing font size */
+}
+
+/* Styling for the submit button */
+lightning-button {
+    display: block;
+    width: 100%;
+    background-color: #0070d2;
+    color: white;
+    padding: 0.75rem; /* Reduced padding for smaller button */
+    border-radius: 6px; /* Rounded button */
+    font-size: 0.9rem; /* Reduced font size */
+    font-weight: bold;
+    border: 1px solid #005bb5;
+}
+
+lightning-button:hover {
+    background-color: #005bb5;
+}
+
+/* Styling the labels */
+.lightning-combobox, .lightning-input {
+    font-size: 0.85rem; /* Smaller font size for labels */
+}
+
+.slds-p-around_medium h3 {
+    text-align: center;
+    font-size: 1.25rem; /* Title font size */
+    margin-bottom: 1rem;
+}
+
+/* Table styles */
+/* Table container */
+.response-table-container {
+    margin-top: 2rem;
+    border: 1px solid #e0e0e0;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.response-table-container h3 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+/* Table styles */
+.response-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.response-table th, .response-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.response-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.response-table td {
+    font-size: 0.9rem;
+}
+
+.response-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Loading Spinner */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.5rem;
+}

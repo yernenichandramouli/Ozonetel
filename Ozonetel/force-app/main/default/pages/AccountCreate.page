@@ -1,0 +1,27 @@
+<apex:page standardController="Account" extensions="AccountCreate">
+ <apex:form >
+ <apex:pageMessages id="msg"/>  
+   <apex:pageblock title="New Account" id="pb">
+     <apex:pageblocksection >
+                   
+           <apex:pageblocksectionItem >
+                    Name
+                    <apex:outputpanel >
+                        <div class = "requiredInput">
+                            <div class = "requiredBlock"></div> <apex:inputtext value="{!acc.lastname}" />
+                        </div>
+                    </apex:outputpanel>
+                </apex:pageblocksectionItem>
+        
+        <apex:inputfield value="{!acc.PersonEmail}" required="true"/>
+        <apex:inputfield value="{!acc.PersonMobilePhone}" required="true"/>
+            
+     </apex:pageblocksection>
+     
+     <apex:pageblockbuttons location="bottom" >
+      <apex:commandButton value="Save" action="{!save}" disabled="{!accbt}" style="width:100px" reRender="msg,pb" />
+     </apex:pageblockbuttons>
+   
+   </apex:pageblock>
+ </apex:form>
+</apex:page>

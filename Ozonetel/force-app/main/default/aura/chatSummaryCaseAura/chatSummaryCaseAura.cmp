@@ -1,0 +1,91 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 11-16-2024
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<aura:component implements="force:hasRecordId,flexipage:availableForAllPageTypes" access="global" controller="OpenAIChatGptCntrl" >
+    <!-- Attribute to store the recordId -->
+    <lightning:conversationToolkitAPI aura:id="conversationToolkit" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="summary" type="String" />
+    <aura:attribute name="channel" type="String" />
+    <aura:attribute name="status" type="String" />
+    <aura:attribute name="issue" type="String" />
+    <aura:attribute name="subIssue" type="String" />
+    <aura:attribute name="loaded" type="Boolean" default="false" />
+    <aura:attribute name="isButtonDisabled" type="Boolean" default="false" />
+
+    <aura:attribute name="isEditable" type="Boolean" default="false" />
+
+    <!-- Handler for the Chat End event -->
+    <aura:handler 
+        event="lightning:conversationChatEnded" 
+        action="{!c.onChatEnded}" 
+    />
+    
+    <!-- Show Spinner when loaded is false -->
+
+
+    <lightning:card title="Create Case" iconName="standard:case">
+        <lightning:spinner aura:id="spinner" alternativeText="Loading..." size="medium" class="{!(v.loaded? 'slds-show': 'slds-hide')}" />
+        <div class="slds-p-around_medium">
+            <!-- Summary Section -->
+            <div class="slds-form-element slds-m-bottom_small">
+                <label for="summaryInput" class="slds-form-element__label">Summary</label>
+                <div class="slds-form-element__control">
+                    <!-- <input id="summaryInput" type="text" value="{!v.summary}" class="slds-input" disabled="{!not(v.isEditable)}" style="width: 100%; height: 150px;"/> -->
+                    <textarea id="summaryInput" class="slds-textarea" value="{!v.summary}" rows="5" 
+                              disabled="{!not(v.isEditable)}"></textarea>
+                </div>
+            </div>
+
+            <!-- Channel, Status, Issue, and SubIssue -->
+            <div class="slds-grid slds-wrap slds-m-bottom_small">
+                <!-- Left Column -->
+                <div class="slds-col slds-size_1-of-2 slds-p-right_x-small">
+                    
+                    <div class="slds-form-element slds-m-bottom_small">
+                        <label for="channelInput" class="slds-form-element__label">Channel</label>
+                        <div class="slds-form-element__control">
+                            <input id="channelInput" type="text" value="{!v.channel}" class="slds-input" disabled="{!not(v.isEditable)}"/>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <label for="statusInput" class="slds-form-element__label">Status</label>
+                        <div class="slds-form-element__control">
+                            <input id="statusInput" type="text" value="{!v.status}" class="slds-input" disabled="{!not(v.isEditable)}" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="slds-col slds-size_1-of-2 slds-p-left_x-small">
+                    <div class="slds-form-element slds-m-bottom_small">
+                        <label for="issueInput" class="slds-form-element__label">Issue</label>
+                        <div class="slds-form-element__control">
+                            <input id="issueInput" type="text" value="{!v.issue}" class="slds-input" disabled="{!not(v.isEditable)}"/>
+                        </div>
+                    </div>
+                    <div class="slds-form-element">
+                        <label for="subIssueInput" class="slds-form-element__label">SubIssue</label>
+                        <div class="slds-form-element__control">
+                            <input id="subIssueInput" type="text" value="{!v.subIssue}" class="slds-input" disabled="{!not(v.isEditable)}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons for Edit/Save -->
+            <div class="slds-grid slds-wrap slds-m-top_small">
+                <div class="slds-col">
+                    <lightning:button label="Edit" variant="neutral" onclick="{!c.toggleEditMode}" />
+                </div>
+                <div class="slds-col">
+                    <lightning:button label="Create" variant="success" onclick="{!c.createCase}" disabled="{!v.isButtonDisabled}" />
+                </div>
+            </div>
+        </div>
+    </lightning:card>
+</aura:component>

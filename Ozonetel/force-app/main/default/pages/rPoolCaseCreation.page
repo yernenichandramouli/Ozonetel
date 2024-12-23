@@ -1,0 +1,32 @@
+<apex:page tabStyle="case"  showheader="false" controller="RPoolTripsCtrl">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:sectionHeader title="rPool" subtitle="Create Case"/>
+            <apex:pageMessages id="msg" />   
+            <apex:pageblockSection >
+                <apex:inputfield value="{!caseObj.Country__c}" html-disabled="true"/>
+                <apex:inputfield value="{!caseObj.Business_Type__c}" html-disabled="true"/>
+                <apex:inputfield value="{!caseObj.Issue_Type__c}" />
+                <apex:inputfield value="{!caseObj.Issue_Sub_Category__c}"/>
+                <apex:inputfield value="{!caseObj.Booking_Mobile_No__c}"/>
+                <apex:inputfield value="{!caseObj.Booking_Email_ID__c}"/>
+                <apex:inputfield value="{!caseObj.Report__c}"/>
+                <apex:inputfield value="{!caseObj.Reason_for_reporting__c}"/>
+                <apex:inputfield value="{!caseObj.Trip_Id_ct__c}"/>
+                <apex:inputfield value="{!caseObj.Description}"/>
+            </apex:pageblockSection>
+            <center>
+                <apex:actionStatus id="loadStatus" >
+                    <apex:facet name="start" >
+                        <img src="/img/loading.gif" />
+                        <apex:commandButton value="Saving..." style="width:100px" disabled="true" status="loadStatus"/>                                       
+                    </apex:facet>
+                    <apex:facet name="stop">
+                        <apex:commandButton value="Save" style="width:100px" action="{!CaseCreate}" rerender="msg" status="loadStatus" disabled="{!caseBt}">                                          
+                        </apex:commandButton>
+                    </apex:facet>
+                </apex:actionStatus>   
+            </center>            
+        </apex:pageBlock>
+    </apex:form> 
+</apex:page>

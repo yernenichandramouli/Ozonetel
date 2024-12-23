@@ -1,0 +1,51 @@
+<!--
+* Name           : CreateCase_NoTransaction
+* Created Date   : 8 June 2017
+* Created By     : Veeramanikanta R
+* Purpose        : Create Case from Account level 
+-->
+<apex:page controller="CreateCaseController" showHeader="false" sidebar="false" lightningStylesheets="true">
+<apex:slds />
+<div class="slds-scope">
+    <apex:form >
+        <apex:pageBlock >
+        <apex:pageMessages id="msg"></apex:pageMessages>
+            <apex:pageblocksection >
+                
+                <apex:outputfield value="{!accObj.PersonEmail}"/>
+                <apex:outputfield value="{!accObj.PersonMobilePhone }"/>
+                <apex:inputField value="{!cObj.Country__c}" html-disabled="true"/>
+                <apex:inputField value="{!cObj.Business_Type__c}" html-disabled="true"/>
+                <apex:inputField value="{!cObj.Issue_Type__c}"/>            
+                <apex:inputField value="{!cObj.Issue_Sub_Category__c}"/>
+                <apex:inputField value="{!cObj.Origin}" required="true"/>
+                <apex:inputField value="{!cObj.Status}" required="true"/>
+                <apex:inputField value="{!cObj.Description}" required="true"/>
+                <apex:inputField value="{!cObj.BO_Code__c}" required="true"/>
+                <apex:inputField value="{!cObj.Operator_Name__c}" required="true"/>
+                <apex:inputField value="{!cObj.DOJ__c}" required="true"/>
+                <apex:inputField value="{!cObj.Time_of_Journey__c}" required="true"/>
+                <apex:inputField value="{!cObj.Via_routes__c}" required="true"/>
+                <apex:inputField value="{!cObj.Primo_Contact__c}" required="true"/>
+                 
+            </apex:pageblocksection>
+            <apex:pageblockbuttons >
+                <apex:commandButton value="Save" action="{!save}" rerender="msg" status="loaderStatus" styleClass="slds-button slds-button_success"/>
+            </apex:pageblockbuttons>
+        </apex:pageBlock>
+    </apex:form>
+     <apex:actionStatus id="loaderStatus">
+        <apex:facet name="start">
+        <div class="demo-only" style="height:6rem">
+        <div class="slds-spinner_container" style="position:fixed">
+            <div role="status" class="slds-spinner slds-spinner_large slds-spinner_brand">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+        </div>
+        </apex:facet> 
+     </apex:actionStatus>
+     </div>
+</apex:page>

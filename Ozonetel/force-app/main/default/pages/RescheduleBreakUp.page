@@ -1,0 +1,16 @@
+<apex:page controller="RescheduleBreakUpController" showheader="false">
+  <apex:form >
+    <apex:pageBlock title="Reschedule BreakUp"> 
+      <apex:pageblocktable value="{!rbResponse}" var="rb" >
+     <!--    <apex:column headerValue="Type" value="{!rb.Type}"/>-->
+          <apex:column headerValue="Name" value="{!rb.DisplayName}"/>
+            <apex:column headerValue="Currency Type" value="{!rb.Value.currencyType}"/>
+            <apex:column headerValue="Amount" value="{!rb.Value.amount}"/>
+             <apex:column headerValue="Pg Type" value="{!rb.pgType}"/>
+       
+      
+      </apex:pageblocktable>
+    
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

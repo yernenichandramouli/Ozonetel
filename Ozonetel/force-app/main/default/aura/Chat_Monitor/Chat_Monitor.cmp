@@ -1,0 +1,8 @@
+<aura:component implements="flexipage:availableForAllPageTypes" controller="ChatMonitorController" access="global" description="Conversation toolkit api sample">
+    <lightning:utilityBarAPI aura:id="UtilityBarEx" />    
+    <lightning:conversationToolkitAPI aura:id="conversationKit" />
+    <aura:handler event="lightning:omniChannelWorkAccepted" action="{! c.onWorkAccepted }"/>
+    <aura:handler event="lightning:conversationAgentSend" action="{! c.onAgentSend}" />
+    <aura:handler event="lightning:conversationChatEnded" action="{! c.onChatEnded}" />
+    <aura:handler event="lightning:conversationNewMessage" action="{!c.onNewMessage}" />    
+</aura:component>

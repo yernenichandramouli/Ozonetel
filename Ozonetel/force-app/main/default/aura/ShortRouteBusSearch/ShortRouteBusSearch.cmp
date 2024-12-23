@@ -1,0 +1,85 @@
+<aura:component controller="ShortRouteBoardingPoints" implements="flexipage:availableForAllPageTypes,force:hasRecordId,force:lightningQuickAction" access="global" >
+    <aura:attribute name="boardingPoints" type="List" default="[]"/>
+    <aura:attribute name="buses" type="List" default="[]" />
+    <aura:attribute name="bp" type="String" default=""/>
+    <aura:attribute name="dp" type="String" default=""/>
+    <aura:attribute name="doj" type="String" default=""/>
+    <aura:attribute name="selectedBp" type="String" default=""/>
+    <aura:attribute name="showErrors" type ="boolean" default="false"/>
+    <aura:attribute name="errorMessage" type="String" />
+    <aura:attribute name="bpList" type="List" default="[]"/>
+    <aura:attribute name="boardingAddress" type="String" default=""/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <!-- create 2 aura handler with waiting and donewaiting events--> 
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/> 
+    
+    <!-- Show the message to ui -->
+    <div class="slds-align_absolute-center">
+        <aura:if isTrue="{!v.showErrors}">
+            <div class="slds-notify slds-notify_toast slds-theme_error">
+                <span class="slds-assistive-text">error</span>
+                <div class="slds-notify__content">                
+                    <h5 class="slds-text-heading_small slds-align_absolute-center">Error Message </h5>                
+                    <p class="slds-align_absolute-center">{!v.errorMessage}</p>            
+                </div>
+            </div>        
+        </aura:if>
+    </div>
+    <br/>
+
+
+    <div class="slds-form-element slds-align_absolute-center">
+        <label class="slds-form-element__label" for="bpComboBox">Select a Boarding Point:</label>
+        <lightning:combobox aura:id="bpComboBox"
+                            name="options" 
+                            placeholder="Boarding Point" 
+                            options="{! v.boardingPoints }" 
+                            onchange="{! c.onChange }" >
+        </lightning:combobox>
+    </div>
+    <div class="slds-align_absolute-center">
+        <aura:if isTrue="{!not(empty(v.boardingAddress))}" >            
+            <p><br/>
+                Boarding Address : {!v.boardingAddress}
+            </p><br/>        
+        </aura:if>            
+        <aura:if isTrue="{! empty(v.selectedBp)}">
+            <div style="height:350px"/>
+        </aura:if>       
+    </div>
+    <div class="slds-align_absolute-center">
+        <aura:if isTrue="{!v.Spinner}">
+            <div aura:id="spinnerId" class="slds-spinner_container">
+                <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </aura:if> 
+        
+    </div> 
+    
+    <aura:iteration items="{!v.buses}" var="bus" indexVar="index">     
+        <div class="slds-align_absolute-center">
+            <lightning:card >
+                <aura:set attribute="title">       
+                    <lightning:icon iconName="custom:custom31" size="small"/>
+                    <b>{!bus.tvs}</b>
+                </aura:set>
+                <div style="background:#f9b1b1 " >
+                    <!--<div class="{!(index%2)? 'slds-theme_info' :'slds-theme_shade'}"> -->
+                    <p class="slds-p-horizontal_small ">
+                        Bus Details
+                        {!bus.sn}<br/>
+                        {!bus.bt}<br/>
+                        Bus ETA: {!bus.p42.Eta} min
+                    </p>
+                </div>
+            </lightning:card> 
+        </div>
+    </aura:iteration> 
+</aura:component>

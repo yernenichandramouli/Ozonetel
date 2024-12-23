@@ -1,0 +1,71 @@
+<template>
+    <template if:true={isLoading} style="height: 200px; position:relative">
+            <lightning-spinner variant="base" size="medium"></lightning-spinner>
+    </template>
+    
+    <div class="c-container">
+        <lightning-layout multiple-rows="true">
+            <lightning-layout-item  size="12">
+                    <lightning-layout-item  size="9">
+                        <div style="background: #fcfcfc;" class="slds-box slds-p-around_none slds-m-top_x-small slds-m-bottom_medium slds-m-horizontal_none">
+                        <!-- To Display Success Message-->
+                            <template if:true={isNotificationSent}>
+                                <b><span style="height:30px;width:150px;font-size:15px;color:#04844b;font-family:Arial;" >{successMessage}</span></b>
+                            </template>
+                        <!-- 1st Row in the layout -->
+                        <!-- To Display Error Message-->
+                            <template if:true={isError}>
+                                <b><span style="color: #a30808;">{errorMessage}</span></b>
+                            </template>
+                        <!-- 1st Row in the layout -->
+                        <!--Spinner-->
+                            
+                        <lightning-layout  multiple-rows="true">
+                            <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="4">
+                                <lightning-input name="booking mobile" type="Phone" label="Booking Mobile Number:" value={bookingNumber} data-field-name="booking_mobile_Number" disabled="true"></lightning-input>
+                            </lightning-layout-item>
+                            <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="4">
+                                <lightning-input type="Email" name="booking email" label="Booking Email Id" value={bookingEmail}  disabled data-field-name="booking_email_id" required ></lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="4">
+                                <lightning-combobox label="Notification Type" data-field-name="notification_type" required options={notificationTypeOptions} onchange={handleOnChange}></lightning-combobox>
+                            </lightning-layout-item> 
+                        </lightning-layout>
+                        <!-- 2nd Row in the layout -->
+                        <lightning-layout  multiple-rows="true">
+                            <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="4">
+                                <lightning-input label="Send to Other Number" data-field-name="send_other_phone" type="checkbox" onchange={handleOnChange}></lightning-input>
+                            </lightning-layout-item> 
+                            <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="4">
+                                <lightning-input label="Send to Other Email" data-field-name="send_other_Email" type="checkbox" onchange={handleOnChange}></lightning-input>
+                            </lightning-layout-item> 
+                            <!-- <div>
+                                <lightning-button label="Send" variant="success" slot="actions" onclick={sendNotoifcation}></lightning-button>
+                            </div>  -->
+                        </lightning-layout>
+                        <!-- 3nd Row in the layout -->
+                        <lightning-layout  multiple-rows="true">
+                            <template if:true={showOtherNumber}>
+                                <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="4">
+                                    <lightning-combobox label="Country Code" data-field-name="country_code" options={countryCodeOptions} onchange={handleOnChange}></lightning-combobox>
+                                </lightning-layout-item> 
+                                <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="4">
+                                    <lightning-input name="other phone" label="Enter Other Number" data-field-name="other_phone" type="Phone" pattern="[0-9]{10}" max-length="10"></lightning-input>
+                                </lightning-layout-item> 
+                            </template>
+                            <template if:true={showOtherEmail}>
+                                <lightning-layout-item padding="around-small" size="12" small-device-size="6" medium-device-size="4" large-device-size="4">
+                                    <lightning-input name="other email" label="Enter Other Email" data-field-name="other_email"  type="Email"></lightning-input>
+                                </lightning-layout-item> 
+                            </template>
+                        </lightning-layout>
+                        <!-- send notification button -->
+                            <div style="padding:0.3rem">
+                                <lightning-button label="Send" class="slds-align_absolute-center slds-p-bottom_medium" variant="success" slot="actions" onclick={sendNotoifcation}></lightning-button>
+                            </div> 
+                        </div>
+                    </lightning-layout-item>
+            </lightning-layout-item>   
+        </lightning-layout>
+    </div>
+</template>

@@ -1,0 +1,103 @@
+<apex:page controller="LoginController" showHeader="false">
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"/>  
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.bootstrapstyle, 'bootstrap-3.3.7-dist/css/bootstrap.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.bootstrapstyle, 'bootstrap-3.3.7-dist/css/strap.css')}"/> 
+    <apex:includeScript value="{!URLFOR($Resource.bootstrapstyle, 'bootstrap-3.3.7-dist/js/bootstrap.min.js')}"/>
+    <apex:composition template="{!$Site.Template}">
+        <apex:define name="body">
+            <style>
+                .Regbtnstyle:hover
+                {
+                background-image:none;
+                background-color:#0c8b80;
+                }
+            </style>
+            <apex:form id="cpb"> 
+                <!--<apex:pageblock id="ref">
+<apex:pageMessages id="msg"/>  
+<apex:pageblocksection columns="1">
+<apex:pageBlockSectionItem>
+User Name <apex:inputText value="{!username}" styleclass="form-control"/>
+</apex:pageBlockSectionItem>
+<apex:pageBlockSectionItem>
+Password <apex:inputSecret value="{!password}" styleclass="form-control"/>
+</apex:pageBlockSectionItem>
+</apex:pageblocksection>
+<apex:pageblockbuttons location="bottom">
+<apex:commandButton value="Sign In" action="{!signIn}" rerender="ref,msg"/>
+</apex:pageblockbuttons>
+
+</apex:pageblock> -->
+                <center>
+                <div class="jumbotron col-lg-6" style="background-color: #f8f8f8;margin-left: 280px;">
+                    <apex:outputPanel id="ref" rendered="{!sp}">
+                        <apex:pageMessages id="msg"/> 
+                        <apex:image url="https://s1.rdbuz.com/trips/images/redBus_logo_red.png" height="100" width="200"/><br/><br/><br/>
+                        <div class="form-group col-md-12">
+                            <label for="User Name" class="col-lg-4" style="color:#446e9b;">User Name &nbsp;<font color="Red">*</font></label>
+                            <div class="col-lg-8">
+                                <apex:inputtext value="{!username}"  label="User Name" styleClass="form-control" html-placeholder="User Name"/> 
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="Password" class="col-lg-4" style="color:#446e9b;">Password &nbsp;<font color="Red">*</font></label>
+                            <div class="col-lg-8">
+                                <apex:inputsecret value="{!password}"  label="Password" styleClass="form-control" html-placeholder="Password"/> 
+                            </div>
+                        </div><br/><br/>
+                        <center>
+                            <br/><br/><br/><br/><apex:commandButton value="Sign In" action="{!signIn}" rerender="ref,msg" styleClass="btn Regbtnstyle btn-default" style="background-image: linear-gradient(#26A69A, #26A69A 50%, #26A69A);background-repeat: no-repeat;color:#ffffff; padding: 3px 12px; font-size:16px;border: 1px solid #26A69A;border-radius: 5px; margin-right:15px;"/>
+                        </center><br/>
+                        <apex:commandLink value="Change Password" action="{!changePassword}" reRender="cpb">
+                        <apex:param name="nickName" value="cps" assignTo="{!button}"/> 
+                        </apex:commandLink>
+                    </apex:outputPanel>
+                  
+                  
+                    <apex:outputpanel id="chap" rendered="{!cp}">
+                     <apex:pageMessages id="msg2"/> 
+                   <apex:image url="https://s1.rdbuz.com/trips/images/redBus_logo_red.png" height="100" width="200"/><br/><br/><br/>
+                       
+                       <div class="form-group col-md-12">
+                            <label for="User Name" class="col-lg-4" style="color:#446e9b;">User Name &nbsp;<font color="Red">*</font></label>
+                            <div class="col-lg-8">
+                                <apex:inputtext value="{!username}"  label="User Name" styleClass="form-control" html-placeholder="User Name"/> 
+                            </div>
+                        </div>
+                       
+                       <div class="form-group col-md-12">
+                            <label for="User Name" class="col-lg-4" style="color:#446e9b;">Old Password &nbsp;<font color="Red">*</font></label>
+                            <div class="col-lg-8">
+                                <apex:inputsecret value="{!password}"  label="User Name" styleClass="form-control" html-placeholder="Old Password"/> 
+                            </div>
+                        </div>
+                         <div class="form-group col-md-12">
+                            <label for="User Name" class="col-lg-4" style="color:#446e9b;">New Password &nbsp;<font color="Red">*</font></label>
+                            <div class="col-lg-8">
+                                <apex:inputsecret value="{!newPassword}"  label="User Name" styleClass="form-control" html-placeholder="New Password"/> 
+                            </div>
+                        </div>
+                         <div class="form-group col-md-12">
+                            <label for="User Name" class="col-lg-4" style="color:#446e9b;">Re-Enter Password &nbsp;<font color="Red">*</font></label>
+                            <div class="col-lg-8">
+                                <apex:inputsecret value="{!newPassword2}"  label="User Name" styleClass="form-control" html-placeholder="Re-Enter Password"/> 
+                            </div>
+                        </div>
+                        
+                         <center>
+                            <br/><br/><br/><br/><apex:commandButton value="Change Password" action="{!updatePassword}" rerender="chap,msg2" styleClass="btn Regbtnstyle btn-default" style="background-image: linear-gradient(#26A69A, #26A69A 50%, #26A69A);background-repeat: no-repeat;color:#ffffff; padding: 3px 12px; font-size:16px;border: 1px solid #26A69A;border-radius: 5px; margin-right:15px;"/>
+                        </center><br/>
+                     <apex:commandLink value="Sign In" action="{!changePassword}" reRender="cpb">
+                        <apex:param name="nickName" value="sIns" assignTo="{!button}"/> 
+                     </apex:commandLink>
+                    
+                    </apex:outputpanel>
+                    
+                </div>
+                </center>
+                <br/><br/>
+            </apex:form>
+        </apex:define>
+    </apex:composition>
+</apex:page>

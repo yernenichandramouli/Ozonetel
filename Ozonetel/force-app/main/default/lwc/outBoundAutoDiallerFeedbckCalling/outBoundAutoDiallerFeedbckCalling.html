@@ -1,0 +1,64 @@
+<template>
+       <lightning-card title="Feedback Calling Details" icon-name="custom:custom63">
+          <div class="slds-clearfix">
+                 <div class="slds-float_right">
+                        <lightning-combobox
+                 name="progress"
+                 label="Status"
+                 value={value}
+                 placeholder="Select Progress"
+                 options={options}
+                 onchange={handleChange} ></lightning-combobox>  
+          </div>
+            </div>
+           <center>
+               
+   
+   
+               <div class="slds-text-heading_medium" style="padding:0.5rem;background:#16325c">
+                   <div class="slds-text-color_inverse-weak">Customer Details</div>
+                 </div>
+   
+               <div class="slds-grid slds-grid_align-space slds-box">
+   
+                      <div class="slds-col slds-size_1-of-2">
+                             <h1 class="label">Customer Name: <lightning-formatted-text value={customerName} class="slds-text-color_success">
+                                    </lightning-formatted-text>
+                             </h1></br>
+                             <h1 class="label"> Phone No: <lightning-formatted-text value={phone} class="slds-text-color_success">
+                                    </lightning-formatted-text>
+                             </h1></br>
+                             <h1 class="label"> Source: <lightning-formatted-text value={source} class="slds-text-color_success">
+                                    </lightning-formatted-text>
+                             </h1></br>
+                             <h1 class="label"> Destination : <lightning-formatted-text value={destination} class="slds-text-color_success">
+                                    </lightning-formatted-text>
+                             </h1></br>
+                             <h1 class="label">Record link: <a id="hyperLink" onclick='{viewRecord}'>{recordlink}</a>
+                               <!-- <lightning-formatted-text value={recordlink} class="slds-text-color_success">
+                        </lightning-formatted-text> -->
+                 </h1></br>
+                      </div>
+                      <div class="slds-col slds-size_1-of-2">
+                        <h1 style="background-color:rgb(230, 216, 176);">Call starts with in<div class='timer'>TIMER</div></h1>
+                      </br>
+                             <h1 class="label"> Disposition Status :  <lightning-formatted-text value={callStatus} class="slds-text-color_success">
+                                    </lightning-formatted-text>
+                             </h1></br>
+                             <h1 class="label">BO Id: <lightning-formatted-text value={boId} class="slds-text-color_success">
+                                    </lightning-formatted-text>
+                             </h1></br>
+                             <h1 class="label">BO Name: <lightning-formatted-text value={boName} class="slds-text-color_success">
+                                    </lightning-formatted-text>
+                             </h1></br>
+                      </div>
+                  
+         </div>
+       </center>
+   <lightning-accordion>
+       <lightning-accordion-section name="A" label="Next Call Details">
+           <lightning-datatable key-field="Id" data={tempArrayList} columns={fields}></lightning-datatable>
+       </lightning-accordion-section>
+   </lightning-accordion>
+       </lightning-card>
+   </template>

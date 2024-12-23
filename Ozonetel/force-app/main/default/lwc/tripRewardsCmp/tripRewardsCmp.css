@@ -1,0 +1,103 @@
+/* file.css */
+.slds-form-element__control {
+    display: flex;
+    flex-direction: row;
+}
+
+.slds-form-element:nth-child(1) {
+    margin-left: 400px; /* Adjust the margin for the second radio button */
+}
+.slds-form-element:nth-child(2) {
+    margin-right: 300px; /* Adjust the margin for the second radio button */
+}
+
+
+.custom-button {
+    margin-left: 450px;
+}
+
+
+
+.field {
+    color: #121213; /* Set color for field labels */
+    font-weight: bold; /* Make field labels bold */
+    padding: 2px;
+
+}
+
+.value {
+    color: #4caf50; /* Set color for field values */
+}
+
+.left-side, .right-side {
+    padding: 10px; /* Add padding to each cell */
+    border: 1px solid #dddddd; /* Add border to each cell */
+    text-align: left;
+}
+
+/* end trans*/
+
+/* file.css */
+.userContainer {
+    font-family: Arial, sans-serif;
+}
+
+.streak-container {
+    border: 1px solid #0f3edc;;
+    border-radius: 25px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.streak-container h2 {
+    margin-top: 0;
+}
+
+.txn-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.txn-table th, .txn-table td {
+    border: 1px solid #ddd;
+    padding: 6px;
+}
+
+.txn-table th {
+    background-color: #f2f2f2;
+}
+
+
+/* file.css */
+.transContainer {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #0f3edc;;
+    margin: 20px 0;
+}
+
+.left-side, .right-side {
+    flex: 1;
+}
+
+.left-side ul, .right-side ul {
+    list-style: none;
+    padding: 0;
+}
+
+.field {
+    font-weight: bold;
+    width: 150px; /* Adjust the width as needed */
+    display: inline-block;
+}
+
+.value {
+    display: inline-block;
+    margin-left: 10px; /* Add space between field and value */
+    padding: 2px;
+}
+
+.error-message {
+    color: red; /* Change the color to whatever you prefer */
+}

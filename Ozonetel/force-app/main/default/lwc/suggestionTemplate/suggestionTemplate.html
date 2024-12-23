@@ -1,0 +1,70 @@
+<template>
+<lightning-card class="slds-text-heading_small slds-card_boundary" title="Suggestion Templates" variant="narrow"
+    icon-name="standard:account">
+
+    <template if:true={showErrMsg}>
+        <c-generic-toast-messages notificationtype={notifType} notificationmessage={notifMsg}>
+        </c-generic-toast-messages>
+        <div class="slds-m-bottom_x-small"></div>
+    </template>
+
+
+    <!--  <input type="text" class="slds-input slds-combobox__input slds-has-focus" value={selectedTemplate}
+        onkeyup={handleKeyChange} id="combobox-id-3" aria-controls="listbox-id-4" role="textbox"
+        placeholder="Select Template" readonly="" /> -->
+    <template if:true={hideSugTemp}>
+        <lightning-input class="slds-m-bottom-small" label="Search" value={selectedTemplate} is-loading=ture
+            minlength="1" onkeyup={handleKeyChange}> </lightning-input>
+
+
+        <template if:true={showoptions}>
+
+            <template if:true={searchRecords}>
+                <template for:each={searchRecords} for:item="sr">
+                    <lightning-layout vertical-align="center" key={sr.Id}>
+                        <div style="cursor:pointer" key={sr.Id} data-contact-id={sr.Id}>
+                            <lightning-layout-item padding="around-small" data-record={sr.Suggestion_Template__c}
+                                key={sr.Issue_Type__c} onclick={handleSelect}>
+                                {sr.Template_Name__c}
+                            </lightning-layout-item>
+                        </div>
+                    </lightning-layout>
+                </template>
+            </template>
+        </template>
+        <template if:false={showoptions}>
+
+        </template>
+        <lightning-radio-group label="Template" name="radioButtonGroup" onchange={handleSelectRedio}
+            options={allTemplates} value={selectedTemplate} type="radio"></lightning-radio-group>
+    </template>
+    <lightning-layout  multiple-rows="true" >
+        <lightning-layout-item flexibility="auto" padding="around-small">
+        
+    <lightning-input type="checkbox" label="STC" name="STC" onchange={handleSTC} checked={stc}></lightning-input>
+    </lightning-layout-item>
+        <lightning-layout-item flexibility="auto" padding="around-small">
+        
+    <lightning-input type="checkbox" label="RTB" name="RTB" onchange={handleRTB} checked={rtb}></lightning-input>
+</lightning-layout-item>
+</lightning-layout>
+    <lightning-textarea value={sugTemplateVal} placeholder='No Suggestion available for this issue type'
+        onkeyup={commentValue} label="Comment"></lightning-textarea>
+    <br />
+    <center>
+        <lightning-button label="Save" onclick={handleSave} variant="brand" disabled={saveBt}></lightning-button>
+        &nbsp;&nbsp;
+        <lightning-button-icon icon-name="utility:skip_back" variant="brand"
+            alternative-text="Create one more Comment" onclick={ReCreate} if:true={reCreateBt}>
+        </lightning-button-icon>
+        <!--  <lightning-button icon-name="change_record_type" onclick={ReCreate} variant="brand" if:true={reCreateBt}>
+        </lightning-button>-->
+    </center>
+    <div if:true={saveBtLoad}>
+        <lightning-spinner alternative-text="Loading..." variant="brand" size="small" class="slds-is-absolute">
+        </lightning-spinner>
+    </div>
+
+</lightning-card>
+
+</template>

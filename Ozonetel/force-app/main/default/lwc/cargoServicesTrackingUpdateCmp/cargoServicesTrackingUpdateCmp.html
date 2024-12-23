@@ -1,0 +1,481 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-11-2023
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card>
+        
+        <template if:true={showRadioBtns}>
+            <div class="container">
+    <div class="slds-m-left_large">
+        <template for:each={options} for:item="item">
+            <fieldset key={item.value} class="slds-form slds-form_compound slds-form_horizontal">
+                <div class="slds-form-element">
+                    <span class="slds-radio">
+                        <input name="radiogroup" id={item.value} type="radio" value={item.value} onchange={handleRadioChange} class="slds-radio__input" />
+                        <label class="slds-radio__label" for={item.value}>
+                            <span class="slds-radio_faux"></span>
+                            <strong> <span class="slds-form-element__label">{item.label}</span> </strong>
+                        </label>
+                    </span>
+                </div>
+            </fieldset>
+        </template>
+    </div>
+
+    <br />
+    <br />
+
+    <div class="slds-m-left_large">
+        <lightning-button label="Haga clic para procesar" class="slds-button slds-button_brand" variant="success" onclick={handleToProcessed}></lightning-button>
+    </div>
+        </div>
+
+</template>
+
+  <div class="slds-container">
+        <template if:true={showCargoProcess}>
+            <strong><p style="color: blue;">Carga Tracking Update</p></strong>
+            <div class="c-container">
+                <lightning-layout multiple-rows="true">
+                    <lightning-layout-item size="12" flexibility="auto">
+                        <strong>
+                            <lightning-combobox name="cargostage" label="Etapa" style="width: 30%;" id="cargostageid" options={cargoStageOptions} value={cargoStageOptionsVal} onchange={handleCargoStageOptionChange}>
+                            </lightning-combobox>
+                        </strong>
+                    </lightning-layout-item>
+                    <br />
+
+                    <template if:true={isPacDrpMidstatusOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="PacDrpMidstageStatus"
+                                    label="Estado de la etapa"
+                                    style="width: 30%;"
+                                    id="PacDrpMidstatusid"
+                                    options={cargoPacDrpMidstatusOptions}
+                                    value={cargoPacDrpMidstatusOptionsVal}
+                                    onchange={handlecargoPacDrpMidstatusOptionsChange}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isPacIntrnsStatusOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="PacIntrnsStageStatus"
+                                    label="Estado de la etapa"
+                                    style="width: 30%;"
+                                    id="PacIntrnsStatusid"
+                                    options={cargoPacIntrnsStatusOptions}
+                                    value={cargoPacIntrnsStatusOptionsVal}
+                                    onchange={handlecargoIntrnsStatusOptionsChange}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isReDesStatusOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="ReDesStageStatus"
+                                    label="Estado de la etapa"
+                                    style="width: 30%;"
+                                    id="ReDesStatusid"
+                                    options={cargoReDesStatusOptions}
+                                    value={cargoReDesStatusOptionsVal}
+                                    onchange={handlecargoReDesStatusOptionsChange}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isDelivStatusOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="DelivStageStatus"
+                                    label="Estado de la etapa"
+                                    style="width: 30%;"
+                                    id="DelivStatusid"
+                                    options={cargoDelivStatusOptions}
+                                    value={cargoDelivStatusOptionsVal}
+                                    onchange={handlecargoDelivStatusOptionsChange}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isPacDrpMidSucOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="PacDrpMidSuccessReason"
+                                    label="Razón del éxito"
+                                    style="width: 30%;"
+                                    id="PacDrpMidScid"
+                                    options={pacDrpMidSucOptions}
+                                    value={pacDrpMidSuccessOptionsVal}
+                                    onchange={handlePacDrpMidSuccessOption}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isPacDrpMidFailOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="PacDrpMidFailReason"
+                                    label="Motivo del fallo"
+                                    style="width: 30%;"
+                                    id="PacDrpMidFailid"
+                                    options={pacDrpMidFailOptions}
+                                    value={pacDrpMidFailOptionsVal}
+                                    onchange={handlePacDrpMidFailOption}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                    </template>
+
+                    <template if:true={isPacIntrnsSucOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="PacIntrnsSuccessReason"
+                                    label="Razón del éxito"
+                                    style="width: 30%;"
+                                    id="PacIntrnsScid"
+                                    options={pacIntrnsSucOptions}
+                                    value={pacIntrnsSuccessOptionsVal}
+                                    onchange={handlePacIntrnsSuccessOption}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isPacIntrnsFailOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="PacIntrnsFailReason"
+                                    label="Motivo del retraso"
+                                    style="width: 30%;"
+                                    id="PacIntrnsFailid"
+                                    options={pacIntrnsFailOptions}
+                                    value={pacIntrnsFailOptionsVal}
+                                    onchange={handlePacIntrnsFailOption}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                    </template>
+
+                    <template if:true={isReDesSucOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox name="ReDesSuccessReason" label="Razón del éxito" style="width: 30%;" id="ReDesScid" options={reDesSucOptions} value={reDesSuccessOptionsVal} onchange={handleReDesSuccessOption}>
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isReDesFailOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox name="ReDesFailReason" label="Motivo del fallo" style="width: 30%;" id="ReDesFailid" options={reDesFailOptions} value={reDesFailOptionsVal} onchange={handleReDesFailOption}>
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                    </template>
+
+                    <template if:true={isDelivSucOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox name="DelivSuccessReason" label="Razón del éxito" style="width: 30%;" id="delivScid" options={delivSucOptions} value={delivSuccessOptionsVal} onchange={handleDelivSuccessOption}>
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isDelivFailOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox name="DelivFailReason" label="Motivo del fallo" style="width: 30%;" id="delivFailid" options={delivFailOptions} value={delivFailOptionsVal} onchange={handleDelivFailOption}>
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                    </template>
+                    
+                     <template if:true={isCargoDelStatus}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="cargoDelStatus"
+                                    label="Estado del envío"
+                                    style="width: 30%;"
+                                    id="cargoDelStatusid"
+                                    options={cargoDelStatusOptions}
+                                    value={cargoDelStatusOptionsVal}
+                                    onchange={handlecargoDelStatusl}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                     <template if:true={iscargoInputDateTime}>
+                            <lightning-layout-item  size="12">
+                                <strong>
+                                <label for="cargodatetimeInput">Seleccione Fecha y Hora:</label><br/>
+                                <input type="datetime-local" style="width: 30%;" id="cargodatetimeInput" name="cargodatetimeInput" onchange={handleCargoDatetimeChange} />
+                                </strong>
+                            </lightning-layout-item>
+                     </template>
+                     
+                      <!--<template if:true={isCargoAgentNameNo}>
+                        <lightning-layout-item size="12">
+                            <strong><lightning-input type="text" label="Nombre del agente de recojo" style="width: 30%;" name="input1" value={cargoagentName} onchange={handleCargoAgentNameChange} required> </lightning-input> </strong>
+                        </lightning-layout-item>
+                        <br />
+                        <br />
+                        <lightning-layout-item size="12">
+                            <strong> <lightning-input label="Pick Agent Phone Number" type="tel" style="width: 30%;" value={cargoPhoneNumber} required onchange={handleCargoPhoneChange}></lightning-input></strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>-->
+
+                    <template if:true={isCargButtons}>
+                        <lightning-layout-item size="12">
+                            <strong><lightning-input  label="Comentarios"  class="custom-textarea" type="textarea" value={cargCommentsVal} onchange={handleCargoCommentsInput} name="input1" required> </lightning-input> </strong>
+                        </lightning-layout-item>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <lightning-layout-item size="12">
+                            <div class="button-container">
+                                <lightning-button variant="success" label="Actualizar" onclick={clickTrackingUpdateMethod} class="slds-m-left_x-small"></lightning-button>
+
+                                <lightning-button variant="success" label="Cancelar" class="slds-m-left_x-small" onclick={handleGoBackTobtns}> </lightning-button>
+                            </div>
+                        </lightning-layout-item>
+                    </template>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <template if:true={isPreviousBtn}>
+                        <lightning-layout-item size="12">
+                            <div class="button-container">
+                                <lightning-button variant="success" label="Regresar" class="slds-m-left_x-small" onclick={handlegoBackHomeScreen}></lightning-button>
+                            </div>
+                        </lightning-layout-item>
+                    </template>
+                </lightning-layout>
+            </div>
+        </template>
+
+        <template if:true={showFirstMailProcess}>
+            <strong><p style="color: blue;">Primera milla Tracking Update</p></strong>
+            <div class="c-container">
+                <lightning-layout multiple-rows="true">
+                    <lightning-layout-item size="12" flexibility="auto">
+                        <strong> <lightning-combobox name="Etapa" label="Etapa" style="width: 30%;" id="stageid" options={stageOptions} value={stageOptionsVal} onchange={handleStageOptionChange}> </lightning-combobox></strong>
+                    </lightning-layout-item>
+                    <br />
+
+                    <template if:true={isstatusOptionsVal}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox name="stageStatus" label="Estado de la etapa" style="width: 30%;" id="statusid" options={statusOptions} value={statusOptionsVal} onchange={handleStatusOptionChange}> </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isPicAgstatusOptionsVal}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="picAgstageStatus"
+                                    label="Estado de la etapa"
+                                    style="width: 30%;"
+                                    id="picAgstatusid"
+                                    options={picByAgentstatusOptions}
+                                    value={picByAgentstatusOptionsVal}
+                                    onchange={handlePicAgntStatusOptionChange}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isFrMailSucOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="frMailSuccessReason"
+                                    label="Razón del éxito"
+                                    style="width: 30%;"
+                                    id="firstMailScid"
+                                    options={frMailSucOptions}
+                                    value={frMailSuccessOptionsVal}
+                                    onchange={handlefrMailSuccessOption}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isFrMailFailOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox name="frMailFailReason" label="Motivo del fallo" style="width: 30%;" id="firstMailFailid" options={frMailFailOptions} value={frMailFailOptionsVal} onchange={handlefrMailFailOption}>
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                    </template>
+
+                    <template if:true={isFrMailPicAgentSucOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="frMailPicAgSuccessReason"
+                                    label="Razón del éxito"
+                                    style="width: 30%;"
+                                    id="firstMailPicAgScid"
+                                    options={frMailPickedByAgntSucOptions}
+                                    value={frMailPickedByAgntSucOptionsVal}
+                                    onchange={handlefrMailPickedByAgntSuc}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isFrMailPicAgentFailOptions}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="frMailPicAgFailReason"
+                                    label="Motivo del fallo"
+                                    style="width: 30%;"
+                                    id="firstMailPicAgFailid"
+                                    options={frMailPickedByAgntFailOptions}
+                                    value={frMailPickedByAgntFailOptionsVal}
+                                    onchange={handlefrMailPickedByAgntFail}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+                  
+                  <template if:true={isfrsMailDelStatus}>
+                        <lightning-layout-item size="12" flexibility="auto">
+                            <strong>
+                                <lightning-combobox
+                                    name="frsMailDelStatus"
+                                    label="Estado del envío"
+                                    style="width: 30%;"
+                                    id="frsMailDelStatusid"
+                                    options={frMailDelStatusOptions}
+                                    value={frMailDelStatusOptionsVal}
+                                    onchange={handlefrMailDelStatusl}
+                                >
+                                </lightning-combobox>
+                            </strong>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                     <template if:true={isInputDateTime}>
+                            <lightning-layout-item  size="12">
+                                <strong>
+                                <label for="datetimeInput">Seleccione Fecha y Hora:</label><br/>
+                                <input type="datetime-local" style="width: 30%;" id="datetimeInput" name="datetimeInput" onchange={handleDatetimeChange} />
+                                </strong>
+                            </lightning-layout-item>
+                     </template>
+                     
+                    <template if:true={isAgentNameNo}>
+                        <lightning-layout-item size="12">
+                            <strong><lightning-input type="text" label="Nombre del agente de recojo" style="width: 30%;" name="input1" value={agentName} onchange={handleAgentNameChange} required> </lightning-input> </strong>
+                        </lightning-layout-item>
+                        <br />
+                        <br />
+                        <br />
+                        <lightning-layout-item size="12">
+                            <strong> <lightning-input label="Número de teléfono del agente de recojo" type="number" onmouseover={handleMouseOver} maxlength="10" message-when-pattern-mismatch="Please enter a valid 10-digit phone number." style="width: 30%;" value={phoneNumber} required onchange={handlePhoneChange}></lightning-input></strong>
+                            <div if:true={showError} class="error-message">Please enter only numeric characters.</div>
+                        </lightning-layout-item>
+                        <br />
+                    </template>
+
+                    <template if:true={isButtons}>
+                        <lightning-layout-item size="12">
+                            <strong><lightning-input type="text" label="Comentarios" value={commentsVal}  style="width: 30%; height: 40px" name="input1"  onchange={handleCommentsInput} required> </lightning-input> </strong>
+                        </lightning-layout-item>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+
+                        <lightning-layout-item size="12">
+                            <div class="button-container">
+                                <lightning-button variant="success" label="Actualizar" onclick={clickTrackingUpdateMethod} class="slds-m-left_x-small"></lightning-button>
+
+                                <lightning-button variant="success" label="Cancelar" class="slds-m-left_x-small" onclick={handleGoBackTobtns}> </lightning-button>
+                            </div>
+                        </lightning-layout-item>
+                    </template>
+                        <br />
+                        <br />
+                        <br />
+                    <template if:true={isPreviousBtn}>
+                        <lightning-layout-item size="12">
+                            <lightning-button variant="success" label="Regresar" onclick={handlegoBackHomeScreen} class="slds-m-left_x-small"></lightning-button>
+                        </lightning-layout-item>
+                    </template>
+                </lightning-layout>
+            </div>
+        </template>
+
+        <template if:true={isSuccessfulTrackingUpd}>
+           <div  style="margin-left:96;">
+           <strong><p style="color: blue;">{successMsg}</p></strong>
+         <br/>
+          <lightning-button variant="success" label="Recarga la página" onclick={handleRefresh} class="slds-m-left_x-small"></lightning-button>
+         </div> 
+         </template>
+
+    </div> 
+
+    </lightning-card>
+</template>

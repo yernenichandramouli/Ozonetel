@@ -1,0 +1,78 @@
+<template>
+<template if:true={showError}>
+<lightning-layout>
+    <lightning-layout-item flexibility="auto" padding="around-small">            
+    <p><b>Sorry, the operator currently does not share the bus and driver assignment details</b></p></br>
+    <p>Please contact the operator on the number provided.</p>
+    </lightning-layout-item>
+</lightning-layout>
+</template>    
+<template if:true={showDetails}>
+<table>
+    <tr>
+        <td>
+            <lightning-layout  >
+                <lightning-layout-item  padding="around-small" >            
+                <p>Operator Name : {operatorName}</p>
+                </lightning-layout-item>
+            </lightning-layout>
+            </td>
+            <td>
+            <lightning-layout horizontal-align=" " >
+                <lightning-layout-item padding="around-small" >            
+                    <p> Vehicle Number : {vehicle}</p>
+                </lightning-layout-item>
+            </lightning-layout>    
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <lightning-layout  >
+                <lightning-layout-item  padding="around-small" >            
+                <p>Driver Name : {driverName}</p>
+                </lightning-layout-item>
+            </lightning-layout>
+            </td>
+            <td>
+            <lightning-layout horizontal-align=" " >
+                <lightning-layout-item padding="around-small" >            
+                    <p> Driver Mobile : {driverMobile}</p>
+                </lightning-layout-item>
+            </lightning-layout>    
+        </td>
+    </tr>
+    <tr>    
+        <td>
+            <lightning-layout  >
+                <lightning-layout-item  padding="around-small" >            
+                <p>Conductor Name : {driverName2}</p>
+                </lightning-layout-item>
+            </lightning-layout>
+            </td>
+            <td>
+            <lightning-layout horizontal-align=" " >
+                <lightning-layout-item padding="around-small" >            
+                    <p> Conductor Mobile : {driverMobile2}</p>
+                </lightning-layout-item>
+            </lightning-layout>    
+        </td>
+    </tr>
+    <tr>    
+        <td>
+            <lightning-layout  >
+                <lightning-layout-item  padding="around-small" >            
+                <p>Source : {source}</p>
+                </lightning-layout-item>
+            </lightning-layout>
+            </td>
+            <td>
+            <lightning-layout horizontal-align=" " >
+                <lightning-layout-item padding="around-small" >            
+                    <p>Destination : {destination}</p>
+                </lightning-layout-item>
+            </lightning-layout>    
+        </td>                        
+    </tr>    
+</table>
+</template> 
+</template>

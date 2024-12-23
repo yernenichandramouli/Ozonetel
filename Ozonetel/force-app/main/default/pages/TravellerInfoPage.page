@@ -1,0 +1,30 @@
+<!--
+ * (c) 2017 RedBus
+ *
+ * Name           : TravellerInfoPage
+ * Created Date   : 26 Oct 2017
+ * Created By     : Sreenivas M
+ * Purpose        : VF page to display all passenger details.
+ *
+ -->
+<apex:page controller="TravellerInfoCntrl" action="{!getPassangerDetails}" showHeader="false" sidebar="false" lightningStylesheets="true">
+<apex:slds />
+<div class="slds-scope">
+<apex:form >
+<apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock title="Passenger Details For Tin -{!$CurrentPage.parameters.Id}" >
+           
+                  <apex:pageBlockTable value="{!listTravellers}" var="wrps" columns="6" styleClass="slds-table slds-table--bordered slds-table--striped">
+                     <apex:column value="{!wrps.name}" headerValue="Name"/>
+                     <apex:column value="{!wrps.Age}" headerValue="Age"/>
+                     <apex:column value="{!wrps.Gender}" headerValue="Gender"/>
+                     <apex:column value="{!wrps.SeatNumber}" headerValue="SeatNumber"/>
+                     <apex:column value="{!phoneNo}" headerValue="Mobile Number"/>
+                     <apex:column value="{!emialId}" headerValue="EmialId"/>
+                     
+                  </apex:pageBlockTable>
+           
+        </apex:pageBlock>
+</apex:form>
+</div>
+</apex:page>

@@ -1,0 +1,100 @@
+<!--
+* (c) 2017 RedBus
+*
+* Name           : ChatMonitorPage
+* Created Date   : 10 Oct 2018
+* Created By     : Sreenivas M
+* Purpose        : Visualfore page for live agent chat monitor
+*
+-->
+<apex:page >
+ <apex:includeScript value="/support/console/32.0/integration.js"/>
+ <apex:includeScript value="/soap/ajax/28.0/connection.js"/>
+
+ <script type="text/javascript">
+ var logUser ='{!$User.FirstName} {!$User.LastName}';
+
+        sforce.connection.sessionId = '{!$Api.Session_ID}';
+        sforce.console.chat.onChatStarted(function(result) {
+        console.log('chat key..'+result.chatKey+'..Json result'+JSON.stringify(result));
+          var accounts = [];
+          var chatMontr = new sforce.SObject("Live_Chat_Monitor__c");
+          chatMontr.Chat_Session_Key__c = result.chatKey;
+          chatMontr.Agent_Last_Message__c='Hello! This is '+logUser+' and I am here to help you.';
+          chatMontr.Full_Chat_Transcript__c=chatMontr.Agent_Last_Message__c;
+          chatMontr.Action__c = 'Chat Accepted';
+          var accRes = sforce.connection.create([chatMontr]);
+    
+          
+           sforce.console.chat.onChatEnded(function(result){
+               console.log('Chat ended..'+result.chatKey)
+                if(result.chatKey!='' && result.chatKey!=null)
+                {
+                    var qr = sforce.connection.query("select id,Name,Agent_Last_Message__c,Full_Chat_Transcript__c from Live_Chat_Monitor__c where Chat_Session_Key__c='"+result.chatKey+"' limit 1");
+                    var chatMonitor = new sforce.SObject("Live_Chat_Monitor__c");
+                    
+                    if(qr.getArray("records")=="")
+                    {
+                        chatMonitor.Chat_Session_Key__c= result.chatKey;                     
+                        chatMonitor.Action__c = 'Chat Ended';
+                        var chatMonitorInsRes = sforce.connection.create([chatMonitor]);
+                    }
+         
+                    else
+                    {
+                        chatMonitor.id = qr.getArray("records")[0].get("Id");
+                        chatMonitor.Action__c = 'Chat Ended';
+                        var chatMonitorUpdRes = sforce.connection.update([chatMonitor]);
+                        
+                    }
+                }
+            });
+            
+            /*
+            sforce.console.chat.onChatCriticalWaitState(result.chatKey,
+            function(oncricState) {
+                alert('This chat has reached a critical wait');
+
+            });
+            */
+            
+            sforce.console.chat.onAgentSend(result.chatKey,
+            function(resOnAgentSend) {
+               
+                if(!(resOnAgentSend.isAutoGreeting && resOnAgentSend.isTransferred)) 
+                {
+              
+                   if(result.chatKey!='' && result.chatKey!=null && resOnAgentSend.content.length<254)
+                   {
+                    var qr = sforce.connection.query("select id,Name,Agent_Last_Message__c,Full_Chat_Transcript__c from Live_Chat_Monitor__c where Chat_Session_Key__c='"+result.chatKey+"' limit 1");
+                    var chatMonitor = new sforce.SObject("Live_Chat_Monitor__c");
+                    
+                    if(qr.getArray("records")=="")
+                    {
+                        chatMonitor.Chat_Session_Key__c= result.chatKey;
+                        chatMonitor.Agent_Last_Message__c = resOnAgentSend.content;
+                        chatMonitor.Full_Chat_Transcript__c = qr.getArray("records")[0].get("Full_Chat_Transcript__c")+"<br>"+resOnAgentSend.content;
+                        chatMonitor.Action__c = 'Agent Replied';
+                        var chatMonitorInsRes = sforce.connection.create([chatMonitor]);
+                    }
+         
+                    else
+                    {
+                        chatMonitor.id = qr.getArray("records")[0].get("Id");
+                        chatMonitor.Agent_Last_Message__c = resOnAgentSend.content;
+                        chatMonitor.Full_Chat_Transcript__c = qr.getArray("records")[0].get("Full_Chat_Transcript__c")+"<br>"+resOnAgentSend.content;
+                        chatMonitor.Action__c = 'Agent Replied';
+                        var chatMonitorUpdRes = sforce.connection.update([chatMonitor]);
+                        
+                    }
+                    sforce.console.chat.sendMessage(result.chatKey,resOnAgentSend.content);
+                   }
+                   else if(resOnAgentSend.content.length>254)
+                        alert('You can not send more than 255 charaters in single message...');
+                   
+                }
+            
+            });
+        });
+ </script>
+</apex:page>
