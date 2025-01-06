@@ -706,7 +706,15 @@ public class redBusCancellation_Test
         cs.Issue_Sub_Category__c='testt';
         cs.Country__c='India';
         insert cs;
+
+        case cs1 = New case();
+        cs1.Issue_Type__c = 'Exceptional Refund';
+        cs1.Refund_status__c='Exceptional Refund Approved';
+        cs1.TIN_No__c='5676';
+        insert cs1;
        
+
+        case c = [Select Exceptional_Refund_Count__c From Case Where Id=:cs1.id];
         String csNumber = [Select CaseNumber From Case Where Id=:cs.id].CaseNumber;
         
         Test.StartTest();
@@ -717,19 +725,94 @@ public class redBusCancellation_Test
         Cancellation_Process_DB_Log__c cp = new Cancellation_Process_DB_Log__c();
         
         //tra.selCurrency=oritran.Auth_Key__c;
+        tra.refundDescription = '';
         tra.cp.FC_Refund_Amount__c = 90;
         tra.cp.Max_Refundable_Amount__c = 100;
+        tra.submitForApproval();
         tra.refundDescription = 'testing';
         tra.parentCase=csNumber;
         tra.submitForApproval();
         tra.cp.FC_Refund_Amount__c = 0;
         tra.cp.Max_Refundable_Amount__c = 100;
         tra.selCurrency=oritran.Auth_Key__c;
-        tra.submitForApproval();
-        tra.refundDescription = '';
+        case cs2 = New case();
+        cs2.Issue_Type__c = 'Exceptional Refund';
+        cs2.Refund_status__c='Exceptional Refund Approved';
+        cs2.TIN_No__c='5676';
+        cs2.Exceptional_Refund_Count__c = 3;
+        insert cs2;
         tra.submitForApproval();
         tra.getSuggestedRefundAmount();
         tra.selectRefundreason();
+    }
+
+    Static TestMethod void exceptionalRefundCaseCreation2()    
+    {
+          
+        OrderItemTransactionResource__c oritran = new OrderItemTransactionResource__c();
+        oritran.Case_Business_Type__c='Domestic-Bus';
+        oritran.Case_Country__c='India';
+        oritran.Name = 'REDBUS_COM';
+        oritran.Auth_Key__c = 'IND';
+        oritran.Channel_Name__c = 'MOBILE_APP';
+        oritran.Case_Business_Type__c='REDBUS_COM';
+        insert oritran;
+        
+        Order_Items__c orItem = new Order_Items__c();
+        orItem.name = '23456';
+        orItem.id__c = '23456';
+        orItem.Order_Item_Reference_No__c='5676';
+        orItem.Email__c = 'test@redbus.com';
+        orItem.Mobile__c = '1234567891';
+        orItem.Business_Unit__c='REDBUS_COM';
+        orItem.Order_Id__c = '123';
+        orItem.Service_Provider_Id__c='12344';
+        insert orItem;
+      
+        Case cs = new Case();
+        cs.Transaction_Id__c= orItem.id;
+        cs.Issue_Type__c='test';
+        cs.Issue_Sub_Category__c='testt';
+        cs.Country__c='India';
+        insert cs;
+
+        case cs1 = New case();
+        cs1.Issue_Type__c = 'Exceptional Refund';
+        cs1.Refund_status__c='Exceptional Refund Approved';
+        cs1.TIN_No__c='5676';
+        insert cs1;
+
+        case cs2 = New case();
+        cs2.Issue_Type__c = 'Exceptional Refund';
+        cs2.Refund_status__c='Exceptional Refund Approved';
+        cs2.TIN_No__c='5676';
+        cs2.Exceptional_Refund_Count__c = 3;
+        insert cs2;
+       
+
+        case c = [Select Exceptional_Refund_Count__c From Case Where Id=:cs1.id];
+        String csNumber = [Select CaseNumber From Case Where Id=:cs.id].CaseNumber;
+        
+        Test.StartTest();
+        ApexPages.CurrentPage().getParameters().put('Id',orItem.Id);
+        ApexPages.StandardController con = new ApexPages.StandardController(orItem);
+        redBusCancellation tra = new redBusCancellation(con);
+        tra.selCurrency=oritran.Auth_Key__c;
+        Cancellation_Process_DB_Log__c cp = new Cancellation_Process_DB_Log__c();
+        
+        //tra.selCurrency=oritran.Auth_Key__c;
+        tra.refundDescription = '';
+        tra.cp.FC_Refund_Amount__c = 90;
+        tra.cp.Max_Refundable_Amount__c = 100;
+        tra.submitForApproval();
+        tra.refundDescription = 'testing';
+        tra.parentCase=csNumber;
+        tra.submitForApproval();
+        tra.cp.FC_Refund_Amount__c = 0;
+        tra.cp.Max_Refundable_Amount__c = 100;
+        tra.selCurrency=oritran.Auth_Key__c;
+        
+        tra.submitForApproval();
     }
 
     Static TestMethod void updateOperCancellationStatusTest()    

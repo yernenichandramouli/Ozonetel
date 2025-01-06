@@ -17,7 +17,7 @@
 
     <aura:handler event="lightning:conversationAgentSend" action="{!c.handleMessageSentOrReceived}" />
     <aura:handler event="lightning:conversationNewMessage" action="{!c.handleMessageSentOrReceived}" />
-    <aura:handler event="lightning:conversationChatEnded" action="{!c.onChatEnded}" />
+    <aura:handler event="lightning:conversationChatEnded" action="{!c.onChatEndedTimer}" />
     
      <aura:attribute name="caseList" type="List" />
 

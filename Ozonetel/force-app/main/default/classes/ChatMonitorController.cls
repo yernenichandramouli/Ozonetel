@@ -6,7 +6,7 @@ public class ChatMonitorController {
             string promptLabel = System.Label.testPromptsMsgSuggestions;
             List<String> userPromptList = promptLabel.split(',');
             
-            LiveChatTranscript lct = [SELECT Id,OrderItem_Uuid__c,Contact.Transaction_Id__c,Issue_Type__c,Sub_Issue_Type__c,Chat_Session_Key__c FROM LiveChatTranscript WHERE Id=:recordId LIMIT 1];
+            LiveChatTranscript lct = [SELECT Id,OrderItem_Uuid__c,Contact.Issue_Type__c, Contact.Sub_Issue_Type__c, Contact.Transaction_Id__c,Issue_Type__c,Sub_Issue_Type__c,Chat_Session_Key__c FROM LiveChatTranscript WHERE Id=:recordId LIMIT 1];
             Live_Chat_Monitor__c chatMonitorData = [SELECT Id,AgentLastMessage__c FROM Live_Chat_Monitor__c WHERE Chat_Session_Key__c=:lct.Chat_Session_Key__c LIMIT 1];
             list<Order_Items__c> orItemLst =[SELECT Id,Order_Uuid__c,Guid__c,Vendor_PNR__c,Amount_Recieved_Currency__c,Service_Provider_Id__c,Service_Provider_Name__c,Service_Provider_Reference_No__c,Route_Id__c, Date_Of_Service__c,ServiceID__c,Business_Unit__c,Order_Item_Reference_No__c FROM Order_Items__c where Guid__c =:lct.Contact.Transaction_Id__c];
     
@@ -19,7 +19,7 @@ public class ChatMonitorController {
                 API_EndPoints__mdt APIMData=new API_EndPoints__mdt();
                 APIMData=[SELECT Endpoint__c,EnableLog__c FROM API_EndPoints__mdt where DeveloperName='getGPTSuggestionMessage'];
                 string endpoint=APIMData.Endpoint__c;
-                string jsBody='{ "message" :"'+userMessage+'","orderItemUUID" :"'+lct.Contact.Transaction_Id__c+'", "lastAgentReply" :"'+chatMonitorData.AgentLastMessage__c+'", "issueType" :"'+lct.Issue_Type__c+'",  "subIssueType" :"'+lct.Sub_Issue_Type__c+'"}';
+                string jsBody='{ "message" :"'+userMessage+'","orderItemUUID" :"'+lct.Contact.Transaction_Id__c+'", "lastAgentReply" :"'+chatMonitorData.AgentLastMessage__c+'", "issueType" :"'+lct.Contact.Issue_Type__c+'",  "subIssueType" :"'+lct.Contact.Sub_Issue_Type__c+'"}';
                 // string jsBody='{ "message" :"'+userMessage+'","orderItemUUID" :"'+recordId+'" }';
                 jsBody=JSON.serialize(jsBody);
                 system.debug('jsBody-->'+jsBody);

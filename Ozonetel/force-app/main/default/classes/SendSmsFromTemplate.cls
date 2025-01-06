@@ -25,7 +25,7 @@ public class SendSmsFromTemplate {
         if(string.isNotBlank(tempName)){
             list<SMS_Template__mdt> templateList=new list<SMS_Template__mdt>();  
             list<SMS_Template__mdt> retIsuList=new list<SMS_Template__mdt>();        
-            templateList=[SELECT Id,DeveloperName,Message_Content__c,Type__c FROM SMS_Template__mdt where DeveloperName LIKE : tempName and Type__c=:type];  
+            templateList=[SELECT Id,DeveloperName,Message_Content__c,Type__c,QualifiedApiName FROM SMS_Template__mdt where DeveloperName LIKE : tempName and Type__c=:type];  
             System.debug('templateList-->'+templateList);
             if(templateList.size()>0)
                 return templateList;
@@ -35,7 +35,7 @@ public class SendSmsFromTemplate {
             return null;
     }
     @AuraEnabled
-    public static string sendSMS(string caseId, string msgContent, string mobileNum,string type){ 
+    public static string sendSMS(string caseId, string msgContent, string mobileNum,string type, string templateName){ 
         system.debug('<<<<case id'+ caseId+';message'+msgContent);
         if(caseId != null && msgContent!= null && msgContent!= '' && caseId !='' &&  mobileNum !=null && mobileNum !=''){
             List<case> cs =[select id, casenumber,Case_Business_Unit__c, Transaction_ID__c, Business_Type__c from case where id =: caseId];
@@ -67,7 +67,7 @@ public class SendSmsFromTemplate {
                     tempUsed=false;
                     fromatedDescription='';
                 }
-                RequestWrapper.SendNotificationWrapper smsJ=new RequestWrapper.SendNotificationWrapper(mobileNum,fromatedDescription,'General_Query_SMS',msgContent,tempUsed);
+                RequestWrapper.SendNotificationWrapper smsJ=new RequestWrapper.SendNotificationWrapper(mobileNum,fromatedDescription,templateName,msgContent,tempUsed);
                 String smsJsonBody=JSON.serialize(smsJ);
                 req.setHeader('BusinessUnit', 'BUS');  
                 req.setHeader('Language', 'en');             

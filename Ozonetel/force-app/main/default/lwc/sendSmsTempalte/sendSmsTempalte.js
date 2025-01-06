@@ -99,6 +99,7 @@ export default class SendSmsTempalte extends LightningElement {
         for (var i = 0; i < this.searchRecords.length; i++) {
             if (this.searchRecords[i].DeveloperName == this.selTemplateVal) {
                 this.selMessageContent = this.searchRecords[i].Message_Content__c;
+                this.selMessageName = this.searchRecords[i].QualifiedApiName;
             }
         }
     }
@@ -109,7 +110,7 @@ export default class SendSmsTempalte extends LightningElement {
     handleSend(event) {
         console.log('Message:>>> ' + this.selMessageContent);
         this.isLoadingSendSms = true;
-        sendSMS({ caseId: this.recordId, msgContent: this.selMessageContent, mobileNum: this.selectedPhNum, type: this.selType })
+        sendSMS({ caseId: this.recordId, msgContent: this.selMessageContent, mobileNum: this.selectedPhNum, type: this.selType, templateName: this.selTemplateVal })
             .then(result => {
                 console.log('result' + result);
                 console.log('res' + JSON.stringify(result));

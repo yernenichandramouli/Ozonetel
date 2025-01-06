@@ -136,6 +136,20 @@
                     <apex:pageBlockSection title="SPOC Details" collapsible="false">
                         <apex:inputfield value="{!c.BOAgentNameBySPOC__c}" html-placeholder="Enter BO Agent Name" id="boName"/> 
                         <apex:inputfield value="{!c.BOAgentContactBySPOC__c}" html-placeholder="Enter BO Agent Phone Number" id="boPhone" onkeypress="return isNumber(event,'{!$Component.boPhone}')"/>
+                        <!-- Rejection Reason Picklist-->
+                    <apex:outputPanel id="rejectionReasonPanel" styleClass="rejectionReason2" style="display:block">
+                        <b>Rejection Reason:</b>
+                        <apex:selectList value="{!rejectionReason}" size="1" style="width: 300px;">
+                            <apex:selectOption itemLabel="Select Reason" itemValue="" />
+                            <apex:selectOption itemLabel="System remarks -  Bus was operational" itemValue="System remarks -  Bus was operational" />
+                            <apex:selectOption itemLabel="Co-passenger remarks - Bus was operational" itemValue="Co-passenger remarks - Bus was operational" />
+                            <apex:selectOption itemLabel="Operator remarks - Bus was operational" itemValue="Operator remarks - Bus was operational" />
+                            <apex:selectOption itemLabel="Operator remarks - Passenger travelled" itemValue="Operator remarks - Passenger travelled" />
+                            <apex:selectOption itemLabel="Operator remarks - Customer no-show" itemValue="Operator remarks - Customer no-show" />
+                            <apex:selectOption itemLabel="Operator remarks - Alternate travel was arranged" itemValue="Operator remarks - Alternate travel was arranged" />
+                        </apex:selectList>
+                    </apex:outputPanel>
+                    <!-- End of Rejection Reason Picklist-->
                         <apex:outputfield value="{!c.Approved_By__c}" />
                         <apex:outputpanel />
                         

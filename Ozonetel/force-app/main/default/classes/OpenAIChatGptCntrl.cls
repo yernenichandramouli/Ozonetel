@@ -375,7 +375,7 @@ system.debug('>>>>>>>'+chatMonitorLst[0].Chat_Summarize__c);
             requestWrapper.model='gpt-3.5-turbo';
             requestWrapper.request = promptMessage;
             
-            system.debug('requestBody= '+requestWrapper);
+            system.debug('requestBody= '+JSON.serialize(requestWrapper));
             system.debug('serializeRequestBody= '+JSON.serialize(requestWrapper));
             Request req = new Request();
             httpReq.setEndpoint(APIMData.Endpoint__c+'chat/completions');
@@ -404,20 +404,16 @@ system.debug('>>>>>>>'+chatMonitorLst[0].Chat_Summarize__c);
                     string messageReceived = String.valueOf(responseData.response.openAIResponse.choices[0].message.content);
                     messageReceived = messageReceived.replaceAll('\\{\'(.*?)\': \'(.*?)\'\\}', '{"$1": "$2"}');
                     System.debug('messageReceived = '+messageReceived);
+                    Database.insert(dbLogListToInsert);
                     Map<String, String> issueTypeMap = (Map<String, String>)JSON.deserialize(messageReceived, Map<String, String>.class);
                     String issueMatchValue = issueTypeMap.get('IssueMatch');
                     System.debug('IssueMatch: ' + issueMatchValue);
-                    // if(dbLogListToInsert.size()>0){
-                    //     Database.insert(dbLogListToInsert);
-                    // }
                     if(res.getStatus()=='OK' && res.getStatusCode()==200 && String.isNotBlank(resBody)){
-                        // if(dbLogListToInsert.size()>0){
-                        //     Database.insert(dbLogListToInsert);
-                        // }
+                        
                         return issueMatchValue;
                     }
                     // if(dbLogListToInsert.size()>0){
-                    //     Database.insert(dbLogListToInsert);
+                    //    Database.insert(dbLogListToInsert);
                     // }
                     numAttempts --;
                 }catch(Exception e){
