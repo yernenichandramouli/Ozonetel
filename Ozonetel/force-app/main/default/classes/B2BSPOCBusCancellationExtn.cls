@@ -31,6 +31,7 @@ public class B2BSPOCBusCancellationExtn {
     public String selSearchStatus{get;set;}
     public Map<string,List<String>> mapSFStattoApiStat;
     public string caseComments{get;set;}
+    public string  rejectionReason{get;set;}
     
     
     public B2BSPOCBusCancellationExtn(ApexPages.StandardController controller) 

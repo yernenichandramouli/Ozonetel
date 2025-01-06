@@ -168,7 +168,7 @@
                           <apex:outputLabel rendered="{!AND(NOT(cp.NC_API_Ping__c),cp.Refund_Reason__c=='Technical Error')}" styleClass="FontSize" style="width: 17.5%;margin-left: 272px;"></apex:outputLabel><apex:inputText value="{!refundDescription}" rendered="{!AND(NOT(cp.NC_API_Ping__c),cp.Refund_Reason__c=='Technical Error')}" style="width: 40.6%;font-size: 16px;border: 1px solid #ccc;border-radius: 4px;margin-top: 10px;"></apex:inputText>
                       </table>
                   </div>
-                    <apex:commandButton value="Submit For Approval" styleClass="btn btn-lg btn-primary nextBtn pull-center greenWhiteBtn" action="{!submitForApproval}" reRender="formId,expId" status="status1"/>
+                    <apex:commandButton value="Submit For Approval" styleClass="btn btn-lg btn-primary nextBtn pull-center greenWhiteBtn" action="{!submitForApproval}" disabled="{!disableSubmitForApproval}" reRender="formId,expId" status="status1"/>
                   </apex:outputPanel>
 
                   <apex:outputPanel rendered="{!cp.FC_IsSuccess__c && forceAPICalled}" id="force">

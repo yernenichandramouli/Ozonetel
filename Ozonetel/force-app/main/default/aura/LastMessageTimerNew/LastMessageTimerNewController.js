@@ -31,7 +31,7 @@
         helper.checkTimers(component,eventRecordId,currentRecId,false,workspaceAPI); 
      },
     
-onChatEnded: function(component, event, helper) {
+onChatEndedTimer: function(component, event, helper) {
     console.log('Inside End Chat');
 
     // Get the event record ID from the event parameter

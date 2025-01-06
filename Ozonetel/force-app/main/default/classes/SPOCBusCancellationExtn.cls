@@ -42,6 +42,7 @@ public class SPOCBusCancellationExtn {
     public boolean reEnableBOPopup{get;set;}
     public string btValue{get;set;}
     public string callStatus{get;set;}
+    public string  rejectionReason{get;set;}
     
     public SPOCBusCancellationExtn(ApexPages.StandardController controller) {
         
@@ -212,11 +213,22 @@ req.setHeader('auth_key','483594d8-1467-47b2-83b5-1d42451c532d');   */
             ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.ERROR, 'Please Enter Description'));
             return null;
         }
+
+        if(String.isBlank(rejectionReason) && 'Rejected'.equalsIgnoreCase(updateAction)){
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.ERROR, 'Please Enter Rejection Reason'));
+            return null;
+        }
+
+        // if(caseComment=='' && 'Rejected For Bus Cancellation'.equalsIgnoreCase(tinStatus)){
+        //     reEnableCCPopup=true;
+        //     ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.ERROR, 'Please Enter Description'));
+        //     return null;
+        // }
         
         reEnablePopup = false;
         reEnableCCPopup=false;
         
-        System.debug('..entered...performUpdate...'+tableIdtoRender+'..'+routeIdtoRender+'..'+updateAction);      
+        System.debug('..entered...performUpdate...'+tableIdtoRender+'..'+routeIdtoRender+'..'+updateAction+'..'+rejectionReason);      
         
         List<case> listCaseToUpdate = new List<case>();
         Map<String,String> mapTinCsId = new Map<String,String>();
@@ -240,6 +252,7 @@ req.setHeader('auth_key','483594d8-1467-47b2-83b5-1d42451c532d');   */
                 wrap.cs.status= mapSFStattoApiStat.get(updateAction)[0];
                 System.debug('status check-->'+mapSFStattoApiStat.get(updateAction)[0]);
                 wrap.cs.notes__c = mapSFStattoApiStat.get(updateAction)[2];
+                wrap.cs.Rejection_Reason__c = String.valueOf(rejectionReason);
                 opTypeApporvals.add(updateAction);
                 
                 
