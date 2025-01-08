@@ -11,7 +11,7 @@ public class SendSmsFromTemplateTest {
         string messageContent =[SELECT Message_Content__c FROM SMS_Template__mdt where DeveloperName LIKE :'NEFT_SMS' ].Message_Content__c;  
         test.startTest();
         Test.setMock(HttpCalloutMock.class, new MockResponseCallout());
-        SendSmsFromTemplate.sendSMS(c.id,messageContent,c.Phone_No_ct__c,'SMS');
+        SendSmsFromTemplate.sendSMS(c.id,messageContent,c.Phone_No_ct__c,'SMS','TestSMS');
         test.stopTest();
     }
       public static testMethod void sendWatsupTest(){
@@ -52,7 +52,7 @@ public class SendSmsFromTemplateTest {
         }
         test.startTest();
         Test.setMock(HttpCalloutMock.class, new MockResponseCallout());
-        SendSmsFromTemplate.sendSMS(c.id,messageContent,c.Phone_No_ct__c,'Whatsapp');
+        SendSmsFromTemplate.sendSMS(c.id,messageContent,c.Phone_No_ct__c,'Whatsapp','TestWhastApp');
         test.stopTest();
     }
 }
