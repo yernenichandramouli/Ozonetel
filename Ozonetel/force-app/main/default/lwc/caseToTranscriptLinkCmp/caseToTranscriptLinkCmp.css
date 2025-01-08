@@ -1,0 +1,23 @@
+.slds-modal__container {
+    width: 50%;
+}
+
+.slds-table {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.slds-table_bordered {
+    border-collapse: collapse;
+}
+
+.slds-table td, .slds-table th {
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.slds-modal__header {
+    background-color: #f4f6f9;
+    border-bottom: 1px solid #d8dde6;
+}

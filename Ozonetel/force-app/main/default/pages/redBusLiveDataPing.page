@@ -3,13 +3,13 @@
     <apex:form id="formId">
             <table>
                 <tr>
-                    <apex:outputPanel rendered="{!if(orIt.RecordType.Name!='Hotels' && orIt.RecordType.Name!='B2B Bus Booking',true,false)}">
+                    <apex:outputPanel rendered="{!if(orIt.RecordType.Name!='B2B Bus Booking',true,false)}">
                         <apex:actionStatus id="SaveButtonStatus2">
                             <apex:facet name="stop">
                                 <apex:outputPanel >
                                    
                                     <apex:commandButton value="Get PG Details" style=" height:25px;width:100px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
-                                        action="{!PaymentUpdatePing}" status="SaveButtonStatus2" reRender="formId"
+                                        action="{!PaymentUpdatePing}" status="SaveButtonStatus2" reRender="formId"  rendered="{!orIt.RecordType.Name!='Hotels'}" 
                                         onComplete="RefreshPrimaryTab();" /> &nbsp;
                                     <apex:commandButton value="Sync redBus data" style="height:25px;width:115px;font-size:12px;background:#04B431;color:white;font-family:Arial;"
                                         action="{!syncDataCall}" status="SaveButtonStatus2" reRender="formId" onComplete="RefreshPrimaryTab();"

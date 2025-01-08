@@ -116,13 +116,13 @@
                                     <apex:selectOption itemLabel="International" itemValue="INTL"></apex:selectOption>
                                     <apex:selectOption itemLabel="Intl BusPass/Coupon" itemValue="COUPON"></apex:selectOption>
                                     <apex:selectOption itemLabel="DOTCOM" itemValue="RDC"></apex:selectOption>
-                                    <!--<apex:selectOption itemLabel="B2B" itemValue="B2B"></apex:selectOption>-->
+                                    <apex:selectOption itemLabel="Hotel" itemValue="HOTEL"></apex:selectOption>
                                     <apex:selectOption itemLabel="B2B-Amazon" itemValue="Amazon"></apex:selectOption>
                                     <apex:selectOption itemLabel="B2B-IRCTC" itemValue="IRCTC"></apex:selectOption>
                                     <apex:selectOption itemLabel="Rails" itemValue="Rails"></apex:selectOption>
  
                                     <apex:selectOption itemLabel="Things TODO" itemValue="THINGSTODO"></apex:selectOption>
- 									<apex:actionsupport event="onchange" action="{!EnableB2B}" rerender="blke"/>                                    
+                                    <apex:actionsupport event="onchange" action="{!EnableB2B}" rerender="blke"/>                                    
                                     </apex:selectList>  
                                 </div>
                             </div>
@@ -210,11 +210,11 @@
             <apex:column >
              <apex:facet name="header">Trip Id</apex:facet>
                 <apex:outputPanel rendered="{!(NOT(res.isTripIdSearch)||(res.isTripIdSearch && res.hasPayment))}">
-    	           <a HREF="#" onClick="callSearchOrder(this,'{!res.cartId}','B2C');return false;">
-        	           <apex:outputlabel value="{!res.cartId}"/>
-            	   </a>
-             	</apex:outputPanel>
-             	<apex:outputPanel rendered="{!res.isTripIdSearch && NOT(res.hasPayment)}">
+                   <a HREF="#" onClick="callSearchOrder(this,'{!res.cartId}','B2C');return false;">
+                       <apex:outputlabel value="{!res.cartId}"/>
+                   </a>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!res.isTripIdSearch && NOT(res.hasPayment)}">
                      <apex:outputlabel value="{!res.cartId}"/>
                </apex:outputPanel>
              </apex:column>

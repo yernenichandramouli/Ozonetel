@@ -24,8 +24,12 @@ public class SendSmsFromTemplate {
         string tempName='%'+template+'%';
         if(string.isNotBlank(tempName)){
             list<SMS_Template__mdt> templateList=new list<SMS_Template__mdt>();  
-            list<SMS_Template__mdt> retIsuList=new list<SMS_Template__mdt>();        
-            templateList=[SELECT Id,DeveloperName,Message_Content__c,Type__c,QualifiedApiName FROM SMS_Template__mdt where DeveloperName LIKE : tempName and Type__c=:type];  
+            list<SMS_Template__mdt> retIsuList=new list<SMS_Template__mdt>();    
+            if(type=='SMS'){
+                templateList=[SELECT Id,DeveloperName,Message_Content__c,Type__c,QualifiedApiName FROM SMS_Template__mdt where DeveloperName LIKE : tempName and Type__c=:type and DLT_Id__c!=null];  
+            }else{
+                templateList=[SELECT Id,DeveloperName,Message_Content__c,Type__c,QualifiedApiName FROM SMS_Template__mdt where DeveloperName LIKE : tempName and Type__c=:type];  
+            }
             System.debug('templateList-->'+templateList);
             if(templateList.size()>0)
                 return templateList;

@@ -101,12 +101,32 @@ global class AutoRemainderMailBatchCtrl implements DataBase.Batchable<sObject>, 
             email.setSaveAsActivity(true);
             if(templateName=='first'){
                 c.Reminders__c='1';
-                email.setSubject('Reminder 1 - '+c.thread_id__c);
-                email.setHtmlBody('<html><body>Dear Customer, <br/> <br/> As per the communication from our customer service team, we had requested you to share some key details that are required from your end to action your request. It would be helpful if you can respond at the earliest. To respond, please click the link below <br/><a href="'+wbLink+'" target="_blank">'+wbLink+'</a> <br/><br/> Thanks, <br/>redBus Support team </body></html>');
+                if('Peru'.equalsIgnoreCase(c.Country__c)){
+                        wbLink='https://m.redbus.pe/help';
+                        email.setSubject('Reminder 1 - Información necesaria'+c.thread_id__c);
+                        email.setHtmlBody('<html><body>Estimado cliente, <br/> <br/>Para poder procesar su solicitud de manera eficiente, necesitamos que nos proporcione algunos detalles adicionales. Agradeceríamos mucho si pudiera responder a la brevedad. Por favor, haga clic en el siguiente enlace para enviar la información requerida : <br/><a href="'+wbLink+'" target="_blank">'+wbLink+'</a> <br/><br/> Gracias por su comprensión.<br/><br/> Atentamente, <br/>El equipo de soporte de redBus</body></html>');
+                }else if('Colombia'.equalsIgnoreCase(c.Country__c)){
+                    wbLink='https://m.redbus.co/help';
+                    email.setSubject('Reminder 1 - Información necesaria'+c.thread_id__c);
+                    email.setHtmlBody('<html><body>Estimado cliente, <br/> <br/>Para poder procesar su solicitud de manera eficiente, necesitamos que nos proporcione algunos detalles adicionales. Agradeceríamos mucho si pudiera responder a la brevedad. Por favor, haga clic en el siguiente enlace para enviar la información requerida : <br/><a href="'+wbLink+'" target="_blank">'+wbLink+'</a> <br/><br/> Gracias por su comprensión.<br/><br/> Atentamente, <br/>El equipo de soporte de redBus</body></html>');
+                }else{
+                    email.setSubject('Reminder 1 - Information needed'+c.thread_id__c);
+                    email.setHtmlBody('<html><body>Dear Customer, <br/> <br/> As per the communication from our customer service team, we had requested you to share some key details that are required from your end to action your request. It would be helpful if you can respond at the earliest. To respond, please click the link below <br/><a href="'+wbLink+'" target="_blank">'+wbLink+'</a> <br/><br/> Thanks, <br/>redBus Support team </body></html>');
+                }
             }else if(templateName=='second'){
                 c.Reminders__c=c.Reminders__c+',2';
-                email.setSubject('Reminder 2 - '+c.thread_id__c);
-                email.setHtmlBody('<html><body>Dear Customer, <br/> <br/> As requested in the earlier email from us, we are still awaiting some key details. It would be helpful if you can respond at the earliest. To respond, please click the link below <br/> <a href="'+wbLink+'" target="_blank"> '+wbLink+'  </a> <br/><br/> Thanks, <br/>redBus Support team </body></html>');
+                 if('Peru'.equalsIgnoreCase(c.Country__c)){
+                     wbLink='https://m.redbus.pe/help';
+                     email.setSubject('Reminder 2 - Información necesaria'+c.thread_id__c);
+                     email.setHtmlBody('<html><body>Estimado cliente, <br/> <br/>Como mencionamos en nuestro correo electrónico anterior, aún estamos a la espera de algunos detalles clave para procesar su solicitud. Le agradeceríamos mucho si pudiera proporcionarlos a la mayor brevedad posible.<br/><br/>Para enviar la información requerida, por favor haga clic en el siguiente enlace: <br/><a href="'+wbLink+'" target="_blank">'+wbLink+'</a> <br/><br/> Gracias por su comprensión.<br/><br/> Atentamente, <br/>El equipo de soporte de redBus</body></html>');
+                }else if('Colombia'.equalsIgnoreCase(c.Country__c)){
+                   wbLink='https://m.redbus.co/help';
+                   email.setSubject('Reminder 2 - Información necesaria'+c.thread_id__c);
+                   email.setHtmlBody('<html><body>Estimado cliente, <br/> <br/>Como mencionamos en nuestro correo electrónico anterior, aún estamos a la espera de algunos detalles clave para procesar su solicitud. Le agradeceríamos mucho si pudiera proporcionarlos a la mayor brevedad posible.<br/><br/>Para enviar la información requerida, por favor haga clic en el siguiente enlace: <br/><a href="'+wbLink+'" target="_blank">'+wbLink+'</a> <br/><br/> Gracias por su comprensión.<br/><br/> Atentamente, <br/>El equipo de soporte de redBus</body></html>');
+                }else{
+                    email.setSubject('Reminder 2 - Information needed'+c.thread_id__c);
+                  email.setHtmlBody('<html><body>Dear Customer, <br/> <br/> As requested in the earlier email from us, we are still awaiting some key details. It would be helpful if you can respond at the earliest. To respond, please click the link below <br/> <a href="'+wbLink+'" target="_blank"> '+wbLink+'  </a> <br/><br/> Thanks, <br/>redBus Support team </body></html>');
+               }
             }else if(templateName=='third'){
                 c.status='Closed';
                 c.Reminders__c=c.Reminders__c+',3';
@@ -119,7 +139,18 @@ global class AutoRemainderMailBatchCtrl implements DataBase.Batchable<sObject>, 
                 cc.parentid=c.id;
                 ccList.add(cc);
                 email.setSubject('Final Reminder - '+c.thread_id__c);
-                email.setHtmlBody('<html><body>Dear Customer, <br/><br/>We believe it must have been an inconvenient time for you to share the required details and understand your time constraints. As of now, we will be closing this particular complaint in our system since we have not received any response from you over 24 hrs. Please feel free to respond back with prescribed details whenever you find time and we will be more than happy to assist you. To respond, please click the link below<br/> <a href="'+wbLink+'" target="_blank"> '+wbLink+' </a> <br/><br/> Thanks, <br/>redBus Support team </body></html>');            
+                if('Peru'.equalsIgnoreCase(c.Country__c)){
+                     wbLink='https://m.redbus.pe/help';
+                     email.setSubject('Reminder 3 - Información necesaria'+c.thread_id__c);
+                      email.setHtmlBody('<html><body>Estimado cliente, <br/> <br/> Entendemos que pudo haber sido un momento inconveniente para compartir los detalles requeridos y comprendemos sus limitaciones de tiempo. Procederemos a cerrar esta solicitud en nuestro sistema, ya que no hemos recibido respuesta de su parte en más de 24 horas. No dude en responder con la información solicitada cuando tenga oportunidad; estaremos encantados de asistirle.<br/><br/>Para enviar la información requerida, por favor haga clic en el siguiente enlace: <br/><a href="'+wbLink+'" target="_blank">'+wbLink+'</a> <br/><br/> Gracias por su comprensión.<br/><br/> Atentamente, <br/>El equipo de soporte de redBus</body></html>');
+                }else if('Colombia'.equalsIgnoreCase(c.Country__c)){
+                   wbLink='https://m.redbus.co/help';
+                   email.setSubject('Reminder 3 - Información necesaria'+c.thread_id__c);
+                    email.setHtmlBody('<html><body>Estimado cliente, <br/> <br/> Entendemos que pudo haber sido un momento inconveniente para compartir los detalles requeridos y comprendemos sus limitaciones de tiempo. Procederemos a cerrar esta solicitud en nuestro sistema, ya que no hemos recibido respuesta de su parte en más de 24 horas. No dude en responder con la información solicitada cuando tenga oportunidad; estaremos encantados de asistirle.<br/><br/>Para enviar la información requerida, por favor haga clic en el siguiente enlace: <br/><a href="'+wbLink+'" target="_blank">'+wbLink+'</a> <br/><br/> Gracias por su comprensión.<br/><br/> Atentamente, <br/>El equipo de soporte de redBus</body></html>');
+                }else{
+                    email.setSubject('Reminder 3 - Information needed'+c.thread_id__c);
+                   email.setHtmlBody('<html><body>Dear Customer, <br/><br/>We believe it must have been an inconvenient time for you to share the required details and understand your time constraints. As of now, we will be closing this particular complaint in our system since we have not received any response from you over 48 hrs. Please feel free to respond back with prescribed details whenever you find time and we will be more than happy to assist you. To respond, please click the link below<br/> <a href="'+wbLink+'" target="_blank"> '+wbLink+' </a> <br/><br/> Thanks, <br/>redBus Support team </body></html>');            
+                }
             }
             
             if(string.isNotBlank(c.TAT_Notifier_Email__c)){

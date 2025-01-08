@@ -1110,6 +1110,9 @@ public class redBusLiveDataPing
         }else if('REDBUS_COM'.equalsIgnoreCase(orIt.Business_Unit__c)){
             body = '{"orderId":"'+orIt.Order_Id__c+'","emailId":"","phone":"","caller":"SyncRedBusData"}';
             countryCode ='RDC';
+        }else if('REDBUS_HOTEL_IN'.equalsIgnoreCase(orIt.Business_Unit__c)){
+            body = '{"orderId":"'+orIt.Order_Id__c+'","emailId":"","phone":"","caller":"SyncRedBusData"}';
+            countryCode ='IND';
         }else {
             body = '{"orderId":"'+orIt.Order_Id__c+'","emailId":"","phone":"","caller":"SyncRedBusData"}';
             countryCode = String.isBlank(orIt.Business_Unit__c)?'IND':'REDBUS_IN'.equalsIgnoreCase(orIt.Business_Unit__c)?'IND':'INTL';
